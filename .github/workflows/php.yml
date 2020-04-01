@@ -11,9 +11,13 @@ jobs:
 
     runs-on: ubuntu-latest
     env: 
-      working-directory: ./ig-back
+      working-directory: ./ig-back/
 
     steps:
+    
+    - name: where am i
+      run: ls -a
+      working-directory: ${{ env.working-directory }}
     
     - name: Validate composer.json and composer.lock
       run: composer validate
