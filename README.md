@@ -3,8 +3,8 @@
 
 ### Requirements
 
-* Image Gallery - Front (https://github.com/HETIC-MT-P2021/front-group6-proj01);
-* Docker;
+* Docker
+* docker-compose
 
 ### How to install 
 
