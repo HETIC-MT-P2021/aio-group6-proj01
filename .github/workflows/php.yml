@@ -17,11 +17,11 @@ jobs:
 
     - name: Validate composer.json and composer.lock
       run: composer validate
-      working-directory: ${{env.working-directory}}
+      working-directory: ${{ env.working-directory }}
 
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress --no-suggest
-      working-directory: ${{env.working-directory}}
+      working-directory: ${{ env.working-directory }}
 
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
     # Docs: https://getcomposer.org/doc/articles/scripts.md
