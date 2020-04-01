@@ -1,4 +1,4 @@
-name: elm-php CI
+name: elm CI
 
 on: [push]
 
