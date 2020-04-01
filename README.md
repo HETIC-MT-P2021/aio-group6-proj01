@@ -28,7 +28,7 @@ Coming soon
 ### Functionality overview
 
 - Start by creating a new category in `localhost:8085/categories` <br/>
-- Add an image in the form at `localhost:8085/images` <br/>
+- Add an image by clicking at `localhost:8085/images/new` <br/>
 - Set the category you created to the image <br/>
 - You can add tags to filter your images later <br/>
 - Navigate in the app and discover our features
