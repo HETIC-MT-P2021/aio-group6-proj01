@@ -1,5 +1,7 @@
 # Image Gallery Project
 
+Image Gallery is an ELM and Symfony web app used to stock and filter all your pictures.
+
 ![Version](https://img.shields.io/badge/version-0.1-red.svg?cacheSeconds=2592000)
 [![GitHub license](https://img.shields.io/github/license/HETIC-MT-P2021/aio-group6-proj01)](https://github.com/HETIC-MT-P2021/aio-group6-proj01/blob/master/LICENSE)
 
