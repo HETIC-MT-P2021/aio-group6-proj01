@@ -1,36 +1,45 @@
-# Image Gallery - Back // Team 6
-<sub><sup>A Symfony4.4 App</sup></sub>
+# Image Gallery Project
+
+![Version](https://img.shields.io/badge/version-0.1-red.svg?cacheSeconds=2592000)
+[![GitHub license](https://img.shields.io/github/license/HETIC-MT-P2021/aio-group6-proj01)](https://github.com/HETIC-MT-P2021/aio-group6-proj01/blob/master/LICENSE)
+
 
 ### Requirements
 
 * Docker
-* docker-compose
+    - [Windows](https://docs.docker.com/docker-for-windows/install/)
+    - [Linux](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
+    - [MacOS](https://docs.docker.com/docker-for-mac/install/)
+* [docker-compose](https://docs.docker.com/compose/install/)
 
-### How to install 
+### Build and install 
 
-- Use docker and docker-compose.
+Go to the project folder and start the containers
 
-  - `cd project/` <br/>
-  - `docker-compose up --build` <br/>
-  - Access the app on your favorite browser
+`cd image_gallery/`<br/>
+`docker-compose up --build`
 
-### How to use 
+Open `localhost:8085` in your favorite browser
 
-- Access the app using the ip:port the console gave you back
+### Unit tests and Linter
 
-  - Start by creating a new category <br/>
-  - Add an image in the form at /url/ <br/>
-  - You can add tags to filter your images later <br/>
-  - Navigate in the app and discover our features
+Coming soon
+
+### Functionality overview
+
+- Start by creating a new category in `localhost:8085/categories` <br/>
+- Add an image in the form at `localhost:8085/images` <br/>
+- Set the category you created to the image <br/>
+- You can add tags to filter your images later <br/>
+- Navigate in the app and discover our features
   
-### Realease
+### Contributing
 
-🚫 Unstable
-<br/>
-![Version](https://img.shields.io/badge/version-0.1-red.svg?cacheSeconds=2592000)
+Please read and follow [Contributing file](https://github.com/HETIC-MT-P2021/aio-group6-proj01/blob/master/CONTRIBUTING.md)
 
-<sub><sup>
 ### Authors
+
+HETIC-MT-P2021 | Team 6 
 
 Monteiro Wyllis
 <br/>
@@ -38,6 +47,14 @@ Ferarma Oussama
 <br/>
 Moret Valentin
 
-## License
-[![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/tterb/atomic-design-ui/blob/master/LICENSEs)
+### License
+  
+<sub><sup>
+Copyright © <br/>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+The Software is provided “as is”, without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. In no event shall the authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software or the use or other dealings in the Software.
 </sup></sub>
