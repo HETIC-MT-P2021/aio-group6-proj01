@@ -4,7 +4,7 @@ Image Gallery is an ELM and Symfony web app used to stock and filter all your pi
 
 ![Version](https://img.shields.io/badge/version-0.1-red.svg?cacheSeconds=2592000)
 ![Php Version](https://img.shields.io/badge/php-%3E%3D_7.3-8892BF.svg)
-![Elm Version](https://img.shields.io/badge/elm-%3E%3D_0.19.1-8892BF.svg)
+![Elm Version](https://img.shields.io/badge/elm-0.19.1-blue.svg)
 [![GitHub license](https://img.shields.io/github/license/HETIC-MT-P2021/aio-group6-proj01)](https://github.com/HETIC-MT-P2021/aio-group6-proj01/blob/master/LICENSE)
 
 ### Requirements
