@@ -37,7 +37,7 @@ Coming soon
   
 ### Contributing
 
-Please read and follow [Contributing file](https://github.com/HETIC-MT-P2021/aio-group6-proj01/blob/master/CONTRIBUTING.md)
+Please read and follow [Contributing file](https://github.com/HETIC-MT-P2021/aio-group6-proj01/blob/markdown/CONTRIBUTING.md)
 
 ### Authors
 
