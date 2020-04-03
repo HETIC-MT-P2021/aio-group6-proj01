@@ -120,7 +120,7 @@ If you’re only fixing a bug, it’s fine to submit a pull request right away b
     
     1/ Make the required updates.
 
-    2/ Re-run the Angular test suites to ensure tests are still passing.
+    2/ Re-run unit test suites to ensure tests are still passing.
 
     3/ Rebase your branch and force push to your GitHub repository (this will update your Pull Request):
 
