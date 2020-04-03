@@ -27,6 +27,7 @@ Every significant change is documented in the changelog file in CHANGELOG.md.
 ### Existing branches
 - master
 - dev
+
 "dev" branch contains the following branches :
 - feat      : New feature.
 - bug       : Code changes linked to a known issue.
