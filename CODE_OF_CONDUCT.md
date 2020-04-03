@@ -20,6 +20,6 @@ Examples of unacceptable behavior by participants include:
 - Publishing others' private information, such as a physical or electronic address, without explicit permission
 - Other conduct which could reasonably be considered inappropriate in a professional setting
 
-If you are subject to or witness unacceptable behavior, or have any other concerns, please contact Author. You can find mail address in [AUTHOR.md](https://github.com/HETIC-MT-P2021/aio-group6-proj01/blob/markdown/AUTHOR.md).
+If you are subject to or witness unacceptable behavior, or have any other concerns, please contact Authors. You can find mail addresses in [AUTHORS.md](https://github.com/HETIC-MT-P2021/aio-group6-proj01/blob/markdown/AUTHORS.md).
 
 Image Gallery - 01/04/2020.
