@@ -7,8 +7,8 @@ Want to contribute to Image Gallery? There are a few things you need to know.
 - [Guidelines](#guidelines)
 - [Bugs](#bugs)
 
-## Author
-We are hetic student, to get mail address go in [AUTHOR.md](https://github.com/HETIC-MT-P2021/aio-group6-proj01/blob/markdown/AUTHOR.md)
+## Authors
+We are hetic students, to get mail addresses go in [AUTHORS.md](https://github.com/HETIC-MT-P2021/aio-group6-proj01/blob/markdown/AUTHORS.md)
 
 ## Code of Conduct
 Please read and follow our Code of Conduct in [CODE_OF_CONDUCT.md](https://github.com/HETIC-MT-P2021/aio-group6-proj01/blob/markdown/CODE_OF_CONDUCT.md).
@@ -81,7 +81,7 @@ We are using GitHub Issues for our public bugs. We keep a close eye on this and 
 The best way to get your bug fixed is to provide a reduced test case. This [JSFiddle](https://jsfiddle.net/) template is a great starting point.
 
 ### How to Get in Touch
-You can find our mail address in [AUTHOR.md](https://github.com/HETIC-MT-P2021/aio-group6-proj01/blob/markdown/AUTHOR.md). We will give you an answer as soon as possible.
+You can find our mail addresses in [AUTHORS.md](https://github.com/HETIC-MT-P2021/aio-group6-proj01/blob/markdown/AUTHORS.md). We will give you an answer as soon as possible.
 
 ### Proposing a change
 If you intend to change the API, or make any non-trivial changes to the implementation, we recommend filing an issue. This lets us reach an agreement on your proposal before you put significant effort into it.
