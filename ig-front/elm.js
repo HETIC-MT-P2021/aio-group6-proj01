@@ -5173,7 +5173,6 @@ var $author$project$Main$update = F2(
 			return model - 1;
 		}
 	});
-var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$html$Html$a = _VirtualDom_node('a');
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $elm$html$Html$Attributes$stringProperty = F2(
@@ -5184,6 +5183,8 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 			$elm$json$Json$Encode$string(string));
 	});
 var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
+var $elm$html$Html$div = _VirtualDom_node('div');
+var $elm$html$Html$h1 = _VirtualDom_node('h1');
 var $elm$html$Html$Attributes$href = function (url) {
 	return A2(
 		$elm$html$Html$Attributes$stringProperty,
@@ -5238,12 +5239,233 @@ var $author$project$Navbar$view = function (model) {
 };
 var $author$project$Navbar$main = $author$project$Navbar$view(
 	{categories: 'Catégories', home: 'Accueil', images: 'Images'});
+var $elm$html$Html$p = _VirtualDom_node('p');
 var $author$project$Main$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
 		_List_Nil,
 		_List_fromArray(
-			[$author$project$Navbar$main]));
+			[
+				$author$project$Navbar$main,
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('container')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('home_categories_section')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$h1,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text('catégories')
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('home_categories_thumbnails')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$a,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$href('#'),
+												$elm$html$Html$Attributes$class('home_categories_thumbnail')
+											]),
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$p,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$class('home_category_name')
+													]),
+												_List_fromArray(
+													[
+														$elm$html$Html$text('Voiture')
+													])),
+												A2(
+												$elm$html$Html$a,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$href('#'),
+														$elm$html$Html$Attributes$class('icon_container')
+													]),
+												_List_fromArray(
+													[
+														A2(
+														$elm$html$Html$div,
+														_List_fromArray(
+															[
+																$elm$html$Html$Attributes$class('icon icon_trash')
+															]),
+														_List_Nil)
+													])),
+												A2(
+												$elm$html$Html$a,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$href('#'),
+														$elm$html$Html$Attributes$class('icon_container')
+													]),
+												_List_fromArray(
+													[
+														A2(
+														$elm$html$Html$div,
+														_List_fromArray(
+															[
+																$elm$html$Html$Attributes$class('icon icon_pen')
+															]),
+														_List_Nil)
+													]))
+											])),
+										A2(
+										$elm$html$Html$a,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$href('#'),
+												$elm$html$Html$Attributes$class('home_categories_thumbnail')
+											]),
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$p,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$class('home_category_name')
+													]),
+												_List_fromArray(
+													[
+														$elm$html$Html$text('Animaux')
+													])),
+												A2(
+												$elm$html$Html$a,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$href('#'),
+														$elm$html$Html$Attributes$class('icon_container')
+													]),
+												_List_fromArray(
+													[
+														A2(
+														$elm$html$Html$div,
+														_List_fromArray(
+															[
+																$elm$html$Html$Attributes$class('icon icon_trash')
+															]),
+														_List_Nil)
+													])),
+												A2(
+												$elm$html$Html$a,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$href('#'),
+														$elm$html$Html$Attributes$class('icon_container')
+													]),
+												_List_fromArray(
+													[
+														A2(
+														$elm$html$Html$div,
+														_List_fromArray(
+															[
+																$elm$html$Html$Attributes$class('icon icon_pen')
+															]),
+														_List_Nil)
+													]))
+											])),
+										A2(
+										$elm$html$Html$a,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$href('#'),
+												$elm$html$Html$Attributes$class('home_categories_thumbnail')
+											]),
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$p,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$class('home_category_name')
+													]),
+												_List_fromArray(
+													[
+														$elm$html$Html$text('Motos')
+													])),
+												A2(
+												$elm$html$Html$a,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$href('#'),
+														$elm$html$Html$Attributes$class('icon_container')
+													]),
+												_List_fromArray(
+													[
+														A2(
+														$elm$html$Html$div,
+														_List_fromArray(
+															[
+																$elm$html$Html$Attributes$class('icon icon_trash')
+															]),
+														_List_Nil)
+													])),
+												A2(
+												$elm$html$Html$a,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$href('#'),
+														$elm$html$Html$Attributes$class('icon_container')
+													]),
+												_List_fromArray(
+													[
+														A2(
+														$elm$html$Html$div,
+														_List_fromArray(
+															[
+																$elm$html$Html$Attributes$class('icon icon_pen')
+															]),
+														_List_Nil)
+													]))
+											]))
+									])),
+								A2(
+								$elm$html$Html$a,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$href('#'),
+										$elm$html$Html$Attributes$class('link')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Afficher toutes les catégories')
+									])),
+								A2(
+								$elm$html$Html$a,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$href('#'),
+										$elm$html$Html$Attributes$class('link')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('+ Créer une nouvelle catégorie')
+									]))
+							]))
+					]))
+			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$sandbox(
 	{init: 0, update: $author$project$Main$update, view: $author$project$Main$view});

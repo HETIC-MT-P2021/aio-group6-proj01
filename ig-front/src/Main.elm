@@ -1,7 +1,8 @@
 module Main exposing (..)
 
 import Browser
-import Html exposing (Html, button, div, text)
+import Html exposing (Html, h1, p, a, button, div, text)
+import Html.Attributes exposing (class, href)
 import Html.Events exposing (onClick)
 
 -- HTML modules
@@ -26,4 +27,35 @@ update msg model =
 -- Show view
 view model =
   div []
-    [ Navbar.main ]
+    [ Navbar.main,
+      div [ class "container" ] 
+        [ div [ class "home_categories_section" ] 
+          [ h1 [] [ text "catégories" ],
+            div [ class "home_categories_thumbnails" ] 
+              [ a [ href "#", class "home_categories_thumbnail" ] 
+                  [ p [ class "home_category_name" ] [ text "Voiture" ],
+                    a [ href "#", class "icon_container" ] 
+                      [ div [ class "icon icon_trash" ] [] ],
+                    a [ href "#", class "icon_container" ] 
+                      [ div [ class "icon icon_pen" ] [] ]
+                  ],
+                a [ href "#", class "home_categories_thumbnail" ] 
+                  [ p [ class "home_category_name" ] [ text "Animaux" ],
+                    a [ href "#", class "icon_container" ] 
+                      [ div [ class "icon icon_trash" ] [] ],
+                    a [ href "#", class "icon_container" ] 
+                      [ div [ class "icon icon_pen" ] [] ]
+                  ],
+                a [ href "#", class "home_categories_thumbnail" ]
+                  [ p [ class "home_category_name" ] [ text "Motos" ],
+                    a [ href "#", class "icon_container" ] 
+                      [ div [ class "icon icon_trash" ] [] ],
+                    a [ href "#", class "icon_container" ] 
+                      [ div [ class "icon icon_pen" ] [] ]
+                  ]
+              ],
+            a [ href "#", class "link" ] [ text "Afficher toutes les catégories" ],
+            a [ href "#", class "link" ] [ text "+ Créer une nouvelle catégorie" ]
+          ] 
+        ]
+    ]
