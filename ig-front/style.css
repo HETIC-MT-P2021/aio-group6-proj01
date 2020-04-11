@@ -10,6 +10,13 @@ h1 {
     margin: 50px 0px;
 }
 
+.link {
+    color: #0055ff;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+}
+
 /*********************************************************************/
 /*                              ICONS                                */
 /*********************************************************************/
@@ -91,18 +98,6 @@ h1 {
     text-decoration: none;
 }
 
-.link {
-    color: #0055ff;
-    text-decoration: none;
-    display: block;
-    text-align: center;
-}
-
-/* select second link in "CATEGORIES" section */
-.home_categories_section .link:first-of-type {
-    margin-bottom: 10px;
-}
-
 /* Select icons of categories thumbnais */
 .home_categories_thumbnails .icon_container {
     position: absolute;
@@ -115,4 +110,65 @@ h1 {
 
 .home_categories_thumbnails .icon_container:nth-of-type(2) {
     right: 0;
+}
+
+/* select second link in "CATEGORIES" section */
+.home_categories_section .link:first-of-type {
+    margin-bottom: 10px;
+}
+
+/*********************************************************************/
+/*                         HOME SECTION IMAGES                       */
+/*********************************************************************/
+
+.home_images_thumbnails {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 30px;
+}
+
+.home_images_thumbnail {
+    width: 280px;
+    height: 280px;
+    background: #333;
+    position: relative;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    text-decoration: none;
+}
+
+.home_images_thumbnails .icon_container {
+    position: absolute;
+    bottom: 50px;
+}
+
+.home_images_thumbnails .icon_container:nth-of-type(1) {
+    right: 50px;
+}
+
+.home_images_thumbnails .icon_container:nth-of-type(2) {
+    right: 0;
+}
+
+.home_image_category {
+    display: block;
+    line-height: 50px;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    background: #e0e0e0;
+    color: #333;
+    text-decoration: none;
+    text-align: center;
+}
+
+.home_images_section .link:first-of-type {
+    margin-bottom: 10px;
+}
+
+.home_images_section .link:nth-of-type(2) {
+    margin-bottom: 30px;
 }

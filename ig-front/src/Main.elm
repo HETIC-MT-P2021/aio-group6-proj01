@@ -56,6 +56,34 @@ view model =
               ],
             a [ href "#", class "link" ] [ text "Afficher toutes les catégories" ],
             a [ href "#", class "link" ] [ text "+ Créer une nouvelle catégorie" ]
-          ] 
+          ],
+          div [ class "home_images_section" ] 
+            [ h1 [] [ text "images" ],
+              div [ class "home_images_thumbnails" ] 
+                [ a [ href "#", class "home_images_thumbnail" ] 
+                    [ a [ href "#", class "icon_container" ] 
+                        [ div [ class "icon icon_trash" ] [] ],
+                      a [ href "#", class "icon_container" ] 
+                        [ div [ class "icon icon_pen" ] [] ],
+                      a [ href "#", class "home_image_category" ] [ text "Voiture" ]
+                    ],
+                  a [ href "#", class "home_images_thumbnail" ] 
+                    [ a [ href "#", class "icon_container" ] 
+                        [ div [ class "icon icon_trash" ] [] ],
+                      a [ href "#", class "icon_container" ] 
+                        [ div [ class "icon icon_pen" ] [] ],
+                      a [ href "#", class "home_image_category" ] [ text "Voiture" ]                      
+                  ],
+                  a [ href "#", class "home_images_thumbnail" ]
+                    [ a [ href "#", class "icon_container" ] 
+                        [ div [ class "icon icon_trash" ] [] ],
+                      a [ href "#", class "icon_container" ] 
+                        [ div [ class "icon icon_pen" ] [] ],
+                      a [ href "#", class "home_image_category" ] [ text "Voiture" ]                      
+                  ]
+              ],
+            a [ href "#", class "link" ] [ text "Afficher toutes les images" ],
+            a [ href "#", class "link" ] [ text "+ Créer une nouvelle image" ]
+          ]
         ]
     ]
