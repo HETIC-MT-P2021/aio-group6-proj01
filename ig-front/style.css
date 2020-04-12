@@ -59,9 +59,13 @@ h1 {
 /*********************************************************************/
 
 .container {
-    width: 1024px;
+    width: 100%;
     margin: 0 auto;
 }
+
+/*********************************************************************/
+/*                           SCREEN < 900px                          */
+/*********************************************************************/
 
 /*********************************************************************/
 /*                              NAVBAR                               */
@@ -90,8 +94,9 @@ h1 {
 
 .home_categories_thumbnails {
     display: flex;
-    justify-content: space-around;
+    flex-direction: column;
     margin-bottom: 30px;
+    align-items: center;
 }
 
 .home_categories_thumbnail {
@@ -105,6 +110,11 @@ h1 {
     justify-content: center;
     font-size: 1.5rem;
     text-decoration: none;
+    margin-bottom: 50px;
+}
+
+.home_categories_thumbnail:nth-of-type(3) {
+    margin: 0;
 }
 
 /* Select icons of categories thumbnais */
@@ -132,8 +142,9 @@ h1 {
 
 .home_images_thumbnails {
     display: flex;
-    justify-content: space-around;
+    flex-direction: column;
     margin-bottom: 30px;
+    align-items: center;
 }
 
 .home_images_thumbnail {
@@ -143,10 +154,15 @@ h1 {
     position: relative;
     color: white;
     display: flex;
+    margin-bottom: 50px;
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
     text-decoration: none;
+}
+
+.home_images_thumbnail:nth-of-type(3) {
+    margin: 0;
 }
 
 .home_images_thumbnails .icon_container {
@@ -197,7 +213,6 @@ h1 {
 /*********************************************************************/
 
 .footer_container {
-    padding-left: 20px;
     background: #333;
     color: white;
     height: 70px;
@@ -206,9 +221,84 @@ h1 {
     align-items: center;
 }
 
+.footer_container p {
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+.footer_container ul {
+    display: none;
+}
+
 .footer_container ul .link {
     display: inline-block;
     margin-right: 20px;
     color: white;
     text-decoration: underline;
+}
+
+/*********************************************************************/
+/*                          SCREEN > 500px                           */
+/*********************************************************************/
+
+@media (min-width: 500px) {
+
+/*********************************************************************/
+/*                              FOOTER                               */
+/*********************************************************************/
+
+    .footer_container {
+        padding-left: 20px;
+    }
+
+    .footer_container p {
+        text-align: left;
+        width: auto;
+    }
+
+    .footer_container ul {
+        display: block;
+    }
+}
+
+/*********************************************************************/
+/*                          SCREEN > 900px                           */
+/*********************************************************************/
+
+@media (min-width: 900px) {
+
+/*********************************************************************/
+/*                          GLOBAL CONTAINER                         */
+/*********************************************************************/
+
+.container {
+    max-width: 1024px;
+}
+
+/*********************************************************************/
+/*                        HOME SECTION CATEGORIES                    */
+/*********************************************************************/
+
+    .home_categories_thumbnails {
+        flex-direction: row;
+        justify-content: space-around;
+    }
+
+    .home_categories_thumbnail {
+        margin: 0;
+    }
+
+/*********************************************************************/
+/*                         HOME SECTION IMAGES                       */
+/*********************************************************************/
+
+    .home_images_thumbnails {
+        flex-direction: row;
+        justify-content: space-around;
+    }
+
+    .home_images_thumbnail {
+        margin: 0;
+    }
 }
