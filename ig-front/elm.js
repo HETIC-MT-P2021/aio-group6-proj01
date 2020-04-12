@@ -5191,8 +5191,63 @@ var $elm$html$Html$Attributes$href = function (url) {
 		'href',
 		_VirtualDom_noJavaScriptUri(url));
 };
+var $author$project$Footer$init = {
+	authors: _List_fromArray(
+		[
+			{mail: 'valentin.moretpro1@gmail.com', name: 'Valentin'},
+			{mail: 'oussama.ferarma@gmail.com', name: 'Oussama'},
+			{mail: 'wyllismonteiro@gmail.com', name: 'Wyllis'}
+		]),
+	mail: '',
+	name: ''
+};
+var $elm$html$Html$p = _VirtualDom_node('p');
+var $elm$core$String$append = _String_append;
+var $author$project$Footer$renderMailto = function (mail) {
+	return A2($elm$core$String$append, 'mailto:', mail);
+};
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $author$project$Footer$renderAuthor = F2(
+	function (index, author) {
+		return A2(
+			$elm$html$Html$a,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$href(
+					$author$project$Footer$renderMailto(author.mail)),
+					$elm$html$Html$Attributes$class('link')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text(author.name)
+				]));
+	});
+var $elm$html$Html$ul = _VirtualDom_node('ul');
+var $author$project$Footer$renderAuthors = function (authors) {
+	var author = A2($elm$core$List$indexedMap, $author$project$Footer$renderAuthor, authors);
+	return A2($elm$html$Html$ul, _List_Nil, author);
+};
+var $author$project$Footer$view = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('footer_container')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$p,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Image Gallery')
+					])),
+				$author$project$Footer$renderAuthors(model.authors)
+			]));
+};
+var $author$project$Footer$main = $author$project$Footer$view($author$project$Footer$init);
 var $author$project$Navbar$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -5239,7 +5294,6 @@ var $author$project$Navbar$view = function (model) {
 };
 var $author$project$Navbar$main = $author$project$Navbar$view(
 	{categories: 'Catégories', home: 'Accueil', images: 'Images'});
-var $elm$html$Html$p = _VirtualDom_node('p');
 var $author$project$Main$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -5676,7 +5730,8 @@ var $author$project$Main$view = function (model) {
 										$elm$html$Html$text('+ Créer une nouvelle image')
 									]))
 							]))
-					]))
+					])),
+				$author$project$Footer$main
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$sandbox(

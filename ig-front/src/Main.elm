@@ -6,7 +6,8 @@ import Html.Attributes exposing (class, href)
 import Html.Events exposing (onClick)
 
 -- HTML modules
-import Navbar 
+import Navbar
+import Footer
 
 main =
   Browser.sandbox { init = 0, update = update, view = view }
@@ -85,5 +86,6 @@ view model =
             a [ href "#", class "link" ] [ text "Afficher toutes les images" ],
             a [ href "#", class "link" ] [ text "+ Créer une nouvelle image" ]
           ]
-        ]
+        ],
+      Footer.main
     ]
