@@ -80,8 +80,8 @@ renderMailto mail =
     String.append "mailto:" mail
 
 
-renderAuthor : Int -> Author -> Html msg
-renderAuthor index author =
+renderAuthor : Author -> Html msg
+renderAuthor author =
     a [ href (renderMailto author.mail), class "link" ] [ text author.name ]
 
 
@@ -89,7 +89,7 @@ renderAuthors : List Author -> Html msg
 renderAuthors authors =
     let 
         author =
-            List.indexedMap renderAuthor authors
+            List.map renderAuthor authors
     in
         ul [] author
 

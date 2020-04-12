@@ -5206,24 +5206,23 @@ var $author$project$Footer$renderMailto = function (mail) {
 };
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
-var $author$project$Footer$renderAuthor = F2(
-	function (index, author) {
-		return A2(
-			$elm$html$Html$a,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$href(
-					$author$project$Footer$renderMailto(author.mail)),
-					$elm$html$Html$Attributes$class('link')
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text(author.name)
-				]));
-	});
+var $author$project$Footer$renderAuthor = function (author) {
+	return A2(
+		$elm$html$Html$a,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$href(
+				$author$project$Footer$renderMailto(author.mail)),
+				$elm$html$Html$Attributes$class('link')
+			]),
+		_List_fromArray(
+			[
+				$elm$html$Html$text(author.name)
+			]));
+};
 var $elm$html$Html$ul = _VirtualDom_node('ul');
 var $author$project$Footer$renderAuthors = function (authors) {
-	var author = A2($elm$core$List$indexedMap, $author$project$Footer$renderAuthor, authors);
+	var author = A2($elm$core$List$map, $author$project$Footer$renderAuthor, authors);
 	return A2($elm$html$Html$ul, _List_Nil, author);
 };
 var $author$project$Footer$view = function (model) {
