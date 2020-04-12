@@ -1,7 +1,7 @@
 module Main exposing (..)
 
 import Browser
-import Html exposing (Html, h1, p, a, button, div, text)
+import Html exposing (Html, h1, p, span, a, button, div, text)
 import Html.Attributes exposing (class, href)
 import Html.Events exposing (onClick)
 
@@ -28,64 +28,76 @@ update msg model =
 -- Show view
 view model =
   div []
-    [ Navbar.main,
-      div [ class "container" ] 
+    [ Navbar.main
+    , div [ class "container" ] 
         [ div [ class "home_categories_section" ] 
           [ h1 [] [ text "catégories" ],
             div [ class "home_categories_thumbnails" ] 
               [ a [ href "#", class "home_categories_thumbnail" ] 
-                  [ p [ class "home_category_name" ] [ text "Voiture" ],
+                  [ p [ class "home_category_name" ] [ text "Voiture" ]
+                  ,  a [ href "#", class "icon_container" ] 
+                      [ div [ class "icon icon_trash" ] [] ]
+                  , a [ href "#", class "icon_container" ] 
+                      [ div [ class "icon icon_pen" ] [] ]
+                  ]
+              , a [ href "#", class "home_categories_thumbnail" ] 
+                    [ p [ class "home_category_name" ] [ text "Animaux" ],
                     a [ href "#", class "icon_container" ] 
                       [ div [ class "icon icon_trash" ] [] ],
                     a [ href "#", class "icon_container" ] 
                       [ div [ class "icon icon_pen" ] [] ]
-                  ],
-                a [ href "#", class "home_categories_thumbnail" ] 
-                  [ p [ class "home_category_name" ] [ text "Animaux" ],
-                    a [ href "#", class "icon_container" ] 
-                      [ div [ class "icon icon_trash" ] [] ],
-                    a [ href "#", class "icon_container" ] 
-                      [ div [ class "icon icon_pen" ] [] ]
-                  ],
-                a [ href "#", class "home_categories_thumbnail" ]
+                  ]
+              , a [ href "#", class "home_categories_thumbnail" ]
                   [ p [ class "home_category_name" ] [ text "Motos" ],
                     a [ href "#", class "icon_container" ] 
                       [ div [ class "icon icon_trash" ] [] ],
                     a [ href "#", class "icon_container" ] 
                       [ div [ class "icon icon_pen" ] [] ]
                   ]
-              ],
-            a [ href "#", class "link" ] [ text "Afficher toutes les catégories" ],
-            a [ href "#", class "link" ] [ text "+ Créer une nouvelle catégorie" ]
-          ],
-          div [ class "home_images_section" ] 
+              ]
+            , a [ href "#", class "link" ] [ text "Afficher toutes les catégories" ]
+            , a [ href "#", class "link" ] [ text "+ Créer une nouvelle catégorie" ]
+          ]
+        , div [ class "home_images_section" ] 
             [ h1 [] [ text "images" ],
               div [ class "home_images_thumbnails" ] 
                 [ a [ href "#", class "home_images_thumbnail" ] 
-                    [ a [ href "#", class "icon_container" ] 
-                        [ div [ class "icon icon_trash" ] [] ],
-                      a [ href "#", class "icon_container" ] 
-                        [ div [ class "icon icon_pen" ] [] ],
-                      a [ href "#", class "home_image_category" ] [ text "Voiture" ]
-                    ],
-                  a [ href "#", class "home_images_thumbnail" ] 
-                    [ a [ href "#", class "icon_container" ] 
-                        [ div [ class "icon icon_trash" ] [] ],
-                      a [ href "#", class "icon_container" ] 
-                        [ div [ class "icon icon_pen" ] [] ],
-                      a [ href "#", class "home_image_category" ] [ text "Voiture" ]                      
-                  ],
-                  a [ href "#", class "home_images_thumbnail" ]
-                    [ a [ href "#", class "icon_container" ] 
-                        [ div [ class "icon icon_trash" ] [] ],
-                      a [ href "#", class "icon_container" ] 
-                        [ div [ class "icon icon_pen" ] [] ],
-                      a [ href "#", class "home_image_category" ] [ text "Voiture" ]                      
+                    [ div [ class "home_tags_images" ] 
+                        [ span [ href "#", class "tag_thumbnails" ] [ text "Rouge" ]
+                        , span [ href "#", class "tag_thumbnails" ] [ text "BMW" ]
+                        ]
+                    , a [ href "#", class "icon_container" ] 
+                        [ div [ class "icon icon_trash" ] [] ]
+                    , a [ href "#", class "icon_container" ] 
+                        [ div [ class "icon icon_pen" ] [] ]
+                    , a [ href "#", class "home_image_category" ] [ text "Voiture" ]
+                    ]
+                , a [ href "#", class "home_images_thumbnail" ] 
+                    [ div [ class "home_tags_images" ] 
+                        [ span [ href "#", class "tag_thumbnails" ] [ text "Rouge" ]
+                        , span [ href "#", class "tag_thumbnails" ] [ text "BMW" ]
+                        ]
+                    , a [ href "#", class "icon_container" ] 
+                        [ div [ class "icon icon_trash" ] [] ]
+                    , a [ href "#", class "icon_container" ] 
+                        [ div [ class "icon icon_pen" ] [] ]
+                    , a [ href "#", class "home_image_category" ] [ text "Voiture" ]                      
                   ]
-              ],
-            a [ href "#", class "link" ] [ text "Afficher toutes les images" ],
-            a [ href "#", class "link" ] [ text "+ Créer une nouvelle image" ]
+                , a [ href "#", class "home_images_thumbnail" ]
+                    [ div [ class "home_tags_images" ] 
+                        [ span [ href "#", class "tag_thumbnails" ] [ text "Rouge" ]
+                        , span [ href "#", class "tag_thumbnails" ] [ text "BMW" ]
+                        ]
+                    , a [ href "#", class "icon_container" ] 
+                        [ div [ class "icon icon_trash" ] [] ]
+                    , a [ href "#", class "icon_container" ] 
+                        [ div [ class "icon icon_pen" ] [] ]
+                    , a [ href "#", class "home_image_category" ] [ text "Voiture" ]                      
+                  ]
+                ]
+            , a [ href "#", class "link" ] [ text "Afficher toutes les images" ]
+            , a [ href "#", class "link" ] [ text "+ Créer une nouvelle image" ]
           ]
-        ],
-      Footer.main
+        ]
+    , Footer.main
     ]

@@ -5294,6 +5294,7 @@ var $author$project$Navbar$view = function (model) {
 };
 var $author$project$Navbar$main = $author$project$Navbar$view(
 	{categories: 'Catégories', home: 'Accueil', images: 'Images'});
+var $elm$html$Html$span = _VirtualDom_node('span');
 var $author$project$Main$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -5551,6 +5552,37 @@ var $author$project$Main$view = function (model) {
 										_List_fromArray(
 											[
 												A2(
+												$elm$html$Html$div,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$class('home_tags_images')
+													]),
+												_List_fromArray(
+													[
+														A2(
+														$elm$html$Html$span,
+														_List_fromArray(
+															[
+																$elm$html$Html$Attributes$href('#'),
+																$elm$html$Html$Attributes$class('tag_thumbnails')
+															]),
+														_List_fromArray(
+															[
+																$elm$html$Html$text('Rouge')
+															])),
+														A2(
+														$elm$html$Html$span,
+														_List_fromArray(
+															[
+																$elm$html$Html$Attributes$href('#'),
+																$elm$html$Html$Attributes$class('tag_thumbnails')
+															]),
+														_List_fromArray(
+															[
+																$elm$html$Html$text('BMW')
+															]))
+													])),
+												A2(
 												$elm$html$Html$a,
 												_List_fromArray(
 													[
@@ -5606,6 +5638,37 @@ var $author$project$Main$view = function (model) {
 										_List_fromArray(
 											[
 												A2(
+												$elm$html$Html$div,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$class('home_tags_images')
+													]),
+												_List_fromArray(
+													[
+														A2(
+														$elm$html$Html$span,
+														_List_fromArray(
+															[
+																$elm$html$Html$Attributes$href('#'),
+																$elm$html$Html$Attributes$class('tag_thumbnails')
+															]),
+														_List_fromArray(
+															[
+																$elm$html$Html$text('Rouge')
+															])),
+														A2(
+														$elm$html$Html$span,
+														_List_fromArray(
+															[
+																$elm$html$Html$Attributes$href('#'),
+																$elm$html$Html$Attributes$class('tag_thumbnails')
+															]),
+														_List_fromArray(
+															[
+																$elm$html$Html$text('BMW')
+															]))
+													])),
+												A2(
 												$elm$html$Html$a,
 												_List_fromArray(
 													[
@@ -5660,6 +5723,37 @@ var $author$project$Main$view = function (model) {
 											]),
 										_List_fromArray(
 											[
+												A2(
+												$elm$html$Html$div,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$class('home_tags_images')
+													]),
+												_List_fromArray(
+													[
+														A2(
+														$elm$html$Html$span,
+														_List_fromArray(
+															[
+																$elm$html$Html$Attributes$href('#'),
+																$elm$html$Html$Attributes$class('tag_thumbnails')
+															]),
+														_List_fromArray(
+															[
+																$elm$html$Html$text('Rouge')
+															])),
+														A2(
+														$elm$html$Html$span,
+														_List_fromArray(
+															[
+																$elm$html$Html$Attributes$href('#'),
+																$elm$html$Html$Attributes$class('tag_thumbnails')
+															]),
+														_List_fromArray(
+															[
+																$elm$html$Html$text('BMW')
+															]))
+													])),
 												A2(
 												$elm$html$Html$a,
 												_List_fromArray(
