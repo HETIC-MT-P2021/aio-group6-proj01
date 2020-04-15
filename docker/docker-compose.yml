@@ -41,8 +41,8 @@ services:
             dockerfile: Dockerfile 
         ports: 
             - "8001:8001"
-        volumes: 
-            - /home/oussama/Documents/aio-group6-proj01/ig-front/src/:/home/oussama/Documents/aio-group6-proj01/ig-front/src/
+        #volumes: 
+         #   - /home/oussama/Documents/aio-group6-proj01/ig-front/src/:/home/oussama/Documents/aio-group6-proj01/ig-front/src/
         #command: elm reactor
 
 
