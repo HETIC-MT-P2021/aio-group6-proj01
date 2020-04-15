@@ -17,14 +17,5 @@ if ($conn){
 	die();
 }
 
-// $sql = $conn->prepare("SELECT messages from logs_table");
-// $sql->execute();
-
-// echo "<br> <br>" . "Logs:" . "<br> <br>";
-
-// while($row = $sql->fetch()) {
-//         echo $row['messages'] . "<br>";
-//     }
-
 $conn = null;    
 ?>
