@@ -1,6 +1,5 @@
 module Footer exposing (..)
 
-import Browser
 import Html exposing (Html, a, ul, li, div, text, p)
 import Html.Attributes exposing (class, href)
 

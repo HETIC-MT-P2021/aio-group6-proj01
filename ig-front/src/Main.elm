@@ -8,6 +8,7 @@ import Html.Events exposing (onClick)
 -- HTML modules
 import Navbar
 import Footer
+import Popup
 
 main =
   Browser.sandbox { init = 0, update = update, view = view }
@@ -68,12 +69,13 @@ renderThumbnails msg =
 
 view model =
   div []
-    [ Navbar.main
+    [ Popup.main
+    , Navbar.main
     , div [ class "container" ] 
         [ div [ class "home_categories_section" ] 
           [ h1 [] [ text "catégories" ],
             div [ class "home_categories_thumbnails" ] 
-              [ renderThumbnails ThumbnailsCategories
+              [ renderThumbnails ThumbnailsCategories 
               , renderThumbnails ThumbnailsCategories
               , renderThumbnails ThumbnailsCategories
               ]

@@ -5291,6 +5291,98 @@ var $author$project$Navbar$view = function (model) {
 };
 var $author$project$Navbar$main = $author$project$Navbar$view(
 	{categories: 'Catégories', home: 'Accueil', images: 'Images'});
+var $author$project$Popup$Nothing = {$: 'Nothing'};
+var $author$project$Popup$init = {display: 'popup_overlay', popupType: $author$project$Popup$Nothing, title: ''};
+var $author$project$Popup$DisplayPopup = function (a) {
+	return {$: 'DisplayPopup', a: a};
+};
+var $elm$html$Html$button = _VirtualDom_node('button');
+var $elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var $elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var $elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'click',
+		$elm$json$Json$Decode$succeed(msg));
+};
+var $author$project$Popup$view = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class(model.display)
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('popup_container')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$a,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$href('#'),
+								$elm$html$Html$Attributes$class('icon icon_close'),
+								$elm$html$Html$Events$onClick($author$project$Popup$DisplayPopup)
+							]),
+						_List_Nil),
+						A2(
+						$elm$html$Html$p,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('popup_title')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Voulez-vous supprimez cette image ?')
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('buttons_container')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('btn danger')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Annuler')
+									])),
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('btn primary')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Supprimer')
+									]))
+							]))
+					]))
+			]));
+};
+var $author$project$Popup$main = $author$project$Popup$view($author$project$Popup$init);
 var $elm$html$Html$span = _VirtualDom_node('span');
 var $author$project$Main$renderThumbnails = function (msg) {
 	if (msg.$ === 'ThumbnailsCategories') {
@@ -5443,6 +5535,7 @@ var $author$project$Main$view = function (model) {
 		_List_Nil,
 		_List_fromArray(
 			[
+				$author$project$Popup$main,
 				$author$project$Navbar$main,
 				A2(
 				$elm$html$Html$div,
