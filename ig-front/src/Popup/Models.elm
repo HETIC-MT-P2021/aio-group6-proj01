@@ -1,11 +1,12 @@
 module Popup.Models exposing (Model, model)
 
-import Popup.Messages exposing (NavItem, Author)
+import Popup.Messages exposing (PopupType(..), NavItem, Author)
 
 type alias Model =
   { --popup
     title : String
   , isPopupOpen : Bool
+  , popupType : PopupType
     --navbar
   , itemsNav : List NavItem
     --footer
@@ -17,6 +18,7 @@ model =
   { --popup
     title = "Test"
   , isPopupOpen = False
+  , popupType = EmptyPopup
     --navbar
   , itemsNav = [ { name = "Accueil"
                  , link = "/"

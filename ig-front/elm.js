@@ -4435,6 +4435,7 @@ var $elm$core$Set$toList = function (_v0) {
 var $elm$core$Basics$EQ = {$: 'EQ'};
 var $elm$core$Basics$GT = {$: 'GT'};
 var $elm$core$Basics$LT = {$: 'LT'};
+var $author$project$Popup$Messages$EmptyPopup = {$: 'EmptyPopup'};
 var $elm$core$Basics$False = {$: 'False'};
 var $author$project$Popup$Models$model = {
 	authors: _List_fromArray(
@@ -4450,6 +4451,7 @@ var $author$project$Popup$Models$model = {
 			{link: '/images', name: 'Images'},
 			{link: '/categories', name: 'Catégories'}
 		]),
+	popupType: $author$project$Popup$Messages$EmptyPopup,
 	title: 'Test'
 };
 var $author$project$Main$init = $author$project$Popup$Models$model;
@@ -5188,9 +5190,11 @@ var $author$project$Popup$Update$update = F2(
 			case 'NoOp':
 				return model;
 			case 'ShowPopup':
+				var popupType = msg.a;
+				var title = msg.b;
 				return _Utils_update(
 					model,
-					{isPopupOpen: true});
+					{isPopupOpen: true, popupType: popupType, title: title});
 			case 'HidePopup':
 				return _Utils_update(
 					model,
@@ -5314,7 +5318,7 @@ var $elm$html$Html$Events$onClick = function (msg) {
 		'click',
 		$elm$json$Json$Decode$succeed(msg));
 };
-var $author$project$Popup$View$renderPopup = F2(
+var $author$project$Popup$View$renderDeletePopup = F2(
 	function (model, classname) {
 		return A2(
 			$elm$html$Html$div,
@@ -5382,6 +5386,78 @@ var $author$project$Popup$View$renderPopup = F2(
 						]))
 				]));
 	});
+var $elm$html$Html$input = _VirtualDom_node('input');
+var $author$project$Popup$View$renderEditPopup = F2(
+	function (model, classname) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class(classname)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('popup_container')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$button,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('btn icon icon_close'),
+									$elm$html$Html$Events$onClick($author$project$Popup$Messages$HidePopup)
+								]),
+							_List_Nil),
+							A2(
+							$elm$html$Html$p,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('popup_title')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text(model.title)
+								])),
+							A2(
+							$elm$html$Html$input,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('popup_input')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Write Name')
+								])),
+							A2(
+							$elm$html$Html$button,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('btn primary')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Confirmer')
+								]))
+						]))
+				]));
+	});
+var $author$project$Popup$View$renderPopup = F2(
+	function (model, classname) {
+		var _v0 = model.popupType;
+		switch (_v0.$) {
+			case 'EmptyPopup':
+				return A2($elm$html$Html$div, _List_Nil, _List_Nil);
+			case 'EditPopup':
+				return A2($author$project$Popup$View$renderEditPopup, model, classname);
+			default:
+				return A2($author$project$Popup$View$renderDeletePopup, model, classname);
+		}
+	});
 var $author$project$Popup$View$popupView = function (model) {
 	var _v0 = model.isPopupOpen;
 	if (_v0) {
@@ -5390,7 +5466,12 @@ var $author$project$Popup$View$popupView = function (model) {
 		return A2($author$project$Popup$View$renderPopup, model, 'popup_overlay hidden');
 	}
 };
-var $author$project$Popup$Messages$ShowPopup = {$: 'ShowPopup'};
+var $author$project$Popup$Messages$DeletePopup = {$: 'DeletePopup'};
+var $author$project$Popup$Messages$EditPopup = {$: 'EditPopup'};
+var $author$project$Popup$Messages$ShowPopup = F2(
+	function (a, b) {
+		return {$: 'ShowPopup', a: a, b: b};
+	});
 var $elm$html$Html$span = _VirtualDom_node('span');
 var $author$project$Page$Home$renderThumbnails = function (thumbnailsType) {
 	if (thumbnailsType.$ === 'ThumbnailsCategories') {
@@ -5418,7 +5499,8 @@ var $author$project$Page$Home$renderThumbnails = function (thumbnailsType) {
 					_List_fromArray(
 						[
 							$elm$html$Html$Attributes$class('icon_container pointer'),
-							$elm$html$Html$Events$onClick($author$project$Popup$Messages$ShowPopup)
+							$elm$html$Html$Events$onClick(
+							A2($author$project$Popup$Messages$ShowPopup, $author$project$Popup$Messages$DeletePopup, 'Voulez-vous supprimez cette catégorie ?'))
 						]),
 					_List_fromArray(
 						[
@@ -5434,7 +5516,9 @@ var $author$project$Page$Home$renderThumbnails = function (thumbnailsType) {
 					$elm$html$Html$button,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('icon_container pointer')
+							$elm$html$Html$Attributes$class('icon_container pointer'),
+							$elm$html$Html$Events$onClick(
+							A2($author$project$Popup$Messages$ShowPopup, $author$project$Popup$Messages$EditPopup, 'Donnez un nom à votre nouvelle catégorie:'))
 						]),
 					_List_fromArray(
 						[
@@ -5493,7 +5577,8 @@ var $author$project$Page$Home$renderThumbnails = function (thumbnailsType) {
 					_List_fromArray(
 						[
 							$elm$html$Html$Attributes$class('icon_container pointer'),
-							$elm$html$Html$Events$onClick($author$project$Popup$Messages$ShowPopup)
+							$elm$html$Html$Events$onClick(
+							A2($author$project$Popup$Messages$ShowPopup, $author$project$Popup$Messages$DeletePopup, 'Voulez-vous supprimez cette image ?'))
 						]),
 					_List_fromArray(
 						[
@@ -5509,7 +5594,9 @@ var $author$project$Page$Home$renderThumbnails = function (thumbnailsType) {
 					$elm$html$Html$button,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('icon_container pointer')
+							$elm$html$Html$Attributes$class('icon_container pointer'),
+							$elm$html$Html$Events$onClick(
+							A2($author$project$Popup$Messages$ShowPopup, $author$project$Popup$Messages$EditPopup, 'Donnez un nom à votre nouvelle image:'))
 						]),
 					_List_fromArray(
 						[

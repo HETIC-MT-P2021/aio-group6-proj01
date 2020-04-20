@@ -9,8 +9,8 @@ update msg model =
     NoOp ->
       model
 
-    ShowPopup ->
-      { model | isPopupOpen = True }
+    ShowPopup popupType title ->
+      { model | isPopupOpen = True, popupType = popupType, title = title }
       
     HidePopup ->
       { model | isPopupOpen = False }

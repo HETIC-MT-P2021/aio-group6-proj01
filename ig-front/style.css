@@ -102,6 +102,7 @@ button {
     box-shadow: 1px 1px 5px rgba(0,0,0,0.5);
     transform: translate(-50%, -50%);
     justify-content: center;
+    align-items: center;
     flex-direction: column;
     display: flex;
 }
@@ -116,6 +117,17 @@ button {
 .popup_title {
     text-align: center;
     margin-bottom: 40px; 
+}
+
+.popup_input {
+    box-sizing: border-box;
+    border: 1px solid gray;
+    max-width: 500px;
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
 }
 
 .buttons_container {

@@ -5,7 +5,7 @@ import Html.Attributes exposing (class, href)
 import Html.Events exposing (onClick)
 
 import Popup.Models exposing (model, Model)
-import Popup.Messages exposing (Msg(..))
+import Popup.Messages exposing (Msg(..), PopupType(..))
 
 import Popup.View exposing (popupView)
 import Navbar exposing (navbarView)
@@ -22,9 +22,9 @@ renderThumbnails thumbnailsType =
     ThumbnailsCategories ->
       a [ href "#", class "home_categories_thumbnail" ] 
         [ p [ class "home_category_name" ] [ text "Voiture" ]
-        , button [ class "icon_container pointer", onClick ShowPopup ] 
+        , button [ class "icon_container pointer", onClick (ShowPopup DeletePopup "Voulez-vous supprimez cette catégorie ?") ] 
             [ div [ class "icon icon_trash" ] [] ]
-        , button [ class "icon_container pointer" ] 
+        , button [ class "icon_container pointer", onClick (ShowPopup EditPopup "Donnez un nom à votre nouvelle catégorie:") ] 
             [ div [ class "icon icon_pen" ] [] ]
         ]
 
@@ -34,9 +34,9 @@ renderThumbnails thumbnailsType =
             [ span [ href "#", class "tag_thumbnails" ] [ text "Rouge" ]
             , span [ href "#", class "tag_thumbnails" ] [ text "BMW" ]
             ]
-        , button [ class "icon_container pointer", onClick ShowPopup ] 
+        , button [ class "icon_container pointer", onClick (ShowPopup DeletePopup "Voulez-vous supprimez cette image ?") ] 
             [ div [ class "icon icon_trash" ] [] ]
-        , button [ class "icon_container pointer" ] 
+        , button [ class "icon_container pointer", onClick (ShowPopup EditPopup "Donnez un nom à votre nouvelle image:") ] 
             [ div [ class "icon icon_pen" ] [] ]
         , a [ href "#", class "home_image_category" ] [ text "Voiture" ]
         ]

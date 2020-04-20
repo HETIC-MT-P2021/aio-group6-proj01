@@ -1,4 +1,4 @@
-module Popup.Messages exposing (Msg(..), NavItem, Author)
+module Popup.Messages exposing (Msg(..), PopupType(..), NavItem, Author)
 
 type alias NavItem =
   { name : String
@@ -10,10 +10,15 @@ type alias Author =
   , mail : String
   }
 
+type PopupType
+  = EmptyPopup
+  | EditPopup
+  | DeletePopup
+
 type Msg
   --popup
   = NoOp
-  | ShowPopup
+  | ShowPopup PopupType String
   | HidePopup
   --navbar
   | SetItemsNav (List NavItem)
