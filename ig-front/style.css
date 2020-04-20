@@ -10,6 +10,14 @@ h1 {
     margin: 50px 0px;
 }
 
+button {
+    border: none;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
 .hidden {
     display: none;
 }
@@ -76,24 +84,26 @@ h1 {
     background: rgba(0, 0, 0, 0.6);
     z-index: 1;
     font-size: 1.3rem;
+    transition: all .5s ease;
 }
 
 .popup_container {
-    position: fixed;
-    width: 500px;
-    height: 300px;
-    background: white;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    margin: auto;
-    border-radius: 5px;
-    box-shadow: 5px 5px 15px -2px rgba(0,0,0,0.75);
-    display: flex;
-    flex-direction: column;
+    background-color: rgba(255, 255, 255, 1);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: auto;
+    max-height: 80%;
+    min-height: 35%;
+    width: 700px;
+    max-width: 95%;
     padding: 10px;
+    border-radius: 3px;
+    box-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+    transform: translate(-50%, -50%);
     justify-content: center;
+    flex-direction: column;
+    display: flex;
 }
 
 .popup_container .icon {
@@ -123,10 +133,10 @@ h1 {
 
 .btn {
     border: none;
-    background: #e0e0e0;
     color: black;
     padding: 15px 20px;
     cursor: pointer;
+    background-color: transparent;
 }
 
 .primary {

@@ -1,0 +1,22 @@
+module Popup.Update exposing (update)
+
+import Popup.Models exposing (Model, model)
+import Popup.Messages exposing (Msg(..))
+
+update : Msg -> Model -> Model
+update msg model =
+  case msg of
+    NoOp ->
+      model
+
+    ShowPopup ->
+      { model | isPopupOpen = True }
+      
+    HidePopup ->
+      { model | isPopupOpen = False }
+
+    SetItemsNav items ->
+      { model | itemsNav = items }
+
+    SetAuthors items ->
+      { model | authors = items }
