@@ -1,5 +1,8 @@
 module Popup.Update exposing (update)
 
+import Browser
+import Url
+
 import Popup.Models exposing (Model, model)
 import Popup.Messages exposing (Msg(..))
 

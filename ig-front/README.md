@@ -1,3 +1,8 @@
+# Developpment mode
+Need to run this command for using route
+
+```elm-live src/Main.elm --open -- --output=elm.js```
+
 # Build application
 ```$ elm make src/Main.elm --output elm.js```
 

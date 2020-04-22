@@ -1,10 +1,15 @@
 module Popup.Models exposing (Model, model)
 
+import Browser
+import Browser.Navigation as Nav
+import Url
+
 import Popup.Messages exposing (PopupType(..), NavItem, Author)
 
 type alias Model =
-  { --popup
-    title : String
+  { 
+  --popup
+  title : String
   , isPopupOpen : Bool
   , popupType : PopupType
     --navbar

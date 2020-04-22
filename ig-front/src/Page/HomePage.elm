@@ -1,30 +1,52 @@
-module Page.Home exposing (..)
+module Page.HomePage exposing (..)
 
 import Html exposing (Html, Attribute, h1, p, span, a, button, div, text)
 import Html.Attributes exposing (class, href)
 import Html.Events exposing (onClick)
 
-import Popup.Models exposing (model, Model)
-import Popup.Messages exposing (Msg(..), PopupType(..))
+--import Popup.Models exposing (model, Model)
+--import Popup.Messages exposing (Msg(..), PopupType(..))
 
-import Popup.View exposing (popupView)
+--import Popup.View exposing (popupView)
 import Navbar exposing (navbarView)
 import Footer exposing (footerView)
+
+-- MODEL
+
+type alias Model =
+  { test : String
+  }
 
 type ThumbnailsType
   = ThumbnailsCategories
   | ThumbnailsImages
 
---view
+init : ( Model, Cmd Msg )
+init =
+    ( { test = "test" }, Cmd.none )
+
+-- UPDATE
+
+type Msg 
+  = ChangeTest String
+
+update : Msg -> Model ->( Model, Cmd Msg )
+update msg model =
+  case msg of
+    ChangeTest test ->
+      ( { model | test = test }, Cmd.none )
+
+-- VIEW
+
 renderThumbnails : ThumbnailsType -> Html Msg
 renderThumbnails thumbnailsType = 
   case thumbnailsType of
     ThumbnailsCategories ->
       a [ href "#", class "home_categories_thumbnail" ] 
         [ p [ class "home_category_name" ] [ text "Voiture" ]
-        , button [ class "icon_container pointer", onClick (ShowPopup DeletePopup "Voulez-vous supprimez cette catégorie ?") ] 
+        , button [ class "icon_container pointer"{-, onClick (ShowPopup DeletePopup "Voulez-vous supprimez cette catégorie ?")-} ] 
             [ div [ class "icon icon_trash" ] [] ]
-        , button [ class "icon_container pointer", onClick (ShowPopup EditPopup "Donnez un nom à votre nouvelle catégorie:") ] 
+        , button [ class "icon_container pointer"{-, onClick (ShowPopup EditPopup "Donnez un nom à votre nouvelle catégorie:")-} ] 
             [ div [ class "icon icon_pen" ] [] ]
         ]
 
@@ -34,9 +56,9 @@ renderThumbnails thumbnailsType =
             [ span [ href "#", class "tag_thumbnails" ] [ text "Rouge" ]
             , span [ href "#", class "tag_thumbnails" ] [ text "BMW" ]
             ]
-        , button [ class "icon_container pointer", onClick (ShowPopup DeletePopup "Voulez-vous supprimez cette image ?") ] 
+        , button [ class "icon_container pointer"{-, onClick (ShowPopup DeletePopup "Voulez-vous supprimez cette image ?")-} ] 
             [ div [ class "icon icon_trash" ] [] ]
-        , button [ class "icon_container pointer", onClick (ShowPopup EditPopup "Donnez un nom à votre nouvelle image:") ] 
+        , button [ class "icon_container pointer"{-, onClick (ShowPopup EditPopup "Donnez un nom à votre nouvelle image:")-} ] 
             [ div [ class "icon icon_pen" ] [] ]
         , a [ href "#", class "home_image_category" ] [ text "Voiture" ]
         ]
@@ -44,9 +66,9 @@ renderThumbnails thumbnailsType =
 view : Model -> Html Msg
 view model =
   div []
-    [ popupView model
-    , navbarView model
-    , div [ class "container" ] 
+--    [ popupView model
+--    , navbarView model
+      [ div [ class "container" ] 
         [ div [ class "home_categories_section" ] 
           [ h1 [] [ text "catégories" ],
             div [ class "home_categories_thumbnails" ] 
@@ -68,5 +90,6 @@ view model =
             , a [ href "#", class "link" ] [ text "+ Créer une nouvelle image" ]
           ]
         ]
-    , footerView model
-    ]
+--    , footerView model
+      ]
+  
