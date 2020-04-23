@@ -5168,11 +5168,11 @@ var $elm$core$Task$perform = F2(
 	});
 var $elm$browser$Browser$application = _Browser_application;
 var $author$project$Main$NotFoundPage = {$: 'NotFoundPage'};
+var $author$project$Main$CategoriesListPage = function (a) {
+	return {$: 'CategoriesListPage', a: a};
+};
 var $author$project$Main$HomePage = function (a) {
 	return {$: 'HomePage', a: a};
-};
-var $author$project$Main$HomePageMsg = function (a) {
-	return {$: 'HomePageMsg', a: a};
 };
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $author$project$Footer$init = {
@@ -5194,24 +5194,34 @@ var $author$project$Navbar$init = {
 var $author$project$Popup$EmptyPopup = {$: 'EmptyPopup'};
 var $author$project$Popup$init = {isPopupOpen: false, popupType: $author$project$Popup$EmptyPopup, title: 'Test'};
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
-var $author$project$Page$HomePage$init = _Utils_Tuple2(
+var $author$project$Page$CategoriesListPage$init = _Utils_Tuple2(
 	{footer: $author$project$Footer$init, navbar: $author$project$Navbar$init, popup: $author$project$Popup$init},
 	$elm$core$Platform$Cmd$none);
-var $elm$core$Platform$Cmd$map = _Platform_map;
+var $author$project$Page$HomePage$init = _Utils_Tuple2(
+	{footer: $author$project$Footer$init, navbar: $author$project$Navbar$init, popup: $author$project$Popup$init, show: 'False'},
+	$elm$core$Platform$Cmd$none);
 var $author$project$Main$initCurrentPage = function (_v0) {
 	var model = _v0.a;
 	var existingCmds = _v0.b;
 	var _v1 = function () {
 		var _v2 = model.route;
-		if (_v2.$ === 'NotFound') {
-			return _Utils_Tuple2($author$project$Main$NotFoundPage, $elm$core$Platform$Cmd$none);
-		} else {
-			var _v3 = $author$project$Page$HomePage$init;
-			var pageModel = _v3.a;
-			var pageCmds = _v3.b;
-			return _Utils_Tuple2(
-				$author$project$Main$HomePage(pageModel),
-				A2($elm$core$Platform$Cmd$map, $author$project$Main$HomePageMsg, pageCmds));
+		switch (_v2.$) {
+			case 'NotFound':
+				return _Utils_Tuple2($author$project$Main$NotFoundPage, $elm$core$Platform$Cmd$none);
+			case 'Home':
+				var _v3 = $author$project$Page$HomePage$init;
+				var pageModel = _v3.a;
+				var pageCmds = _v3.b;
+				return _Utils_Tuple2(
+					$author$project$Main$HomePage(pageModel),
+					$elm$core$Platform$Cmd$none);
+			default:
+				var _v4 = $author$project$Page$CategoriesListPage$init;
+				var pageModel = _v4.a;
+				var pageCmds = _v4.b;
+				return _Utils_Tuple2(
+					$author$project$Main$CategoriesListPage(pageModel),
+					$elm$core$Platform$Cmd$none);
 		}
 	}();
 	var currentPage = _v1.a;
@@ -5225,6 +5235,7 @@ var $author$project$Main$initCurrentPage = function (_v0) {
 				[existingCmds, mappedPageCmds])));
 };
 var $author$project$Route$NotFound = {$: 'NotFound'};
+var $author$project$Route$Categories = {$: 'Categories'};
 var $author$project$Route$Home = {$: 'Home'};
 var $elm$url$Url$Parser$Parser = function (a) {
 	return {$: 'Parser', a: a};
@@ -5331,7 +5342,11 @@ var $author$project$Route$matchRoute = $elm$url$Url$Parser$oneOf(
 			A2(
 			$elm$url$Url$Parser$map,
 			$author$project$Route$Home,
-			$elm$url$Url$Parser$s('home'))
+			$elm$url$Url$Parser$s('home')),
+			A2(
+			$elm$url$Url$Parser$map,
+			$author$project$Route$Categories,
+			$elm$url$Url$Parser$s('categories'))
 		]));
 var $elm$url$Url$Parser$getFirstMatch = function (states) {
 	getFirstMatch:
@@ -6061,7 +6076,7 @@ var $author$project$Popup$update = F2(
 					{isPopupOpen: false});
 		}
 	});
-var $author$project$Page$HomePage$update = F2(
+var $author$project$Page$CategoriesListPage$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
 			case 'NavbarMsg':
@@ -6093,10 +6108,49 @@ var $author$project$Page$HomePage$update = F2(
 					$elm$core$Platform$Cmd$none);
 		}
 	});
+var $author$project$Page$HomePage$update = F2(
+	function (msg, model) {
+		switch (msg.$) {
+			case 'NavbarMsg':
+				var navbarMsg = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							navbar: A2($author$project$Navbar$update, navbarMsg, model.navbar)
+						}),
+					$elm$core$Platform$Cmd$none);
+			case 'FooterMsg':
+				var footerMsg = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							footer: A2($author$project$Footer$update, footerMsg, model.footer)
+						}),
+					$elm$core$Platform$Cmd$none);
+			case 'PopupMsg':
+				var popupMsg = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							popup: A2($author$project$Popup$update, popupMsg, model.popup)
+						}),
+					$elm$core$Platform$Cmd$none);
+			default:
+				var show = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{show: show}),
+					$elm$core$Platform$Cmd$none);
+		}
+	});
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		var _v0 = _Utils_Tuple2(msg, model.page);
-		_v0$2:
+		_v0$4:
 		while (true) {
 			switch (_v0.a.$) {
 				case 'HomePageMsg':
@@ -6114,7 +6168,24 @@ var $author$project$Main$update = F2(
 								}),
 							$elm$core$Platform$Cmd$none);
 					} else {
-						break _v0$2;
+						break _v0$4;
+					}
+				case 'CategoriesListPageMsg':
+					if (_v0.b.$ === 'CategoriesListPage') {
+						var subMsg = _v0.a.a;
+						var pageModel = _v0.b.a;
+						var _v2 = A2($author$project$Page$CategoriesListPage$update, subMsg, pageModel);
+						var updatedPageModel = _v2.a;
+						var updatedCmd = _v2.b;
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									page: $author$project$Main$CategoriesListPage(updatedPageModel)
+								}),
+							$elm$core$Platform$Cmd$none);
+					} else {
+						break _v0$4;
 					}
 				case 'LinkClicked':
 					var urlRequest = _v0.a.a;
@@ -6133,11 +6204,24 @@ var $author$project$Main$update = F2(
 							$elm$browser$Browser$Navigation$load(url));
 					}
 				default:
-					break _v0$2;
+					var url = _v0.a.a;
+					var newRoute = $author$project$Route$parseUrl(url);
+					return $author$project$Main$initCurrentPage(
+						_Utils_Tuple2(
+							_Utils_update(
+								model,
+								{route: newRoute}),
+							$elm$core$Platform$Cmd$none));
 			}
 		}
 		return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 	});
+var $author$project$Main$CategoriesListPageMsg = function (a) {
+	return {$: 'CategoriesListPageMsg', a: a};
+};
+var $author$project$Main$HomePageMsg = function (a) {
+	return {$: 'HomePageMsg', a: a};
+};
 var $elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
 var $elm$html$Html$map = $elm$virtual_dom$VirtualDom$map;
 var $elm$html$Html$h3 = _VirtualDom_node('h3');
@@ -6150,18 +6234,16 @@ var $author$project$Main$notFoundView = A2(
 		[
 			$elm$html$Html$text('Oops! The page you requested was not found!')
 		]));
-var $author$project$Page$HomePage$FooterMsg = function (a) {
+var $author$project$Page$CategoriesListPage$FooterMsg = function (a) {
 	return {$: 'FooterMsg', a: a};
 };
-var $author$project$Page$HomePage$NavbarMsg = function (a) {
+var $author$project$Page$CategoriesListPage$NavbarMsg = function (a) {
 	return {$: 'NavbarMsg', a: a};
 };
-var $author$project$Page$HomePage$PopupMsg = function (a) {
+var $author$project$Page$CategoriesListPage$PopupMsg = function (a) {
 	return {$: 'PopupMsg', a: a};
 };
-var $author$project$Page$HomePage$ThumbnailsCategories = {$: 'ThumbnailsCategories'};
-var $author$project$Page$HomePage$ThumbnailsImages = {$: 'ThumbnailsImages'};
-var $elm$html$Html$a = _VirtualDom_node('a');
+var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
@@ -6173,19 +6255,19 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
 var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
-var $elm$html$Html$Attributes$href = function (url) {
-	return A2(
-		$elm$html$Html$Attributes$stringProperty,
-		'href',
-		_VirtualDom_noJavaScriptUri(url));
-};
 var $author$project$Popup$DeletePopup = {$: 'DeletePopup'};
 var $author$project$Popup$EditPopup = {$: 'EditPopup'};
 var $author$project$Popup$ShowPopup = F2(
 	function (a, b) {
 		return {$: 'ShowPopup', a: a, b: b};
 	});
-var $elm$html$Html$button = _VirtualDom_node('button');
+var $elm$html$Html$a = _VirtualDom_node('a');
+var $elm$html$Html$Attributes$href = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'href',
+		_VirtualDom_noJavaScriptUri(url));
+};
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -6204,160 +6286,66 @@ var $elm$html$Html$Events$onClick = function (msg) {
 		$elm$json$Json$Decode$succeed(msg));
 };
 var $elm$html$Html$p = _VirtualDom_node('p');
-var $elm$html$Html$span = _VirtualDom_node('span');
-var $author$project$Page$HomePage$renderThumbnails = function (thumbnailsType) {
-	var editPopupMsgImage = $author$project$Page$HomePage$PopupMsg(
-		A2($author$project$Popup$ShowPopup, $author$project$Popup$EditPopup, 'Voulez-vous modifier le titre de l\'image ?'));
-	var editPopupMsgCategory = $author$project$Page$HomePage$PopupMsg(
+var $author$project$Page$CategoriesListPage$renderThumbnails = function () {
+	var editPopupMsg = $author$project$Page$CategoriesListPage$PopupMsg(
 		A2($author$project$Popup$ShowPopup, $author$project$Popup$EditPopup, 'Voulez-vous modifier le titre de la catégorie ?'));
-	var deletePopupMsgImage = $author$project$Page$HomePage$PopupMsg(
-		A2($author$project$Popup$ShowPopup, $author$project$Popup$DeletePopup, 'Voulez-vous supprimer l\'image ?'));
-	var deletePopupMsgCategory = $author$project$Page$HomePage$PopupMsg(
+	var deletePopupMsg = $author$project$Page$CategoriesListPage$PopupMsg(
 		A2($author$project$Popup$ShowPopup, $author$project$Popup$DeletePopup, 'Voulez-vous supprimer la catégorie ?'));
-	if (thumbnailsType.$ === 'ThumbnailsCategories') {
-		return A2(
-			$elm$html$Html$a,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$href('#'),
-					$elm$html$Html$Attributes$class('home_categories_thumbnail')
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$p,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('home_category_name')
-						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text('Voiture')
-						])),
-					A2(
-					$elm$html$Html$button,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('icon_container pointer'),
-							$elm$html$Html$Events$onClick(deletePopupMsgCategory)
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$div,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('icon icon_trash')
-								]),
-							_List_Nil)
-						])),
-					A2(
-					$elm$html$Html$button,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('icon_container pointer'),
-							$elm$html$Html$Events$onClick(editPopupMsgCategory)
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$div,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('icon icon_pen')
-								]),
-							_List_Nil)
-						]))
-				]));
-	} else {
-		return A2(
-			$elm$html$Html$a,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$href('#'),
-					$elm$html$Html$Attributes$class('home_images_thumbnail')
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$div,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('home_tags_images')
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$span,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$href('#'),
-									$elm$html$Html$Attributes$class('tag_thumbnails')
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text('Rouge')
-								])),
-							A2(
-							$elm$html$Html$span,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$href('#'),
-									$elm$html$Html$Attributes$class('tag_thumbnails')
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text('BMW')
-								]))
-						])),
-					A2(
-					$elm$html$Html$button,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('icon_container pointer'),
-							$elm$html$Html$Events$onClick(deletePopupMsgImage)
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$div,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('icon icon_trash')
-								]),
-							_List_Nil)
-						])),
-					A2(
-					$elm$html$Html$button,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('icon_container pointer'),
-							$elm$html$Html$Events$onClick(editPopupMsgImage)
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$div,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('icon icon_pen')
-								]),
-							_List_Nil)
-						])),
-					A2(
-					$elm$html$Html$a,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$href('#'),
-							$elm$html$Html$Attributes$class('home_image_category')
-						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text('Voiture')
-						]))
-				]));
-	}
-};
+	return A2(
+		$elm$html$Html$a,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$href('#'),
+				$elm$html$Html$Attributes$class('categories_thumbnail')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$p,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('category_name')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Voiture')
+					])),
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('icon_container pointer'),
+						$elm$html$Html$Events$onClick(deletePopupMsg)
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('icon icon_trash')
+							]),
+						_List_Nil)
+					])),
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('icon_container pointer'),
+						$elm$html$Html$Events$onClick(editPopupMsg)
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('icon icon_pen')
+							]),
+						_List_Nil)
+					]))
+			]));
+}();
 var $elm$core$String$append = _String_append;
 var $author$project$Footer$renderMailto = function (mail) {
 	return A2($elm$core$String$append, 'mailto:', mail);
@@ -6572,12 +6560,283 @@ var $author$project$Popup$view = function (model) {
 		return A2($author$project$Popup$renderPopup, model, 'popup_overlay hidden');
 	}
 };
-var $author$project$Page$HomePage$view = function (model) {
+var $author$project$Page$CategoriesListPage$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
 		_List_Nil,
 		_List_fromArray(
 			[
+				A2(
+				$elm$html$Html$map,
+				$author$project$Page$CategoriesListPage$PopupMsg,
+				$author$project$Popup$view(model.popup)),
+				A2(
+				$elm$html$Html$map,
+				$author$project$Page$CategoriesListPage$NavbarMsg,
+				$author$project$Navbar$view(model.navbar)),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('container')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('categories_section')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('categories_head')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$h1,
+										_List_Nil,
+										_List_fromArray(
+											[
+												$elm$html$Html$text('catégories')
+											])),
+										A2(
+										$elm$html$Html$button,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('btn primary')
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text('Créer')
+											]))
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('categories_thumbnails')
+									]),
+								_List_fromArray(
+									[$author$project$Page$CategoriesListPage$renderThumbnails, $author$project$Page$CategoriesListPage$renderThumbnails, $author$project$Page$CategoriesListPage$renderThumbnails]))
+							]))
+					])),
+				A2(
+				$elm$html$Html$map,
+				$author$project$Page$CategoriesListPage$FooterMsg,
+				$author$project$Footer$view(model.footer))
+			]));
+};
+var $author$project$Page$HomePage$FooterMsg = function (a) {
+	return {$: 'FooterMsg', a: a};
+};
+var $author$project$Page$HomePage$NavbarMsg = function (a) {
+	return {$: 'NavbarMsg', a: a};
+};
+var $author$project$Page$HomePage$PopupMsg = function (a) {
+	return {$: 'PopupMsg', a: a};
+};
+var $author$project$Page$HomePage$ThumbnailsCategories = {$: 'ThumbnailsCategories'};
+var $author$project$Page$HomePage$ThumbnailsImages = {$: 'ThumbnailsImages'};
+var $author$project$Page$HomePage$ChangeShow = function (a) {
+	return {$: 'ChangeShow', a: a};
+};
+var $elm$html$Html$span = _VirtualDom_node('span');
+var $author$project$Page$HomePage$renderThumbnails = function (thumbnailsType) {
+	var editPopupMsgImage = $author$project$Page$HomePage$PopupMsg(
+		A2($author$project$Popup$ShowPopup, $author$project$Popup$EditPopup, 'Voulez-vous modifier le titre de l\'image ?'));
+	var editPopupMsgCategory = $author$project$Page$HomePage$PopupMsg(
+		A2($author$project$Popup$ShowPopup, $author$project$Popup$EditPopup, 'Voulez-vous modifier le titre de la catégorie ?'));
+	var deletePopupMsgImage = $author$project$Page$HomePage$PopupMsg(
+		A2($author$project$Popup$ShowPopup, $author$project$Popup$DeletePopup, 'Voulez-vous supprimer l\'image ?'));
+	var deletePopupMsgCategory = $author$project$Page$HomePage$PopupMsg(
+		A2($author$project$Popup$ShowPopup, $author$project$Popup$DeletePopup, 'Voulez-vous supprimer la catégorie ?'));
+	if (thumbnailsType.$ === 'ThumbnailsCategories') {
+		return A2(
+			$elm$html$Html$a,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$href('#'),
+					$elm$html$Html$Attributes$class('home_categories_thumbnail')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$p,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('home_category_name')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Voiture')
+						])),
+					A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('icon_container pointer'),
+							$elm$html$Html$Events$onClick(
+							$author$project$Page$HomePage$ChangeShow('test'))
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('icon icon_trash')
+								]),
+							_List_Nil)
+						])),
+					A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('icon_container pointer'),
+							$elm$html$Html$Events$onClick(editPopupMsgCategory)
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('icon icon_pen')
+								]),
+							_List_Nil)
+						]))
+				]));
+	} else {
+		return A2(
+			$elm$html$Html$a,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$href('#'),
+					$elm$html$Html$Attributes$class('home_images_thumbnail')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('home_tags_images')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$span,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$href('#'),
+									$elm$html$Html$Attributes$class('tag_thumbnails')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Rouge')
+								])),
+							A2(
+							$elm$html$Html$span,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$href('#'),
+									$elm$html$Html$Attributes$class('tag_thumbnails')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('BMW')
+								]))
+						])),
+					A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('icon_container pointer'),
+							$elm$html$Html$Events$onClick(deletePopupMsgImage)
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('icon icon_trash')
+								]),
+							_List_Nil)
+						])),
+					A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('icon_container pointer'),
+							$elm$html$Html$Events$onClick(editPopupMsgImage)
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('icon icon_pen')
+								]),
+							_List_Nil)
+						])),
+					A2(
+					$elm$html$Html$a,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$href('#'),
+							$elm$html$Html$Attributes$class('home_image_category')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Voiture')
+						]))
+				]));
+	}
+};
+var $author$project$Page$HomePage$view = function (model) {
+	var isShow = function () {
+		var _v0 = model.show;
+		switch (_v0) {
+			case 'False':
+				return A2(
+					$elm$html$Html$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('True')
+						]));
+			case 'True':
+				return A2(
+					$elm$html$Html$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('False')
+						]));
+			default:
+				return A2(
+					$elm$html$Html$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Test')
+						]));
+		}
+	}();
+	return A2(
+		$elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				isShow,
 				A2(
 				$elm$html$Html$map,
 				$author$project$Page$HomePage$PopupMsg,
@@ -6703,14 +6962,21 @@ var $author$project$Page$HomePage$view = function (model) {
 };
 var $author$project$Main$currentView = function (model) {
 	var _v0 = model.page;
-	if (_v0.$ === 'NotFoundPage') {
-		return $author$project$Main$notFoundView;
-	} else {
-		var pageModel = _v0.a;
-		return A2(
-			$elm$html$Html$map,
-			$author$project$Main$HomePageMsg,
-			$author$project$Page$HomePage$view(pageModel));
+	switch (_v0.$) {
+		case 'NotFoundPage':
+			return $author$project$Main$notFoundView;
+		case 'HomePage':
+			var pageModel = _v0.a;
+			return A2(
+				$elm$html$Html$map,
+				$author$project$Main$HomePageMsg,
+				$author$project$Page$HomePage$view(pageModel));
+		default:
+			var pageModel = _v0.a;
+			return A2(
+				$elm$html$Html$map,
+				$author$project$Main$CategoriesListPageMsg,
+				$author$project$Page$CategoriesListPage$view(pageModel));
 	}
 };
 var $author$project$Main$view = function (model) {

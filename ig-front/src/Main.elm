@@ -13,7 +13,8 @@ import Route exposing (Route)
 
 -- PAGES
 
-import Page.HomePage as HomePage
+import Page.HomePage as Home
+import Page.CategoriesListPage as CategoriesList
 
 -- MAIN
 
@@ -38,7 +39,8 @@ type alias Model =
 
 type Page
     = NotFoundPage
-    | HomePage HomePage.Model
+    | HomePage Home.Model
+    | CategoriesListPage CategoriesList.Model
 
 -- UPDATE
 
@@ -47,36 +49,54 @@ type UrlRequest
   | External String
 
 type Msg
-    = HomePageMsg HomePage.Msg
+    = HomePageMsg Home.Msg
+    | CategoriesListPageMsg CategoriesList.Msg
     | LinkClicked Browser.UrlRequest
     | UrlChanged Url
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case ( msg, model.page ) of
-        ( HomePageMsg subMsg, HomePage pageModel ) ->
-          let
-              ( updatedPageModel, updatedCmd ) =
-                HomePage.update subMsg pageModel
-          in
-          ( { model | page = HomePage updatedPageModel }
-          , Cmd.none
+  case ( msg, model.page ) of
+    ( HomePageMsg subMsg, HomePage pageModel ) ->
+      let
+          ( updatedPageModel, updatedCmd ) =
+            Home.update subMsg pageModel
+      in
+      ( { model | page = HomePage updatedPageModel }
+      , Cmd.none
+      )
+
+    ( CategoriesListPageMsg subMsg, CategoriesListPage pageModel ) ->
+      let
+          ( updatedPageModel, updatedCmd ) =
+            CategoriesList.update subMsg pageModel
+      in
+      ( { model | page = CategoriesListPage updatedPageModel }
+      , Cmd.none
+      )
+
+    ( LinkClicked urlRequest, _ ) ->
+      case urlRequest of
+        Browser.Internal url ->
+          ( model
+          , Nav.pushUrl model.navKey (Url.toString url)
           )
 
-        ( LinkClicked urlRequest, _ ) ->
-            case urlRequest of
-                Browser.Internal url ->
-                    ( model
-                    , Nav.pushUrl model.navKey (Url.toString url)
-                    )
+        Browser.External url ->
+          ( model
+          , Nav.load url
+          )
 
-                Browser.External url ->
-                    ( model
-                    , Nav.load url
-                    )
-
-        ( _, _ ) ->
-            ( model, Cmd.none )
+    ( UrlChanged url, _ ) ->
+      let
+        newRoute =
+            Route.parseUrl url
+      in
+      ( { model | route = newRoute }, Cmd.none )
+        |> initCurrentPage
+    
+    ( _, _ ) ->
+      ( model, Cmd.none )
 
 init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url navKey =
@@ -100,9 +120,16 @@ initCurrentPage ( model, existingCmds ) =
           Route.Home ->
             let
               ( pageModel, pageCmds ) =
-                HomePage.init
+                Home.init
             in
-            ( HomePage pageModel, Cmd.map HomePageMsg pageCmds )
+            ( HomePage pageModel, Cmd.none )
+
+          Route.Categories ->
+            let
+              ( pageModel, pageCmds ) =
+                CategoriesList.init
+            in
+            ( CategoriesListPage pageModel, Cmd.none )
     in
     ( { model | page = currentPage }
     , Cmd.batch [ existingCmds, mappedPageCmds ]
@@ -118,13 +145,17 @@ view model =
 
 currentView : Model -> Html Msg
 currentView model =
-    case model.page of
-        NotFoundPage ->
-          notFoundView
+  case model.page of
+    NotFoundPage ->
+      notFoundView
 
-        HomePage pageModel ->
-          HomePage.view pageModel
-            |> Html.map HomePageMsg
+    HomePage pageModel ->
+      Home.view pageModel
+        |> Html.map HomePageMsg
+
+    CategoriesListPage pageModel ->
+      CategoriesList.view pageModel
+        |> Html.map CategoriesListPageMsg
 
 notFoundView : Html msg
 notFoundView =

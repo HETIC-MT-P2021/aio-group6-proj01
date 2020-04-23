@@ -2,6 +2,9 @@ body {
     margin: 0;
     font-size: 1rem;
     font-family: Arial, Helvetica, sans-serif;
+    height: 100%;
+    position: relative;
+    min-height: 100vh;
 }
 
 h1 {
@@ -148,6 +151,8 @@ button {
     color: black;
     padding: 15px 20px;
     cursor: pointer;
+    font-size: 1.2rem;
+    max-height: 70px;
     background-color: transparent;
 }
 
@@ -167,7 +172,7 @@ button {
 
 .container {
     width: 100%;
-    margin: 0 auto;
+    margin: 0 auto 100px auto;
 }
 
 /*********************************************************************/
@@ -316,6 +321,50 @@ button {
 }
 
 /*********************************************************************/
+/*                             CATEGORIES                            */
+/*********************************************************************/
+
+.categories_head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.categories_thumbnails {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 30px;
+    align-items: center;
+}
+
+.categories_thumbnail {
+    width: 280px;
+    height: 280px;
+    background: red;
+    position: relative;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    text-decoration: none;
+    margin-bottom: 50px;
+}
+
+.categories_thumbnail .icon_container {
+    position: absolute;
+    bottom: 0;
+}
+
+.categories_thumbnail .icon_container:nth-of-type(1) {
+    right: 50px;
+}
+
+.categories_thumbnail .icon_container:nth-of-type(2) {
+    right: 0;
+}
+
+/*********************************************************************/
 /*                              FOOTER                               */
 /*********************************************************************/
 
@@ -326,6 +375,10 @@ button {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .footer_container p {
@@ -406,6 +459,25 @@ button {
     }
 
     .home_images_thumbnail {
+        margin: 0;
+    }
+
+/*********************************************************************/
+/*                             CATEGORIES                            */
+/*********************************************************************/
+
+    .categories_head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .categories_thumbnails {
+        flex-direction: row;
+        justify-content: space-around;
+    }
+
+    .categories_thumbnail {
         margin: 0;
     }
 }
