@@ -14,6 +14,7 @@ type alias Model =
   { navbar : Navbar.Model
   , footer : Footer.Model
   , popup : Popup.Model
+  , show : String
   }
 
 type ThumbnailsType
@@ -25,6 +26,7 @@ init =
     ( { navbar = Navbar.init
       , footer = Footer.init
       , popup = Popup.init
+      , show = "False"
       }, Cmd.none )
 
 -- UPDATE
@@ -33,6 +35,7 @@ type Msg
   = NavbarMsg Navbar.Msg
   | FooterMsg Footer.Msg
   | PopupMsg Popup.Msg
+  | ChangeShow String
 
 update : Msg -> Model ->( Model, Cmd Msg )
 update msg model =
@@ -45,6 +48,9 @@ update msg model =
     
     PopupMsg popupMsg ->
       ( { model | popup = Popup.update popupMsg model.popup }, Cmd.none )
+    
+    ChangeShow show ->
+      ( { model | show = show }, Cmd.none )
 
 -- VIEW
 
@@ -72,7 +78,7 @@ renderThumbnails thumbnailsType =
     ThumbnailsCategories ->
       a [ href "#", class "home_categories_thumbnail" ] 
         [ p [ class "home_category_name" ] [ text "Voiture" ]
-        , button [ class "icon_container pointer", onClick (deletePopupMsgCategory) ] 
+        , button [ class "icon_container pointer", onClick (ChangeShow "test")  ] 
             [ div [ class "icon icon_trash" ] [] ]
         , button [ class "icon_container pointer", onClick (editPopupMsgCategory) ] 
             [ div [ class "icon icon_pen" ] [] ]
@@ -93,8 +99,16 @@ renderThumbnails thumbnailsType =
 
 view : Model -> Html Msg
 view model =
+  let 
+    isShow = 
+      case model.show of
+        "False" -> p [] [ text "True" ]
+        "True" -> p [] [ text "False" ]
+        _ -> p [] [ text "Test" ]
+  in        
   div []
-    [ map PopupMsg (Popup.view model.popup)
+    [ isShow
+    , map PopupMsg (Popup.view model.popup)
     , map NavbarMsg (Navbar.view model.navbar)
     , div [ class "container" ] 
           [ div [ class "home_categories_section" ] 
