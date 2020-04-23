@@ -1,11 +1,49 @@
-module Popup.View exposing (popupView)
+module Popup exposing (init, update, Msg(..), Model, view, PopupType(..))
 
-import Html exposing (Html, Attribute, h1, p, span, a, button, div, input, text)
-import Html.Attributes exposing (class, href)
+import Html exposing (Html, a, ul, li, div, text, p, button, input)
 import Html.Events exposing (onClick)
+import Html.Attributes exposing (class, href)
 
-import Popup.Messages exposing (Msg(..), PopupType(..))
-import Popup.Models exposing (Model)
+-- MODEL
+
+type PopupType
+    = EmptyPopup
+    | EditPopup
+    | DeletePopup
+
+type alias Model =
+    { title : String
+    , isPopupOpen : Bool
+    , popupType : PopupType
+    }
+
+init : Model
+init = 
+    { title = "Test"
+    , isPopupOpen = False
+    , popupType = EmptyPopup
+    }
+
+-- UPDATE
+
+type Msg
+  = NoOp
+  | ShowPopup PopupType String
+  | HidePopup
+
+update : Msg -> Model -> Model
+update msg model =
+    case msg of
+        NoOp ->
+            model
+
+        ShowPopup popupType title ->
+            { model | isPopupOpen = True, popupType = popupType, title = title }
+        
+        HidePopup ->
+            { model | isPopupOpen = False }
+
+-- VIEW
 
 renderPopup : Model -> String -> Html Msg
 renderPopup model classname =
@@ -43,11 +81,11 @@ renderDeletePopup model classname =
       ]
     ]
 
-popupView : Model -> Html Msg
-popupView model =
+view : Model -> Html Msg
+view model =
   case model.isPopupOpen of
     True ->
       renderPopup model "popup_overlay"
-
+    
     False ->
-      renderPopup model "popup_overlay hidden"      
+      renderPopup model "popup_overlay hidden"

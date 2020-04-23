@@ -55,8 +55,6 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case ( msg, model.page ) of
         ( HomePageMsg subMsg, HomePage pageModel ) ->
-          --( model, Cmd.none )
-
           let
               ( updatedPageModel, updatedCmd ) =
                 HomePage.update subMsg pageModel
@@ -100,7 +98,6 @@ initCurrentPage ( model, existingCmds ) =
             ( NotFoundPage, Cmd.none )
 
           Route.Home ->
-            --( NotFoundPage, Cmd.none )
             let
               ( pageModel, pageCmds ) =
                 HomePage.init
@@ -123,11 +120,11 @@ currentView : Model -> Html Msg
 currentView model =
     case model.page of
         NotFoundPage ->
-            notFoundView
+          notFoundView
 
         HomePage pageModel ->
-            HomePage.view pageModel
-                |> Html.map HomePageMsg
+          HomePage.view pageModel
+            |> Html.map HomePageMsg
 
 notFoundView : Html msg
 notFoundView =

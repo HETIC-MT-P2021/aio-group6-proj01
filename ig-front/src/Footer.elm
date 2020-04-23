@@ -1,12 +1,42 @@
-module Footer exposing (footerView)
+module Footer exposing (init, update, Msg(..), Model, view)
 
 import Html exposing (Html, a, ul, li, div, text, p)
 import Html.Attributes exposing (class, href)
 
-import Popup.Messages exposing (Author)
-import Popup.Models exposing (Model)
+-- MODEL
 
---view
+type alias Author = 
+    { name : String
+    , mail : String
+    }
+
+type alias Model =
+    { authors : List Author
+    }
+
+init : Model
+init = 
+    {
+        authors = [ { name = "Valentin"
+                    , mail = "valentin.moretpro1@gmail.com" }
+                  , { name = "Oussama"
+                    , mail = "oussama.ferarma@gmail.com" }
+                  , { name = "Wyllis"
+                    , mail = "wyllismonteiro@gmail.com" }
+                  ]  
+    }
+
+-- UPDATE
+
+type Msg 
+    = SetAuthors (List Author)
+
+update : Msg -> Model -> Model
+update msg model =
+    case msg of
+        SetAuthors items ->
+            { model | authors = items }
+-- VIEW
 
 renderMailto : String -> String
 renderMailto mail =
@@ -24,8 +54,8 @@ renderAuthors authors =
     in
         ul [] author
 
-footerView : Model -> Html msg
-footerView model =
+view : Model -> Html msg
+view model =
   div [ class "footer_container" ]
     [ p [] [ text "Image Gallery" ],
       renderAuthors model.authors ]

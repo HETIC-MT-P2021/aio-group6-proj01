@@ -5175,9 +5175,27 @@ var $author$project$Main$HomePageMsg = function (a) {
 	return {$: 'HomePageMsg', a: a};
 };
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
+var $author$project$Footer$init = {
+	authors: _List_fromArray(
+		[
+			{mail: 'valentin.moretpro1@gmail.com', name: 'Valentin'},
+			{mail: 'oussama.ferarma@gmail.com', name: 'Oussama'},
+			{mail: 'wyllismonteiro@gmail.com', name: 'Wyllis'}
+		])
+};
+var $author$project$Navbar$init = {
+	itemsNav: _List_fromArray(
+		[
+			{link: '/', name: 'Accueil'},
+			{link: '/images', name: 'Images'},
+			{link: '/categories', name: 'Catégories'}
+		])
+};
+var $author$project$Popup$EmptyPopup = {$: 'EmptyPopup'};
+var $author$project$Popup$init = {isPopupOpen: false, popupType: $author$project$Popup$EmptyPopup, title: 'Test'};
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Page$HomePage$init = _Utils_Tuple2(
-	{test: 'test'},
+	{footer: $author$project$Footer$init, navbar: $author$project$Navbar$init, popup: $author$project$Popup$init},
 	$elm$core$Platform$Cmd$none);
 var $elm$core$Platform$Cmd$map = _Platform_map;
 var $author$project$Main$initCurrentPage = function (_v0) {
@@ -6012,14 +6030,68 @@ var $elm$url$Url$toString = function (url) {
 					_Utils_ap(http, url.host)),
 				url.path)));
 };
+var $author$project$Footer$update = F2(
+	function (msg, model) {
+		var items = msg.a;
+		return _Utils_update(
+			model,
+			{authors: items});
+	});
+var $author$project$Navbar$update = F2(
+	function (msg, model) {
+		var items = msg.a;
+		return _Utils_update(
+			model,
+			{itemsNav: items});
+	});
+var $author$project$Popup$update = F2(
+	function (msg, model) {
+		switch (msg.$) {
+			case 'NoOp':
+				return model;
+			case 'ShowPopup':
+				var popupType = msg.a;
+				var title = msg.b;
+				return _Utils_update(
+					model,
+					{isPopupOpen: true, popupType: popupType, title: title});
+			default:
+				return _Utils_update(
+					model,
+					{isPopupOpen: false});
+		}
+	});
 var $author$project$Page$HomePage$update = F2(
 	function (msg, model) {
-		var test = msg.a;
-		return _Utils_Tuple2(
-			_Utils_update(
-				model,
-				{test: test}),
-			$elm$core$Platform$Cmd$none);
+		switch (msg.$) {
+			case 'NavbarMsg':
+				var navbarMsg = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							navbar: A2($author$project$Navbar$update, navbarMsg, model.navbar)
+						}),
+					$elm$core$Platform$Cmd$none);
+			case 'FooterMsg':
+				var footerMsg = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							footer: A2($author$project$Footer$update, footerMsg, model.footer)
+						}),
+					$elm$core$Platform$Cmd$none);
+			default:
+				var popupMsg = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							popup: A2($author$project$Popup$update, popupMsg, model.popup)
+						}),
+					$elm$core$Platform$Cmd$none);
+		}
 	});
 var $author$project$Main$update = F2(
 	function (msg, model) {
@@ -6078,6 +6150,15 @@ var $author$project$Main$notFoundView = A2(
 		[
 			$elm$html$Html$text('Oops! The page you requested was not found!')
 		]));
+var $author$project$Page$HomePage$FooterMsg = function (a) {
+	return {$: 'FooterMsg', a: a};
+};
+var $author$project$Page$HomePage$NavbarMsg = function (a) {
+	return {$: 'NavbarMsg', a: a};
+};
+var $author$project$Page$HomePage$PopupMsg = function (a) {
+	return {$: 'PopupMsg', a: a};
+};
 var $author$project$Page$HomePage$ThumbnailsCategories = {$: 'ThumbnailsCategories'};
 var $author$project$Page$HomePage$ThumbnailsImages = {$: 'ThumbnailsImages'};
 var $elm$html$Html$a = _VirtualDom_node('a');
@@ -6098,10 +6179,41 @@ var $elm$html$Html$Attributes$href = function (url) {
 		'href',
 		_VirtualDom_noJavaScriptUri(url));
 };
+var $author$project$Popup$DeletePopup = {$: 'DeletePopup'};
+var $author$project$Popup$EditPopup = {$: 'EditPopup'};
+var $author$project$Popup$ShowPopup = F2(
+	function (a, b) {
+		return {$: 'ShowPopup', a: a, b: b};
+	});
 var $elm$html$Html$button = _VirtualDom_node('button');
+var $elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var $elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var $elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'click',
+		$elm$json$Json$Decode$succeed(msg));
+};
 var $elm$html$Html$p = _VirtualDom_node('p');
 var $elm$html$Html$span = _VirtualDom_node('span');
 var $author$project$Page$HomePage$renderThumbnails = function (thumbnailsType) {
+	var editPopupMsgImage = $author$project$Page$HomePage$PopupMsg(
+		A2($author$project$Popup$ShowPopup, $author$project$Popup$EditPopup, 'Voulez-vous modifier le titre de l\'image ?'));
+	var editPopupMsgCategory = $author$project$Page$HomePage$PopupMsg(
+		A2($author$project$Popup$ShowPopup, $author$project$Popup$EditPopup, 'Voulez-vous modifier le titre de la catégorie ?'));
+	var deletePopupMsgImage = $author$project$Page$HomePage$PopupMsg(
+		A2($author$project$Popup$ShowPopup, $author$project$Popup$DeletePopup, 'Voulez-vous supprimer l\'image ?'));
+	var deletePopupMsgCategory = $author$project$Page$HomePage$PopupMsg(
+		A2($author$project$Popup$ShowPopup, $author$project$Popup$DeletePopup, 'Voulez-vous supprimer la catégorie ?'));
 	if (thumbnailsType.$ === 'ThumbnailsCategories') {
 		return A2(
 			$elm$html$Html$a,
@@ -6126,7 +6238,8 @@ var $author$project$Page$HomePage$renderThumbnails = function (thumbnailsType) {
 					$elm$html$Html$button,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('icon_container pointer')
+							$elm$html$Html$Attributes$class('icon_container pointer'),
+							$elm$html$Html$Events$onClick(deletePopupMsgCategory)
 						]),
 					_List_fromArray(
 						[
@@ -6142,7 +6255,8 @@ var $author$project$Page$HomePage$renderThumbnails = function (thumbnailsType) {
 					$elm$html$Html$button,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('icon_container pointer')
+							$elm$html$Html$Attributes$class('icon_container pointer'),
+							$elm$html$Html$Events$onClick(editPopupMsgCategory)
 						]),
 					_List_fromArray(
 						[
@@ -6200,7 +6314,8 @@ var $author$project$Page$HomePage$renderThumbnails = function (thumbnailsType) {
 					$elm$html$Html$button,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('icon_container pointer')
+							$elm$html$Html$Attributes$class('icon_container pointer'),
+							$elm$html$Html$Events$onClick(deletePopupMsgImage)
 						]),
 					_List_fromArray(
 						[
@@ -6216,7 +6331,8 @@ var $author$project$Page$HomePage$renderThumbnails = function (thumbnailsType) {
 					$elm$html$Html$button,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('icon_container pointer')
+							$elm$html$Html$Attributes$class('icon_container pointer'),
+							$elm$html$Html$Events$onClick(editPopupMsgImage)
 						]),
 					_List_fromArray(
 						[
@@ -6242,12 +6358,234 @@ var $author$project$Page$HomePage$renderThumbnails = function (thumbnailsType) {
 				]));
 	}
 };
+var $elm$core$String$append = _String_append;
+var $author$project$Footer$renderMailto = function (mail) {
+	return A2($elm$core$String$append, 'mailto:', mail);
+};
+var $author$project$Footer$renderAuthor = function (author) {
+	return A2(
+		$elm$html$Html$a,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$href(
+				$author$project$Footer$renderMailto(author.mail)),
+				$elm$html$Html$Attributes$class('link')
+			]),
+		_List_fromArray(
+			[
+				$elm$html$Html$text(author.name)
+			]));
+};
+var $elm$html$Html$ul = _VirtualDom_node('ul');
+var $author$project$Footer$renderAuthors = function (authors) {
+	var author = A2($elm$core$List$map, $author$project$Footer$renderAuthor, authors);
+	return A2($elm$html$Html$ul, _List_Nil, author);
+};
+var $author$project$Footer$view = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('footer_container')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$p,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Image Gallery')
+					])),
+				$author$project$Footer$renderAuthors(model.authors)
+			]));
+};
+var $author$project$Navbar$renderItem = function (item) {
+	return A2(
+		$elm$html$Html$a,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('item_nav'),
+				$elm$html$Html$Attributes$href(item.link)
+			]),
+		_List_fromArray(
+			[
+				$elm$html$Html$text(item.name)
+			]));
+};
+var $author$project$Navbar$view = function (model) {
+	var navbar = A2($elm$core$List$map, $author$project$Navbar$renderItem, model.itemsNav);
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('navbar_container')
+			]),
+		navbar);
+};
+var $author$project$Popup$HidePopup = {$: 'HidePopup'};
+var $author$project$Popup$renderDeletePopup = F2(
+	function (model, classname) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class(classname)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('popup_container')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$button,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('btn icon icon_close'),
+									$elm$html$Html$Events$onClick($author$project$Popup$HidePopup)
+								]),
+							_List_Nil),
+							A2(
+							$elm$html$Html$p,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('popup_title')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text(model.title)
+								])),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('buttons_container')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$button,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class('btn danger')
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Annuler')
+										])),
+									A2(
+									$elm$html$Html$button,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class('btn primary')
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Supprimer')
+										]))
+								]))
+						]))
+				]));
+	});
+var $elm$html$Html$input = _VirtualDom_node('input');
+var $author$project$Popup$renderEditPopup = F2(
+	function (model, classname) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class(classname)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('popup_container')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$button,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('btn icon icon_close'),
+									$elm$html$Html$Events$onClick($author$project$Popup$HidePopup)
+								]),
+							_List_Nil),
+							A2(
+							$elm$html$Html$p,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('popup_title')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text(model.title)
+								])),
+							A2(
+							$elm$html$Html$input,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('popup_input')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Write Name')
+								])),
+							A2(
+							$elm$html$Html$button,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('btn primary')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Confirmer')
+								]))
+						]))
+				]));
+	});
+var $author$project$Popup$renderPopup = F2(
+	function (model, classname) {
+		var _v0 = model.popupType;
+		switch (_v0.$) {
+			case 'EmptyPopup':
+				return A2($elm$html$Html$div, _List_Nil, _List_Nil);
+			case 'EditPopup':
+				return A2($author$project$Popup$renderEditPopup, model, classname);
+			default:
+				return A2($author$project$Popup$renderDeletePopup, model, classname);
+		}
+	});
+var $author$project$Popup$view = function (model) {
+	var _v0 = model.isPopupOpen;
+	if (_v0) {
+		return A2($author$project$Popup$renderPopup, model, 'popup_overlay');
+	} else {
+		return A2($author$project$Popup$renderPopup, model, 'popup_overlay hidden');
+	}
+};
 var $author$project$Page$HomePage$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
 		_List_Nil,
 		_List_fromArray(
 			[
+				A2(
+				$elm$html$Html$map,
+				$author$project$Page$HomePage$PopupMsg,
+				$author$project$Popup$view(model.popup)),
+				A2(
+				$elm$html$Html$map,
+				$author$project$Page$HomePage$NavbarMsg,
+				$author$project$Navbar$view(model.navbar)),
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(
@@ -6356,7 +6694,11 @@ var $author$project$Page$HomePage$view = function (model) {
 										$elm$html$Html$text('+ Créer une nouvelle image')
 									]))
 							]))
-					]))
+					])),
+				A2(
+				$elm$html$Html$map,
+				$author$project$Page$HomePage$FooterMsg,
+				$author$project$Footer$view(model.footer))
 			]));
 };
 var $author$project$Main$currentView = function (model) {
