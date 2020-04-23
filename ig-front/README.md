@@ -11,6 +11,14 @@ Need to run this command for using route
 
 Project launched on localhost:8000
 
+# Help tutos
+- Elm doc : https://guide.elm-lang.org/
+- Create modal : https://medium.com/front-end-weekly/programming-in-elm-modals-in-a-pure-environment-bc2cf98fbc33
+- Elm spa example : https://github.com/rtfeldman/elm-spa-example
+- Create navigation between pages : https://elmprogramming.com/navigating-to-list-posts-page.html
+- Import module in a page : https://discourse.elm-lang.org/t/a-simple-example-of-splitting-view-update-into-a-separate-module/3107
+- Elm live npm package : https://www.npmjs.com/package/elm-live
+
 # CSS Code Conventions
 
 ## CSS architecture
