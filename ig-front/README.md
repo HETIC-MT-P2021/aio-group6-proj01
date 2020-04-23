@@ -1,4 +1,9 @@
 # Developpment mode
+
+Please install this module from npm :
+
+```npm i -g elm-live```
+
 Need to run this command for using route
 
 ```elm-live src/Main.elm --open -- --output=elm.js```
