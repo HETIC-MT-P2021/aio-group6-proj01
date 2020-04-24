@@ -5198,7 +5198,7 @@ var $author$project$Page$CategoriesListPage$init = _Utils_Tuple2(
 	{footer: $author$project$Footer$init, navbar: $author$project$Navbar$init, popup: $author$project$Popup$init},
 	$elm$core$Platform$Cmd$none);
 var $author$project$Page$HomePage$init = _Utils_Tuple2(
-	{footer: $author$project$Footer$init, navbar: $author$project$Navbar$init, popup: $author$project$Popup$init, show: 'False'},
+	{footer: $author$project$Footer$init, navbar: $author$project$Navbar$init, popup: $author$project$Popup$init},
 	$elm$core$Platform$Cmd$none);
 var $author$project$Main$initCurrentPage = function (_v0) {
 	var model = _v0.a;
@@ -6129,7 +6129,7 @@ var $author$project$Page$HomePage$update = F2(
 							footer: A2($author$project$Footer$update, footerMsg, model.footer)
 						}),
 					$elm$core$Platform$Cmd$none);
-			case 'PopupMsg':
+			default:
 				var popupMsg = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
@@ -6137,13 +6137,6 @@ var $author$project$Page$HomePage$update = F2(
 						{
 							popup: A2($author$project$Popup$update, popupMsg, model.popup)
 						}),
-					$elm$core$Platform$Cmd$none);
-			default:
-				var show = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{show: show}),
 					$elm$core$Platform$Cmd$none);
 		}
 	});
@@ -6863,41 +6856,11 @@ var $author$project$Page$HomePage$renderThumbnails = function (thumbnailsType) {
 	}
 };
 var $author$project$Page$HomePage$view = function (model) {
-	var isShow = function () {
-		var _v0 = model.show;
-		switch (_v0) {
-			case 'False':
-				return A2(
-					$elm$html$Html$p,
-					_List_Nil,
-					_List_fromArray(
-						[
-							$elm$html$Html$text('True')
-						]));
-			case 'True':
-				return A2(
-					$elm$html$Html$p,
-					_List_Nil,
-					_List_fromArray(
-						[
-							$elm$html$Html$text('False')
-						]));
-			default:
-				return A2(
-					$elm$html$Html$p,
-					_List_Nil,
-					_List_fromArray(
-						[
-							$elm$html$Html$text('Test')
-						]));
-		}
-	}();
 	return A2(
 		$elm$html$Html$div,
 		_List_Nil,
 		_List_fromArray(
 			[
-				isShow,
 				A2(
 				$elm$html$Html$map,
 				$author$project$Page$HomePage$PopupMsg,
