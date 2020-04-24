@@ -46,10 +46,7 @@ update msg model =
 
 renderButtonCreate : Html Msg
 renderButtonCreate =
-    let
-        createPopupMsg = PopupMsg (Popup.ShowPopup Popup.CreatePopup "Entrez le titre de la nouvelle catégorie")
-    in
-        button [ class "btn primary", onClick createPopupMsg ] [ text "Créer" ]
+    a [ href "/images/new", class "btn primary" ] [ text "Créer" ]
 
 renderThumbnails : Html Msg
 renderThumbnails =

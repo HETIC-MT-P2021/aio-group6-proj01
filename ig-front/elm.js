@@ -7063,21 +7063,17 @@ var $author$project$Page$ImagesListPage$NavbarMsg = function (a) {
 var $author$project$Page$ImagesListPage$PopupMsg = function (a) {
 	return {$: 'PopupMsg', a: a};
 };
-var $author$project$Page$ImagesListPage$renderButtonCreate = function () {
-	var createPopupMsg = $author$project$Page$ImagesListPage$PopupMsg(
-		A2($author$project$Popup$ShowPopup, $author$project$Popup$CreatePopup, 'Entrez le titre de la nouvelle catégorie'));
-	return A2(
-		$elm$html$Html$button,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('btn primary'),
-				$elm$html$Html$Events$onClick(createPopupMsg)
-			]),
-		_List_fromArray(
-			[
-				$elm$html$Html$text('Créer')
-			]));
-}();
+var $author$project$Page$ImagesListPage$renderButtonCreate = A2(
+	$elm$html$Html$a,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$href('/images/new'),
+			$elm$html$Html$Attributes$class('btn primary')
+		]),
+	_List_fromArray(
+		[
+			$elm$html$Html$text('Créer')
+		]));
 var $author$project$Page$ImagesListPage$renderThumbnails = function () {
 	var editPopupMsg = $author$project$Page$ImagesListPage$PopupMsg(
 		A2($author$project$Popup$ShowPopup, $author$project$Popup$EditPopup, 'Veuillez modifier le titre de la catégorie ?'));
