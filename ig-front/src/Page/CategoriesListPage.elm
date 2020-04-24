@@ -44,12 +44,19 @@ update msg model =
 
 -- VIEW
 
+renderButtonCreate : Html Msg
+renderButtonCreate =
+    let
+        createPopupMsg = PopupMsg (Popup.ShowPopup Popup.CreatePopup "Entrez le titre de la nouvelle catégorie")
+    in
+        button [ class "btn primary", onClick createPopupMsg ] [ text "Créer" ]
 renderThumbnails : Html Msg
 renderThumbnails =
     let
         {-
-        2 types of popup :
+        3 types of popup :
             - EditPopup
+            - CreatePopup
             - DeletePopup
         
         Msg ShowPopup takes 2 args :
@@ -57,17 +64,17 @@ renderThumbnails =
             - Title of Popup
         -}
 
-        editPopupMsg = PopupMsg (Popup.ShowPopup Popup.EditPopup "Voulez-vous modifier le titre de la catégorie ?")
+        editPopupMsg = PopupMsg (Popup.ShowPopup Popup.EditPopup "Veuillez modifier le titre de la catégorie ?")
         deletePopupMsg = PopupMsg (Popup.ShowPopup Popup.DeletePopup "Voulez-vous supprimer la catégorie ?")
   
     in
-    a [ href "#", class "categories_thumbnail" ] 
-    [ p [ class "category_name" ] [ text "Voiture" ]
-    , button [ class "icon_container pointer", onClick (deletePopupMsg) ] 
-        [ div [ class "icon icon_trash" ] [] ]
-    , button [ class "icon_container pointer", onClick (editPopupMsg) ] 
-        [ div [ class "icon icon_pen" ] [] ]
-    ]
+        button [ class "categories_thumbnail" ] 
+        [ p [ class "category_name" ] [ text "Voiture" ]
+        , button [ class "icon_container pointer", onClick (deletePopupMsg) ] 
+            [ div [ class "icon icon_trash" ] [] ]
+        , button [ class "icon_container pointer", onClick (editPopupMsg) ] 
+            [ div [ class "icon icon_pen" ] [] ]
+        ]
 
 view : Model -> Html Msg
 view model =
@@ -78,7 +85,7 @@ view model =
           [ div [ class "categories_section" ] 
             [ div [ class "categories_head" ] 
                 [ h1 [] [ text "catégories" ]
-                , button [ class "btn primary" ] [ text "Créer" ]
+                , renderButtonCreate
                 ]
             , div [ class "categories_thumbnails" ] 
                 [ renderThumbnails

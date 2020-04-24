@@ -6243,7 +6243,6 @@ var $author$project$Page$CategoriesListPage$NavbarMsg = function (a) {
 var $author$project$Page$CategoriesListPage$PopupMsg = function (a) {
 	return {$: 'PopupMsg', a: a};
 };
-var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
@@ -6255,19 +6254,12 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
 var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
-var $author$project$Popup$DeletePopup = {$: 'DeletePopup'};
-var $author$project$Popup$EditPopup = {$: 'EditPopup'};
+var $author$project$Popup$CreatePopup = {$: 'CreatePopup'};
 var $author$project$Popup$ShowPopup = F2(
 	function (a, b) {
 		return {$: 'ShowPopup', a: a, b: b};
 	});
-var $elm$html$Html$a = _VirtualDom_node('a');
-var $elm$html$Html$Attributes$href = function (url) {
-	return A2(
-		$elm$html$Html$Attributes$stringProperty,
-		'href',
-		_VirtualDom_noJavaScriptUri(url));
-};
+var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -6285,17 +6277,33 @@ var $elm$html$Html$Events$onClick = function (msg) {
 		'click',
 		$elm$json$Json$Decode$succeed(msg));
 };
+var $author$project$Page$CategoriesListPage$renderButtonCreate = function () {
+	var createPopupMsg = $author$project$Page$CategoriesListPage$PopupMsg(
+		A2($author$project$Popup$ShowPopup, $author$project$Popup$CreatePopup, 'Entrez le titre de la nouvelle catégorie'));
+	return A2(
+		$elm$html$Html$button,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('btn primary'),
+				$elm$html$Html$Events$onClick(createPopupMsg)
+			]),
+		_List_fromArray(
+			[
+				$elm$html$Html$text('Créer')
+			]));
+}();
+var $author$project$Popup$DeletePopup = {$: 'DeletePopup'};
+var $author$project$Popup$EditPopup = {$: 'EditPopup'};
 var $elm$html$Html$p = _VirtualDom_node('p');
 var $author$project$Page$CategoriesListPage$renderThumbnails = function () {
 	var editPopupMsg = $author$project$Page$CategoriesListPage$PopupMsg(
-		A2($author$project$Popup$ShowPopup, $author$project$Popup$EditPopup, 'Voulez-vous modifier le titre de la catégorie ?'));
+		A2($author$project$Popup$ShowPopup, $author$project$Popup$EditPopup, 'Veuillez modifier le titre de la catégorie ?'));
 	var deletePopupMsg = $author$project$Page$CategoriesListPage$PopupMsg(
 		A2($author$project$Popup$ShowPopup, $author$project$Popup$DeletePopup, 'Voulez-vous supprimer la catégorie ?'));
 	return A2(
-		$elm$html$Html$a,
+		$elm$html$Html$button,
 		_List_fromArray(
 			[
-				$elm$html$Html$Attributes$href('#'),
 				$elm$html$Html$Attributes$class('categories_thumbnail')
 			]),
 		_List_fromArray(
@@ -6346,6 +6354,13 @@ var $author$project$Page$CategoriesListPage$renderThumbnails = function () {
 					]))
 			]));
 }();
+var $elm$html$Html$a = _VirtualDom_node('a');
+var $elm$html$Html$Attributes$href = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'href',
+		_VirtualDom_noJavaScriptUri(url));
+};
 var $elm$core$String$append = _String_append;
 var $author$project$Footer$renderMailto = function (mail) {
 	return A2($elm$core$String$append, 'mailto:', mail);
@@ -6412,6 +6427,66 @@ var $author$project$Navbar$view = function (model) {
 		navbar);
 };
 var $author$project$Popup$HidePopup = {$: 'HidePopup'};
+var $elm$html$Html$input = _VirtualDom_node('input');
+var $author$project$Popup$renderCreatePopup = F2(
+	function (model, classname) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class(classname)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('popup_container')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$button,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('btn icon icon_close'),
+									$elm$html$Html$Events$onClick($author$project$Popup$HidePopup)
+								]),
+							_List_Nil),
+							A2(
+							$elm$html$Html$p,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('popup_title')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text(model.title)
+								])),
+							A2(
+							$elm$html$Html$input,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('popup_input')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Write Name')
+								])),
+							A2(
+							$elm$html$Html$button,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('btn primary')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Confirmer')
+								]))
+						]))
+				]));
+	});
 var $author$project$Popup$renderDeletePopup = F2(
 	function (model, classname) {
 		return A2(
@@ -6480,7 +6555,6 @@ var $author$project$Popup$renderDeletePopup = F2(
 						]))
 				]));
 	});
-var $elm$html$Html$input = _VirtualDom_node('input');
 var $author$project$Popup$renderEditPopup = F2(
 	function (model, classname) {
 		return A2(
@@ -6548,6 +6622,8 @@ var $author$project$Popup$renderPopup = F2(
 				return A2($elm$html$Html$div, _List_Nil, _List_Nil);
 			case 'EditPopup':
 				return A2($author$project$Popup$renderEditPopup, model, classname);
+			case 'CreatePopup':
+				return A2($author$project$Popup$renderCreatePopup, model, classname);
 			default:
 				return A2($author$project$Popup$renderDeletePopup, model, classname);
 		}
@@ -6605,16 +6681,7 @@ var $author$project$Page$CategoriesListPage$view = function (model) {
 											[
 												$elm$html$Html$text('catégories')
 											])),
-										A2(
-										$elm$html$Html$button,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$class('btn primary')
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text('Créer')
-											]))
+										$author$project$Page$CategoriesListPage$renderButtonCreate
 									])),
 								A2(
 								$elm$html$Html$div,
@@ -6643,25 +6710,21 @@ var $author$project$Page$HomePage$PopupMsg = function (a) {
 };
 var $author$project$Page$HomePage$ThumbnailsCategories = {$: 'ThumbnailsCategories'};
 var $author$project$Page$HomePage$ThumbnailsImages = {$: 'ThumbnailsImages'};
-var $author$project$Page$HomePage$ChangeShow = function (a) {
-	return {$: 'ChangeShow', a: a};
-};
 var $elm$html$Html$span = _VirtualDom_node('span');
 var $author$project$Page$HomePage$renderThumbnails = function (thumbnailsType) {
 	var editPopupMsgImage = $author$project$Page$HomePage$PopupMsg(
-		A2($author$project$Popup$ShowPopup, $author$project$Popup$EditPopup, 'Voulez-vous modifier le titre de l\'image ?'));
+		A2($author$project$Popup$ShowPopup, $author$project$Popup$EditPopup, 'Veuillez modifier le titre de l\'image ?'));
 	var editPopupMsgCategory = $author$project$Page$HomePage$PopupMsg(
-		A2($author$project$Popup$ShowPopup, $author$project$Popup$EditPopup, 'Voulez-vous modifier le titre de la catégorie ?'));
+		A2($author$project$Popup$ShowPopup, $author$project$Popup$EditPopup, 'Veuillez modifier le titre de la catégorie ?'));
 	var deletePopupMsgImage = $author$project$Page$HomePage$PopupMsg(
 		A2($author$project$Popup$ShowPopup, $author$project$Popup$DeletePopup, 'Voulez-vous supprimer l\'image ?'));
 	var deletePopupMsgCategory = $author$project$Page$HomePage$PopupMsg(
 		A2($author$project$Popup$ShowPopup, $author$project$Popup$DeletePopup, 'Voulez-vous supprimer la catégorie ?'));
 	if (thumbnailsType.$ === 'ThumbnailsCategories') {
 		return A2(
-			$elm$html$Html$a,
+			$elm$html$Html$button,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$href('#'),
 					$elm$html$Html$Attributes$class('home_categories_thumbnail')
 				]),
 			_List_fromArray(
@@ -6681,8 +6744,7 @@ var $author$project$Page$HomePage$renderThumbnails = function (thumbnailsType) {
 					_List_fromArray(
 						[
 							$elm$html$Html$Attributes$class('icon_container pointer'),
-							$elm$html$Html$Events$onClick(
-							$author$project$Page$HomePage$ChangeShow('test'))
+							$elm$html$Html$Events$onClick(deletePopupMsgCategory)
 						]),
 					_List_fromArray(
 						[
@@ -6714,10 +6776,9 @@ var $author$project$Page$HomePage$renderThumbnails = function (thumbnailsType) {
 				]));
 	} else {
 		return A2(
-			$elm$html$Html$a,
+			$elm$html$Html$button,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$href('#'),
 					$elm$html$Html$Attributes$class('home_images_thumbnail')
 				]),
 			_List_fromArray(
@@ -6884,7 +6945,7 @@ var $author$project$Page$HomePage$view = function (model) {
 								$elm$html$Html$a,
 								_List_fromArray(
 									[
-										$elm$html$Html$Attributes$href('#'),
+										$elm$html$Html$Attributes$href('/categories'),
 										$elm$html$Html$Attributes$class('link')
 									]),
 								_List_fromArray(
@@ -6934,7 +6995,7 @@ var $author$project$Page$HomePage$view = function (model) {
 								$elm$html$Html$a,
 								_List_fromArray(
 									[
-										$elm$html$Html$Attributes$href('#'),
+										$elm$html$Html$Attributes$href('/images'),
 										$elm$html$Html$Attributes$class('link')
 									]),
 								_List_fromArray(
