@@ -1,6 +1,6 @@
 module Popup exposing (init, update, Msg(..), Model, view, PopupType(..))
 
-import Html exposing (Html, a, ul, li, div, text, p, button, input)
+import Html exposing (Html, div, text, p, button, input)
 import Html.Events exposing (onClick)
 import Html.Attributes exposing (class, href)
 
@@ -9,6 +9,7 @@ import Html.Attributes exposing (class, href)
 type PopupType
     = EmptyPopup
     | EditPopup
+    | CreatePopup
     | DeletePopup
 
 type alias Model =
@@ -54,11 +55,25 @@ renderPopup model classname =
     EditPopup ->
       renderEditPopup model classname
 
+    CreatePopup ->
+      renderCreatePopup model classname
+
     DeletePopup ->
       renderDeletePopup model classname
 
 renderEditPopup : Model -> String -> Html Msg
 renderEditPopup model classname = 
+  div [ class classname ]
+    [ div [ class "popup_container" ]
+      [ button [ class "btn icon icon_close", onClick HidePopup ] []
+      , p [ class "popup_title"] [ text model.title ]
+      , input [ class "popup_input" ] [ text "Write Name" ]
+      , button [ class "btn primary" ] [ text "Confirmer" ]
+      ]
+    ]
+
+renderCreatePopup : Model -> String -> Html Msg
+renderCreatePopup model classname = 
   div [ class classname ]
     [ div [ class "popup_container" ]
       [ button [ class "btn icon icon_close", onClick HidePopup ] []

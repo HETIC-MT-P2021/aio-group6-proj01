@@ -67,25 +67,25 @@ renderThumbnails thumbnailsType =
         - PopupType
         - Title of Popup
     -}
-    editPopupMsgImage = PopupMsg (Popup.ShowPopup Popup.EditPopup "Voulez-vous modifier le titre de l'image ?")
+    editPopupMsgImage = PopupMsg (Popup.ShowPopup Popup.EditPopup "Veuillez modifier le titre de l'image ?")
     deletePopupMsgImage = PopupMsg (Popup.ShowPopup Popup.DeletePopup "Voulez-vous supprimer l'image ?")
 
-    editPopupMsgCategory = PopupMsg (Popup.ShowPopup Popup.EditPopup "Voulez-vous modifier le titre de la catégorie ?")
+    editPopupMsgCategory = PopupMsg (Popup.ShowPopup Popup.EditPopup "Veuillez modifier le titre de la catégorie ?")
     deletePopupMsgCategory = PopupMsg (Popup.ShowPopup Popup.DeletePopup "Voulez-vous supprimer la catégorie ?")
   
   in
   case thumbnailsType of
     ThumbnailsCategories ->
-      a [ href "#", class "home_categories_thumbnail" ] 
+      button [ class "home_categories_thumbnail" ] 
         [ p [ class "home_category_name" ] [ text "Voiture" ]
-        , button [ class "icon_container pointer", onClick (ChangeShow "test")  ] 
+        , button [ class "icon_container pointer", onClick (deletePopupMsgCategory)  ] 
             [ div [ class "icon icon_trash" ] [] ]
         , button [ class "icon_container pointer", onClick (editPopupMsgCategory) ] 
             [ div [ class "icon icon_pen" ] [] ]
         ]
 
     ThumbnailsImages ->
-      a [ href "#", class "home_images_thumbnail" ] 
+      button [ class "home_images_thumbnail" ] 
         [ div [ class "home_tags_images" ] 
             [ span [ href "#", class "tag_thumbnails" ] [ text "Rouge" ]
             , span [ href "#", class "tag_thumbnails" ] [ text "BMW" ]
@@ -118,7 +118,7 @@ view model =
                 , renderThumbnails ThumbnailsCategories
                 , renderThumbnails ThumbnailsCategories
                 ]
-              , a [ href "#", class "link" ] [ text "Afficher toutes les catégories" ]
+              , a [ href "/categories", class "link" ] [ text "Afficher toutes les catégories" ]
               , a [ href "#", class "link" ] [ text "+ Créer une nouvelle catégorie" ]
             ]
           , div [ class "home_images_section" ] 
@@ -128,7 +128,7 @@ view model =
                   , renderThumbnails ThumbnailsImages
                   , renderThumbnails ThumbnailsImages
                   ]
-              , a [ href "#", class "link" ] [ text "Afficher toutes les images" ]
+              , a [ href "/images", class "link" ] [ text "Afficher toutes les images" ]
               , a [ href "#", class "link" ] [ text "+ Créer une nouvelle image" ]
             ]
           ]

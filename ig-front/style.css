@@ -87,7 +87,6 @@ button {
     background: rgba(0, 0, 0, 0.6);
     z-index: 1;
     font-size: 1.3rem;
-    transition: all .5s ease;
 }
 
 .popup_container {
@@ -325,6 +324,7 @@ button {
 /*********************************************************************/
 
 .categories_head {
+    padding: 0px 10px;
     display: flex;
     align-items: center;
     justify-content: space-between;
