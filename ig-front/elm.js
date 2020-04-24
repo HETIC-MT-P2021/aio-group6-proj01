@@ -5174,6 +5174,9 @@ var $author$project$Main$CategoriesListPage = function (a) {
 var $author$project$Main$HomePage = function (a) {
 	return {$: 'HomePage', a: a};
 };
+var $author$project$Main$ImagesListPage = function (a) {
+	return {$: 'ImagesListPage', a: a};
+};
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $author$project$Footer$init = {
 	authors: _List_fromArray(
@@ -5200,6 +5203,9 @@ var $author$project$Page$CategoriesListPage$init = _Utils_Tuple2(
 var $author$project$Page$HomePage$init = _Utils_Tuple2(
 	{footer: $author$project$Footer$init, navbar: $author$project$Navbar$init, popup: $author$project$Popup$init},
 	$elm$core$Platform$Cmd$none);
+var $author$project$Page$ImagesListPage$init = _Utils_Tuple2(
+	{footer: $author$project$Footer$init, navbar: $author$project$Navbar$init, popup: $author$project$Popup$init},
+	$elm$core$Platform$Cmd$none);
 var $author$project$Main$initCurrentPage = function (_v0) {
 	var model = _v0.a;
 	var existingCmds = _v0.b;
@@ -5215,10 +5221,17 @@ var $author$project$Main$initCurrentPage = function (_v0) {
 				return _Utils_Tuple2(
 					$author$project$Main$HomePage(pageModel),
 					$elm$core$Platform$Cmd$none);
-			default:
-				var _v4 = $author$project$Page$CategoriesListPage$init;
+			case 'Images':
+				var _v4 = $author$project$Page$ImagesListPage$init;
 				var pageModel = _v4.a;
 				var pageCmds = _v4.b;
+				return _Utils_Tuple2(
+					$author$project$Main$ImagesListPage(pageModel),
+					$elm$core$Platform$Cmd$none);
+			default:
+				var _v5 = $author$project$Page$CategoriesListPage$init;
+				var pageModel = _v5.a;
+				var pageCmds = _v5.b;
 				return _Utils_Tuple2(
 					$author$project$Main$CategoriesListPage(pageModel),
 					$elm$core$Platform$Cmd$none);
@@ -5237,6 +5250,7 @@ var $author$project$Main$initCurrentPage = function (_v0) {
 var $author$project$Route$NotFound = {$: 'NotFound'};
 var $author$project$Route$Categories = {$: 'Categories'};
 var $author$project$Route$Home = {$: 'Home'};
+var $author$project$Route$Images = {$: 'Images'};
 var $elm$url$Url$Parser$Parser = function (a) {
 	return {$: 'Parser', a: a};
 };
@@ -5343,6 +5357,10 @@ var $author$project$Route$matchRoute = $elm$url$Url$Parser$oneOf(
 			$elm$url$Url$Parser$map,
 			$author$project$Route$Home,
 			$elm$url$Url$Parser$s('home')),
+			A2(
+			$elm$url$Url$Parser$map,
+			$author$project$Route$Images,
+			$elm$url$Url$Parser$s('images')),
 			A2(
 			$elm$url$Url$Parser$map,
 			$author$project$Route$Categories,
@@ -6140,10 +6158,42 @@ var $author$project$Page$HomePage$update = F2(
 					$elm$core$Platform$Cmd$none);
 		}
 	});
+var $author$project$Page$ImagesListPage$update = F2(
+	function (msg, model) {
+		switch (msg.$) {
+			case 'NavbarMsg':
+				var navbarMsg = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							navbar: A2($author$project$Navbar$update, navbarMsg, model.navbar)
+						}),
+					$elm$core$Platform$Cmd$none);
+			case 'FooterMsg':
+				var footerMsg = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							footer: A2($author$project$Footer$update, footerMsg, model.footer)
+						}),
+					$elm$core$Platform$Cmd$none);
+			default:
+				var popupMsg = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							popup: A2($author$project$Popup$update, popupMsg, model.popup)
+						}),
+					$elm$core$Platform$Cmd$none);
+		}
+	});
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		var _v0 = _Utils_Tuple2(msg, model.page);
-		_v0$4:
+		_v0$5:
 		while (true) {
 			switch (_v0.a.$) {
 				case 'HomePageMsg':
@@ -6161,15 +6211,32 @@ var $author$project$Main$update = F2(
 								}),
 							$elm$core$Platform$Cmd$none);
 					} else {
-						break _v0$4;
+						break _v0$5;
+					}
+				case 'ImagesListPageMsg':
+					if (_v0.b.$ === 'ImagesListPage') {
+						var subMsg = _v0.a.a;
+						var pageModel = _v0.b.a;
+						var _v2 = A2($author$project$Page$ImagesListPage$update, subMsg, pageModel);
+						var updatedPageModel = _v2.a;
+						var updatedCmd = _v2.b;
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									page: $author$project$Main$ImagesListPage(updatedPageModel)
+								}),
+							$elm$core$Platform$Cmd$none);
+					} else {
+						break _v0$5;
 					}
 				case 'CategoriesListPageMsg':
 					if (_v0.b.$ === 'CategoriesListPage') {
 						var subMsg = _v0.a.a;
 						var pageModel = _v0.b.a;
-						var _v2 = A2($author$project$Page$CategoriesListPage$update, subMsg, pageModel);
-						var updatedPageModel = _v2.a;
-						var updatedCmd = _v2.b;
+						var _v3 = A2($author$project$Page$CategoriesListPage$update, subMsg, pageModel);
+						var updatedPageModel = _v3.a;
+						var updatedCmd = _v3.b;
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
@@ -6178,7 +6245,7 @@ var $author$project$Main$update = F2(
 								}),
 							$elm$core$Platform$Cmd$none);
 					} else {
-						break _v0$4;
+						break _v0$5;
 					}
 				case 'LinkClicked':
 					var urlRequest = _v0.a.a;
@@ -6214,6 +6281,9 @@ var $author$project$Main$CategoriesListPageMsg = function (a) {
 };
 var $author$project$Main$HomePageMsg = function (a) {
 	return {$: 'HomePageMsg', a: a};
+};
+var $author$project$Main$ImagesListPageMsg = function (a) {
+	return {$: 'ImagesListPageMsg', a: a};
 };
 var $elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
 var $elm$html$Html$map = $elm$virtual_dom$VirtualDom$map;
@@ -6984,6 +7054,182 @@ var $author$project$Page$HomePage$view = function (model) {
 				$author$project$Footer$view(model.footer))
 			]));
 };
+var $author$project$Page$ImagesListPage$FooterMsg = function (a) {
+	return {$: 'FooterMsg', a: a};
+};
+var $author$project$Page$ImagesListPage$NavbarMsg = function (a) {
+	return {$: 'NavbarMsg', a: a};
+};
+var $author$project$Page$ImagesListPage$PopupMsg = function (a) {
+	return {$: 'PopupMsg', a: a};
+};
+var $author$project$Page$ImagesListPage$renderButtonCreate = function () {
+	var createPopupMsg = $author$project$Page$ImagesListPage$PopupMsg(
+		A2($author$project$Popup$ShowPopup, $author$project$Popup$CreatePopup, 'Entrez le titre de la nouvelle catégorie'));
+	return A2(
+		$elm$html$Html$button,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('btn primary'),
+				$elm$html$Html$Events$onClick(createPopupMsg)
+			]),
+		_List_fromArray(
+			[
+				$elm$html$Html$text('Créer')
+			]));
+}();
+var $author$project$Page$ImagesListPage$renderThumbnails = function () {
+	var editPopupMsg = $author$project$Page$ImagesListPage$PopupMsg(
+		A2($author$project$Popup$ShowPopup, $author$project$Popup$EditPopup, 'Veuillez modifier le titre de la catégorie ?'));
+	var deletePopupMsg = $author$project$Page$ImagesListPage$PopupMsg(
+		A2($author$project$Popup$ShowPopup, $author$project$Popup$DeletePopup, 'Voulez-vous supprimer la catégorie ?'));
+	return A2(
+		$elm$html$Html$button,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('images_thumbnail')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('image_tags')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$span,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('tag_thumbnails')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Rouge')
+							])),
+						A2(
+						$elm$html$Html$span,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('tag_thumbnails')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('BMW')
+							]))
+					])),
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('icon_container icon_container_trash pointer'),
+						$elm$html$Html$Events$onClick(deletePopupMsg)
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('icon icon_trash')
+							]),
+						_List_Nil)
+					])),
+				A2(
+				$elm$html$Html$a,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$href('/images/edit'),
+						$elm$html$Html$Attributes$class('icon_container icon_container_edit pointer')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('icon icon_pen')
+							]),
+						_List_Nil)
+					])),
+				A2(
+				$elm$html$Html$a,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$href('#'),
+						$elm$html$Html$Attributes$class('image_category')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Voiture')
+					]))
+			]));
+}();
+var $author$project$Page$ImagesListPage$view = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$map,
+				$author$project$Page$ImagesListPage$PopupMsg,
+				$author$project$Popup$view(model.popup)),
+				A2(
+				$elm$html$Html$map,
+				$author$project$Page$ImagesListPage$NavbarMsg,
+				$author$project$Navbar$view(model.navbar)),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('container')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('images_section')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('images_head')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$h1,
+										_List_Nil,
+										_List_fromArray(
+											[
+												$elm$html$Html$text('images')
+											])),
+										$author$project$Page$ImagesListPage$renderButtonCreate
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('images_thumbnails')
+									]),
+								_List_fromArray(
+									[$author$project$Page$ImagesListPage$renderThumbnails, $author$project$Page$ImagesListPage$renderThumbnails, $author$project$Page$ImagesListPage$renderThumbnails]))
+							]))
+					])),
+				A2(
+				$elm$html$Html$map,
+				$author$project$Page$ImagesListPage$FooterMsg,
+				$author$project$Footer$view(model.footer))
+			]));
+};
 var $author$project$Main$currentView = function (model) {
 	var _v0 = model.page;
 	switch (_v0.$) {
@@ -6995,6 +7241,12 @@ var $author$project$Main$currentView = function (model) {
 				$elm$html$Html$map,
 				$author$project$Main$HomePageMsg,
 				$author$project$Page$HomePage$view(pageModel));
+		case 'ImagesListPage':
+			var pageModel = _v0.a;
+			return A2(
+				$elm$html$Html$map,
+				$author$project$Main$ImagesListPageMsg,
+				$author$project$Page$ImagesListPage$view(pageModel));
 		default:
 			var pageModel = _v0.a;
 			return A2(

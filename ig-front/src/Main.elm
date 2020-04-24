@@ -14,6 +14,7 @@ import Route exposing (Route)
 -- PAGES
 
 import Page.HomePage as Home
+import Page.ImagesListPage as ImagesList
 import Page.CategoriesListPage as CategoriesList
 
 -- MAIN
@@ -40,6 +41,7 @@ type alias Model =
 type Page
     = NotFoundPage
     | HomePage Home.Model
+    | ImagesListPage ImagesList.Model
     | CategoriesListPage CategoriesList.Model
 
 -- UPDATE
@@ -50,6 +52,7 @@ type UrlRequest
 
 type Msg
     = HomePageMsg Home.Msg
+    | ImagesListPageMsg ImagesList.Msg
     | CategoriesListPageMsg CategoriesList.Msg
     | LinkClicked Browser.UrlRequest
     | UrlChanged Url
@@ -63,6 +66,15 @@ update msg model =
             Home.update subMsg pageModel
       in
       ( { model | page = HomePage updatedPageModel }
+      , Cmd.none
+      )
+
+    ( ImagesListPageMsg subMsg, ImagesListPage pageModel ) ->
+      let
+          ( updatedPageModel, updatedCmd ) =
+            ImagesList.update subMsg pageModel
+      in
+      ( { model | page = ImagesListPage updatedPageModel }
       , Cmd.none
       )
 
@@ -124,6 +136,13 @@ initCurrentPage ( model, existingCmds ) =
             in
             ( HomePage pageModel, Cmd.none )
 
+          Route.Images ->
+            let
+              ( pageModel, pageCmds ) =
+                ImagesList.init
+            in
+            ( ImagesListPage pageModel, Cmd.none )
+
           Route.Categories ->
             let
               ( pageModel, pageCmds ) =
@@ -152,6 +171,10 @@ currentView model =
     HomePage pageModel ->
       Home.view pageModel
         |> Html.map HomePageMsg
+
+    ImagesListPage pageModel ->
+      ImagesList.view pageModel
+        |> Html.map ImagesListPageMsg
 
     CategoriesListPage pageModel ->
       CategoriesList.view pageModel
