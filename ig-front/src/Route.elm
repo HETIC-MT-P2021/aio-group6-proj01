@@ -8,6 +8,7 @@ type Route
     = NotFound
     | Home
     | Images
+    | EditImage
     | Categories
 
 
@@ -27,5 +28,6 @@ matchRoute =
         [ Parser.map Home Parser.top
         , Parser.map Home (s "home")
         , Parser.map Images (s "images")
+        , Parser.map EditImage (s "voiture")
         , Parser.map Categories (s "categories")
         ]
