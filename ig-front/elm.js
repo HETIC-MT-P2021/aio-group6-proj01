@@ -6424,8 +6424,8 @@ var $author$project$Page$AddImagePage$FooterMsg = function (a) {
 var $author$project$Page$AddImagePage$NavbarMsg = function (a) {
 	return {$: 'NavbarMsg', a: a};
 };
+var $author$project$Page$AddImagePage$Submit = {$: 'Submit'};
 var $author$project$Page$AddImagePage$Text = {$: 'Text'};
-var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
@@ -6438,6 +6438,7 @@ var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('
 var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$html$Html$form = _VirtualDom_node('form');
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
+var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$input = _VirtualDom_node('input');
 var $elm$html$Html$label = _VirtualDom_node('label');
 var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
@@ -6496,7 +6497,16 @@ var $author$project$Page$AddImagePage$renderInput = F2(
 							_List_Nil)
 						]));
 			default:
-				return A2($elm$html$Html$div, _List_Nil, _List_Nil);
+				return A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('btn primary')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Confirmer')
+						]));
 		}
 	});
 var $elm$html$Html$Attributes$for = $elm$html$Html$Attributes$stringProperty('htmlFor');
@@ -6683,16 +6693,7 @@ var $author$project$Page$AddImagePage$view = function (model) {
 											[
 												A2($author$project$Page$AddImagePage$renderInput, '', $author$project$Page$AddImagePage$File)
 											])),
-										A2(
-										$elm$html$Html$button,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$class('btn primary')
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text('Confirmer')
-											]))
+										A2($author$project$Page$AddImagePage$renderInput, '', $author$project$Page$AddImagePage$Submit)
 									]))
 							]))
 					])),
@@ -7088,6 +7089,7 @@ var $author$project$Page$EditImagePage$FooterMsg = function (a) {
 var $author$project$Page$EditImagePage$NavbarMsg = function (a) {
 	return {$: 'NavbarMsg', a: a};
 };
+var $author$project$Page$EditImagePage$Submit = {$: 'Submit'};
 var $author$project$Page$EditImagePage$Text = {$: 'Text'};
 var $author$project$Page$EditImagePage$renderInput = F2(
 	function (title, inputType) {
@@ -7143,7 +7145,16 @@ var $author$project$Page$EditImagePage$renderInput = F2(
 							_List_Nil)
 						]));
 			default:
-				return A2($elm$html$Html$div, _List_Nil, _List_Nil);
+				return A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('btn primary')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Confirmer')
+						]));
 		}
 	});
 var $author$project$Page$EditImagePage$renderSelect = function (label_txt) {
@@ -7251,16 +7262,7 @@ var $author$project$Page$EditImagePage$view = function (model) {
 											[
 												A2($author$project$Page$EditImagePage$renderInput, '', $author$project$Page$EditImagePage$File)
 											])),
-										A2(
-										$elm$html$Html$button,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$class('btn primary')
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text('Confirmer')
-											]))
+										A2($author$project$Page$EditImagePage$renderInput, '', $author$project$Page$EditImagePage$Submit)
 									]))
 							]))
 					])),

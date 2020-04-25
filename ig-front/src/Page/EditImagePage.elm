@@ -55,7 +55,7 @@ renderInput title inputType=
                 ]
 
         Submit ->
-            div [] []
+            button [ class "btn primary" ] [ text "Confirmer" ]            
 
 renderSelect : String -> Html Msg
 renderSelect label_txt =
@@ -80,7 +80,7 @@ view model =
                     , renderSelect "Tags"
                     , div [ class "edit_image_tags" ]
                         [ renderInput "" File ]
-                    , button [ class "btn primary" ] [ text "Confirmer" ]
+                    , renderInput "" Submit
                     ]
                 ]
             ]
