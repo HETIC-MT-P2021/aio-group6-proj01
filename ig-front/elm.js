@@ -5168,11 +5168,20 @@ var $elm$core$Task$perform = F2(
 	});
 var $elm$browser$Browser$application = _Browser_application;
 var $author$project$Main$NotFoundPage = {$: 'NotFoundPage'};
+var $author$project$Main$AddImagePage = function (a) {
+	return {$: 'AddImagePage', a: a};
+};
 var $author$project$Main$CategoriesListPage = function (a) {
 	return {$: 'CategoriesListPage', a: a};
 };
+var $author$project$Main$EditImagePage = function (a) {
+	return {$: 'EditImagePage', a: a};
+};
 var $author$project$Main$HomePage = function (a) {
 	return {$: 'HomePage', a: a};
+};
+var $author$project$Main$ImagesListPage = function (a) {
+	return {$: 'ImagesListPage', a: a};
 };
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $author$project$Footer$init = {
@@ -5191,13 +5200,22 @@ var $author$project$Navbar$init = {
 			{link: '/categories', name: 'Catégories'}
 		])
 };
+var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
+var $author$project$Page$AddImagePage$init = _Utils_Tuple2(
+	{footer: $author$project$Footer$init, navbar: $author$project$Navbar$init},
+	$elm$core$Platform$Cmd$none);
 var $author$project$Popup$EmptyPopup = {$: 'EmptyPopup'};
 var $author$project$Popup$init = {isPopupOpen: false, popupType: $author$project$Popup$EmptyPopup, title: 'Test'};
-var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Page$CategoriesListPage$init = _Utils_Tuple2(
 	{footer: $author$project$Footer$init, navbar: $author$project$Navbar$init, popup: $author$project$Popup$init},
 	$elm$core$Platform$Cmd$none);
+var $author$project$Page$EditImagePage$init = _Utils_Tuple2(
+	{footer: $author$project$Footer$init, navbar: $author$project$Navbar$init},
+	$elm$core$Platform$Cmd$none);
 var $author$project$Page$HomePage$init = _Utils_Tuple2(
+	{footer: $author$project$Footer$init, navbar: $author$project$Navbar$init, popup: $author$project$Popup$init},
+	$elm$core$Platform$Cmd$none);
+var $author$project$Page$ImagesListPage$init = _Utils_Tuple2(
 	{footer: $author$project$Footer$init, navbar: $author$project$Navbar$init, popup: $author$project$Popup$init},
 	$elm$core$Platform$Cmd$none);
 var $author$project$Main$initCurrentPage = function (_v0) {
@@ -5215,10 +5233,31 @@ var $author$project$Main$initCurrentPage = function (_v0) {
 				return _Utils_Tuple2(
 					$author$project$Main$HomePage(pageModel),
 					$elm$core$Platform$Cmd$none);
-			default:
-				var _v4 = $author$project$Page$CategoriesListPage$init;
+			case 'Images':
+				var _v4 = $author$project$Page$ImagesListPage$init;
 				var pageModel = _v4.a;
 				var pageCmds = _v4.b;
+				return _Utils_Tuple2(
+					$author$project$Main$ImagesListPage(pageModel),
+					$elm$core$Platform$Cmd$none);
+			case 'EditImage':
+				var _v5 = $author$project$Page$EditImagePage$init;
+				var pageModel = _v5.a;
+				var pageCmds = _v5.b;
+				return _Utils_Tuple2(
+					$author$project$Main$EditImagePage(pageModel),
+					$elm$core$Platform$Cmd$none);
+			case 'AddImage':
+				var _v6 = $author$project$Page$AddImagePage$init;
+				var pageModel = _v6.a;
+				var pageCmds = _v6.b;
+				return _Utils_Tuple2(
+					$author$project$Main$AddImagePage(pageModel),
+					$elm$core$Platform$Cmd$none);
+			default:
+				var _v7 = $author$project$Page$CategoriesListPage$init;
+				var pageModel = _v7.a;
+				var pageCmds = _v7.b;
 				return _Utils_Tuple2(
 					$author$project$Main$CategoriesListPage(pageModel),
 					$elm$core$Platform$Cmd$none);
@@ -5235,8 +5274,11 @@ var $author$project$Main$initCurrentPage = function (_v0) {
 				[existingCmds, mappedPageCmds])));
 };
 var $author$project$Route$NotFound = {$: 'NotFound'};
+var $author$project$Route$AddImage = {$: 'AddImage'};
 var $author$project$Route$Categories = {$: 'Categories'};
+var $author$project$Route$EditImage = {$: 'EditImage'};
 var $author$project$Route$Home = {$: 'Home'};
+var $author$project$Route$Images = {$: 'Images'};
 var $elm$url$Url$Parser$Parser = function (a) {
 	return {$: 'Parser', a: a};
 };
@@ -5343,6 +5385,18 @@ var $author$project$Route$matchRoute = $elm$url$Url$Parser$oneOf(
 			$elm$url$Url$Parser$map,
 			$author$project$Route$Home,
 			$elm$url$Url$Parser$s('home')),
+			A2(
+			$elm$url$Url$Parser$map,
+			$author$project$Route$Images,
+			$elm$url$Url$Parser$s('images')),
+			A2(
+			$elm$url$Url$Parser$map,
+			$author$project$Route$EditImage,
+			$elm$url$Url$Parser$s('voiture')),
+			A2(
+			$elm$url$Url$Parser$map,
+			$author$project$Route$AddImage,
+			$elm$url$Url$Parser$s('add')),
 			A2(
 			$elm$url$Url$Parser$map,
 			$author$project$Route$Categories,
@@ -6059,6 +6113,28 @@ var $author$project$Navbar$update = F2(
 			model,
 			{itemsNav: items});
 	});
+var $author$project$Page$AddImagePage$update = F2(
+	function (msg, model) {
+		if (msg.$ === 'NavbarMsg') {
+			var navbarMsg = msg.a;
+			return _Utils_Tuple2(
+				_Utils_update(
+					model,
+					{
+						navbar: A2($author$project$Navbar$update, navbarMsg, model.navbar)
+					}),
+				$elm$core$Platform$Cmd$none);
+		} else {
+			var footerMsg = msg.a;
+			return _Utils_Tuple2(
+				_Utils_update(
+					model,
+					{
+						footer: A2($author$project$Footer$update, footerMsg, model.footer)
+					}),
+				$elm$core$Platform$Cmd$none);
+		}
+	});
 var $author$project$Popup$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -6108,7 +6184,61 @@ var $author$project$Page$CategoriesListPage$update = F2(
 					$elm$core$Platform$Cmd$none);
 		}
 	});
+var $author$project$Page$EditImagePage$update = F2(
+	function (msg, model) {
+		if (msg.$ === 'NavbarMsg') {
+			var navbarMsg = msg.a;
+			return _Utils_Tuple2(
+				_Utils_update(
+					model,
+					{
+						navbar: A2($author$project$Navbar$update, navbarMsg, model.navbar)
+					}),
+				$elm$core$Platform$Cmd$none);
+		} else {
+			var footerMsg = msg.a;
+			return _Utils_Tuple2(
+				_Utils_update(
+					model,
+					{
+						footer: A2($author$project$Footer$update, footerMsg, model.footer)
+					}),
+				$elm$core$Platform$Cmd$none);
+		}
+	});
 var $author$project$Page$HomePage$update = F2(
+	function (msg, model) {
+		switch (msg.$) {
+			case 'NavbarMsg':
+				var navbarMsg = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							navbar: A2($author$project$Navbar$update, navbarMsg, model.navbar)
+						}),
+					$elm$core$Platform$Cmd$none);
+			case 'FooterMsg':
+				var footerMsg = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							footer: A2($author$project$Footer$update, footerMsg, model.footer)
+						}),
+					$elm$core$Platform$Cmd$none);
+			default:
+				var popupMsg = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							popup: A2($author$project$Popup$update, popupMsg, model.popup)
+						}),
+					$elm$core$Platform$Cmd$none);
+		}
+	});
+var $author$project$Page$ImagesListPage$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
 			case 'NavbarMsg':
@@ -6143,7 +6273,7 @@ var $author$project$Page$HomePage$update = F2(
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		var _v0 = _Utils_Tuple2(msg, model.page);
-		_v0$4:
+		_v0$7:
 		while (true) {
 			switch (_v0.a.$) {
 				case 'HomePageMsg':
@@ -6161,15 +6291,32 @@ var $author$project$Main$update = F2(
 								}),
 							$elm$core$Platform$Cmd$none);
 					} else {
-						break _v0$4;
+						break _v0$7;
+					}
+				case 'ImagesListPageMsg':
+					if (_v0.b.$ === 'ImagesListPage') {
+						var subMsg = _v0.a.a;
+						var pageModel = _v0.b.a;
+						var _v2 = A2($author$project$Page$ImagesListPage$update, subMsg, pageModel);
+						var updatedPageModel = _v2.a;
+						var updatedCmd = _v2.b;
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									page: $author$project$Main$ImagesListPage(updatedPageModel)
+								}),
+							$elm$core$Platform$Cmd$none);
+					} else {
+						break _v0$7;
 					}
 				case 'CategoriesListPageMsg':
 					if (_v0.b.$ === 'CategoriesListPage') {
 						var subMsg = _v0.a.a;
 						var pageModel = _v0.b.a;
-						var _v2 = A2($author$project$Page$CategoriesListPage$update, subMsg, pageModel);
-						var updatedPageModel = _v2.a;
-						var updatedCmd = _v2.b;
+						var _v3 = A2($author$project$Page$CategoriesListPage$update, subMsg, pageModel);
+						var updatedPageModel = _v3.a;
+						var updatedCmd = _v3.b;
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
@@ -6178,7 +6325,41 @@ var $author$project$Main$update = F2(
 								}),
 							$elm$core$Platform$Cmd$none);
 					} else {
-						break _v0$4;
+						break _v0$7;
+					}
+				case 'EditImagePageMsg':
+					if (_v0.b.$ === 'EditImagePage') {
+						var subMsg = _v0.a.a;
+						var pageModel = _v0.b.a;
+						var _v4 = A2($author$project$Page$EditImagePage$update, subMsg, pageModel);
+						var updatedPageModel = _v4.a;
+						var updatedCmd = _v4.b;
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									page: $author$project$Main$EditImagePage(updatedPageModel)
+								}),
+							$elm$core$Platform$Cmd$none);
+					} else {
+						break _v0$7;
+					}
+				case 'AddImagePageMsg':
+					if (_v0.b.$ === 'AddImagePage') {
+						var subMsg = _v0.a.a;
+						var pageModel = _v0.b.a;
+						var _v5 = A2($author$project$Page$AddImagePage$update, subMsg, pageModel);
+						var updatedPageModel = _v5.a;
+						var updatedCmd = _v5.b;
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									page: $author$project$Main$AddImagePage(updatedPageModel)
+								}),
+							$elm$core$Platform$Cmd$none);
+					} else {
+						break _v0$7;
 					}
 				case 'LinkClicked':
 					var urlRequest = _v0.a.a;
@@ -6209,11 +6390,20 @@ var $author$project$Main$update = F2(
 		}
 		return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 	});
+var $author$project$Main$AddImagePageMsg = function (a) {
+	return {$: 'AddImagePageMsg', a: a};
+};
 var $author$project$Main$CategoriesListPageMsg = function (a) {
 	return {$: 'CategoriesListPageMsg', a: a};
 };
+var $author$project$Main$EditImagePageMsg = function (a) {
+	return {$: 'EditImagePageMsg', a: a};
+};
 var $author$project$Main$HomePageMsg = function (a) {
 	return {$: 'HomePageMsg', a: a};
+};
+var $author$project$Main$ImagesListPageMsg = function (a) {
+	return {$: 'ImagesListPageMsg', a: a};
 };
 var $elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
 var $elm$html$Html$map = $elm$virtual_dom$VirtualDom$map;
@@ -6227,15 +6417,15 @@ var $author$project$Main$notFoundView = A2(
 		[
 			$elm$html$Html$text('Oops! The page you requested was not found!')
 		]));
-var $author$project$Page$CategoriesListPage$FooterMsg = function (a) {
+var $author$project$Page$AddImagePage$File = {$: 'File'};
+var $author$project$Page$AddImagePage$FooterMsg = function (a) {
 	return {$: 'FooterMsg', a: a};
 };
-var $author$project$Page$CategoriesListPage$NavbarMsg = function (a) {
+var $author$project$Page$AddImagePage$NavbarMsg = function (a) {
 	return {$: 'NavbarMsg', a: a};
 };
-var $author$project$Page$CategoriesListPage$PopupMsg = function (a) {
-	return {$: 'PopupMsg', a: a};
-};
+var $author$project$Page$AddImagePage$Submit = {$: 'Submit'};
+var $author$project$Page$AddImagePage$Text = {$: 'Text'};
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
@@ -6246,107 +6436,137 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 	});
 var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
 var $elm$html$Html$div = _VirtualDom_node('div');
+var $elm$html$Html$form = _VirtualDom_node('form');
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
-var $author$project$Popup$CreatePopup = {$: 'CreatePopup'};
-var $author$project$Popup$ShowPopup = F2(
-	function (a, b) {
-		return {$: 'ShowPopup', a: a, b: b};
-	});
 var $elm$html$Html$button = _VirtualDom_node('button');
-var $elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
-};
-var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var $elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			$elm$virtual_dom$VirtualDom$on,
-			event,
-			$elm$virtual_dom$VirtualDom$Normal(decoder));
+var $elm$html$Html$input = _VirtualDom_node('input');
+var $elm$html$Html$label = _VirtualDom_node('label');
+var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
+var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
+var $author$project$Page$AddImagePage$renderInput = F2(
+	function (title, inputType) {
+		switch (inputType.$) {
+			case 'Text':
+				return A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('input_container')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$label,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text(title)
+								])),
+							A2(
+							$elm$html$Html$input,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$type_('text'),
+									$elm$html$Html$Attributes$placeholder(title)
+								]),
+							_List_Nil)
+						]));
+			case 'File':
+				return A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('input_container')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$label,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text(title)
+								])),
+							A2(
+							$elm$html$Html$input,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$type_('file'),
+									$elm$html$Html$Attributes$placeholder(title)
+								]),
+							_List_Nil)
+						]));
+			default:
+				return A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('btn primary')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Confirmer')
+						]));
+		}
 	});
-var $elm$html$Html$Events$onClick = function (msg) {
+var $elm$html$Html$Attributes$for = $elm$html$Html$Attributes$stringProperty('htmlFor');
+var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
+var $elm$html$Html$Attributes$name = $elm$html$Html$Attributes$stringProperty('name');
+var $elm$html$Html$option = _VirtualDom_node('option');
+var $elm$html$Html$select = _VirtualDom_node('select');
+var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
+var $author$project$Page$AddImagePage$renderSelect = function (label_txt) {
 	return A2(
-		$elm$html$Html$Events$on,
-		'click',
-		$elm$json$Json$Decode$succeed(msg));
-};
-var $author$project$Page$CategoriesListPage$renderButtonCreate = function () {
-	var createPopupMsg = $author$project$Page$CategoriesListPage$PopupMsg(
-		A2($author$project$Popup$ShowPopup, $author$project$Popup$CreatePopup, 'Entrez le titre de la nouvelle catégorie'));
-	return A2(
-		$elm$html$Html$button,
+		$elm$html$Html$div,
 		_List_fromArray(
 			[
-				$elm$html$Html$Attributes$class('btn primary'),
-				$elm$html$Html$Events$onClick(createPopupMsg)
-			]),
-		_List_fromArray(
-			[
-				$elm$html$Html$text('Créer')
-			]));
-}();
-var $author$project$Popup$DeletePopup = {$: 'DeletePopup'};
-var $author$project$Popup$EditPopup = {$: 'EditPopup'};
-var $elm$html$Html$p = _VirtualDom_node('p');
-var $author$project$Page$CategoriesListPage$renderThumbnails = function () {
-	var editPopupMsg = $author$project$Page$CategoriesListPage$PopupMsg(
-		A2($author$project$Popup$ShowPopup, $author$project$Popup$EditPopup, 'Veuillez modifier le titre de la catégorie ?'));
-	var deletePopupMsg = $author$project$Page$CategoriesListPage$PopupMsg(
-		A2($author$project$Popup$ShowPopup, $author$project$Popup$DeletePopup, 'Voulez-vous supprimer la catégorie ?'));
-	return A2(
-		$elm$html$Html$button,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('categories_thumbnail')
+				$elm$html$Html$Attributes$class('input_container')
 			]),
 		_List_fromArray(
 			[
 				A2(
-				$elm$html$Html$p,
+				$elm$html$Html$label,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('category_name')
+						$elm$html$Html$Attributes$for('tags')
 					]),
 				_List_fromArray(
 					[
-						$elm$html$Html$text('Voiture')
+						$elm$html$Html$text(label_txt)
 					])),
 				A2(
-				$elm$html$Html$button,
+				$elm$html$Html$select,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('icon_container pointer'),
-						$elm$html$Html$Events$onClick(deletePopupMsg)
+						$elm$html$Html$Attributes$name('tags'),
+						$elm$html$Html$Attributes$id('tags')
 					]),
 				_List_fromArray(
 					[
 						A2(
-						$elm$html$Html$div,
+						$elm$html$Html$option,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$class('icon icon_trash')
+								$elm$html$Html$Attributes$value('')
 							]),
-						_List_Nil)
-					])),
-				A2(
-				$elm$html$Html$button,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('icon_container pointer'),
-						$elm$html$Html$Events$onClick(editPopupMsg)
-					]),
-				_List_fromArray(
-					[
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Choisir')
+							])),
 						A2(
-						$elm$html$Html$div,
+						$elm$html$Html$option,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$class('icon icon_pen')
+								$elm$html$Html$Attributes$value('')
 							]),
-						_List_Nil)
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Choisir')
+							]))
 					]))
 			]));
-}();
+};
+var $elm$html$Html$p = _VirtualDom_node('p');
 var $elm$html$Html$a = _VirtualDom_node('a');
 var $elm$html$Html$Attributes$href = function (url) {
 	return A2(
@@ -6419,8 +6639,178 @@ var $author$project$Navbar$view = function (model) {
 			]),
 		navbar);
 };
+var $author$project$Page$AddImagePage$view = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$map,
+				$author$project$Page$AddImagePage$NavbarMsg,
+				$author$project$Navbar$view(model.navbar)),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('container')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('add_image_section')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$h1,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Ajout d\'image')
+									])),
+								A2(
+								$elm$html$Html$form,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('add_image_form')
+									]),
+								_List_fromArray(
+									[
+										A2($author$project$Page$AddImagePage$renderInput, 'Titre', $author$project$Page$AddImagePage$Text),
+										A2($author$project$Page$AddImagePage$renderInput, 'Catégorie', $author$project$Page$AddImagePage$Text),
+										$author$project$Page$AddImagePage$renderSelect('Tags'),
+										A2(
+										$elm$html$Html$div,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('add_image_tags')
+											]),
+										_List_fromArray(
+											[
+												A2($author$project$Page$AddImagePage$renderInput, '', $author$project$Page$AddImagePage$File)
+											])),
+										A2($author$project$Page$AddImagePage$renderInput, '', $author$project$Page$AddImagePage$Submit)
+									]))
+							]))
+					])),
+				A2(
+				$elm$html$Html$map,
+				$author$project$Page$AddImagePage$FooterMsg,
+				$author$project$Footer$view(model.footer))
+			]));
+};
+var $author$project$Page$CategoriesListPage$FooterMsg = function (a) {
+	return {$: 'FooterMsg', a: a};
+};
+var $author$project$Page$CategoriesListPage$NavbarMsg = function (a) {
+	return {$: 'NavbarMsg', a: a};
+};
+var $author$project$Page$CategoriesListPage$PopupMsg = function (a) {
+	return {$: 'PopupMsg', a: a};
+};
+var $author$project$Popup$CreatePopup = {$: 'CreatePopup'};
+var $author$project$Popup$ShowPopup = F2(
+	function (a, b) {
+		return {$: 'ShowPopup', a: a, b: b};
+	});
+var $elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var $elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var $elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'click',
+		$elm$json$Json$Decode$succeed(msg));
+};
+var $author$project$Page$CategoriesListPage$renderButtonCreate = function () {
+	var createPopupMsg = $author$project$Page$CategoriesListPage$PopupMsg(
+		A2($author$project$Popup$ShowPopup, $author$project$Popup$CreatePopup, 'Entrez le titre de la nouvelle catégorie'));
+	return A2(
+		$elm$html$Html$button,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('btn primary'),
+				$elm$html$Html$Events$onClick(createPopupMsg)
+			]),
+		_List_fromArray(
+			[
+				$elm$html$Html$text('Créer')
+			]));
+}();
+var $author$project$Popup$DeletePopup = {$: 'DeletePopup'};
+var $author$project$Popup$EditPopup = {$: 'EditPopup'};
+var $author$project$Page$CategoriesListPage$renderThumbnails = function () {
+	var editPopupMsg = $author$project$Page$CategoriesListPage$PopupMsg(
+		A2($author$project$Popup$ShowPopup, $author$project$Popup$EditPopup, 'Veuillez modifier le titre de la catégorie ?'));
+	var deletePopupMsg = $author$project$Page$CategoriesListPage$PopupMsg(
+		A2($author$project$Popup$ShowPopup, $author$project$Popup$DeletePopup, 'Voulez-vous supprimer la catégorie ?'));
+	return A2(
+		$elm$html$Html$button,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('categories_thumbnail')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$p,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('category_name')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Voiture')
+					])),
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('icon_container pointer'),
+						$elm$html$Html$Events$onClick(deletePopupMsg)
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('icon icon_trash')
+							]),
+						_List_Nil)
+					])),
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('icon_container pointer'),
+						$elm$html$Html$Events$onClick(editPopupMsg)
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('icon icon_pen')
+							]),
+						_List_Nil)
+					]))
+			]));
+}();
 var $author$project$Popup$HidePopup = {$: 'HidePopup'};
-var $elm$html$Html$input = _VirtualDom_node('input');
 var $author$project$Popup$renderCreatePopup = F2(
 	function (model, classname) {
 		return A2(
@@ -6689,6 +7079,196 @@ var $author$project$Page$CategoriesListPage$view = function (model) {
 				A2(
 				$elm$html$Html$map,
 				$author$project$Page$CategoriesListPage$FooterMsg,
+				$author$project$Footer$view(model.footer))
+			]));
+};
+var $author$project$Page$EditImagePage$File = {$: 'File'};
+var $author$project$Page$EditImagePage$FooterMsg = function (a) {
+	return {$: 'FooterMsg', a: a};
+};
+var $author$project$Page$EditImagePage$NavbarMsg = function (a) {
+	return {$: 'NavbarMsg', a: a};
+};
+var $author$project$Page$EditImagePage$Submit = {$: 'Submit'};
+var $author$project$Page$EditImagePage$Text = {$: 'Text'};
+var $author$project$Page$EditImagePage$renderInput = F2(
+	function (title, inputType) {
+		switch (inputType.$) {
+			case 'Text':
+				return A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('input_container')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$label,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text(title)
+								])),
+							A2(
+							$elm$html$Html$input,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$type_('text'),
+									$elm$html$Html$Attributes$placeholder(title)
+								]),
+							_List_Nil)
+						]));
+			case 'File':
+				return A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('input_container')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$label,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text(title)
+								])),
+							A2(
+							$elm$html$Html$input,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$type_('file'),
+									$elm$html$Html$Attributes$placeholder(title)
+								]),
+							_List_Nil)
+						]));
+			default:
+				return A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('btn primary')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Confirmer')
+						]));
+		}
+	});
+var $author$project$Page$EditImagePage$renderSelect = function (label_txt) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('input_container')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$label,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$for('tags')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(label_txt)
+					])),
+				A2(
+				$elm$html$Html$select,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$name('tags'),
+						$elm$html$Html$Attributes$id('tags')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$option,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$value('')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Choisir')
+							])),
+						A2(
+						$elm$html$Html$option,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$value('')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Choisir')
+							]))
+					]))
+			]));
+};
+var $author$project$Page$EditImagePage$view = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$map,
+				$author$project$Page$EditImagePage$NavbarMsg,
+				$author$project$Navbar$view(model.navbar)),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('container')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('edit_image_section')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$h1,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Edition d\'image')
+									])),
+								A2(
+								$elm$html$Html$form,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('edit_image_form')
+									]),
+								_List_fromArray(
+									[
+										A2($author$project$Page$EditImagePage$renderInput, 'Titre', $author$project$Page$EditImagePage$Text),
+										A2($author$project$Page$EditImagePage$renderInput, 'Catégorie', $author$project$Page$EditImagePage$Text),
+										$author$project$Page$EditImagePage$renderSelect('Tags'),
+										A2(
+										$elm$html$Html$div,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('edit_image_tags')
+											]),
+										_List_fromArray(
+											[
+												A2($author$project$Page$EditImagePage$renderInput, '', $author$project$Page$EditImagePage$File)
+											])),
+										A2($author$project$Page$EditImagePage$renderInput, '', $author$project$Page$EditImagePage$Submit)
+									]))
+							]))
+					])),
+				A2(
+				$elm$html$Html$map,
+				$author$project$Page$EditImagePage$FooterMsg,
 				$author$project$Footer$view(model.footer))
 			]));
 };
@@ -6984,6 +7564,176 @@ var $author$project$Page$HomePage$view = function (model) {
 				$author$project$Footer$view(model.footer))
 			]));
 };
+var $author$project$Page$ImagesListPage$FooterMsg = function (a) {
+	return {$: 'FooterMsg', a: a};
+};
+var $author$project$Page$ImagesListPage$NavbarMsg = function (a) {
+	return {$: 'NavbarMsg', a: a};
+};
+var $author$project$Page$ImagesListPage$PopupMsg = function (a) {
+	return {$: 'PopupMsg', a: a};
+};
+var $author$project$Page$ImagesListPage$renderButtonCreate = A2(
+	$elm$html$Html$a,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$href('/add'),
+			$elm$html$Html$Attributes$class('btn primary')
+		]),
+	_List_fromArray(
+		[
+			$elm$html$Html$text('Créer')
+		]));
+var $author$project$Page$ImagesListPage$renderThumbnails = function () {
+	var deletePopupMsg = $author$project$Page$ImagesListPage$PopupMsg(
+		A2($author$project$Popup$ShowPopup, $author$project$Popup$DeletePopup, 'Voulez-vous supprimer l\'image ?'));
+	return A2(
+		$elm$html$Html$button,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('images_thumbnail')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('image_tags')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$span,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('tag_thumbnails')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Rouge')
+							])),
+						A2(
+						$elm$html$Html$span,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('tag_thumbnails')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('BMW')
+							]))
+					])),
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('icon_container icon_container_trash pointer'),
+						$elm$html$Html$Events$onClick(deletePopupMsg)
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('icon icon_trash')
+							]),
+						_List_Nil)
+					])),
+				A2(
+				$elm$html$Html$a,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$href('/voiture'),
+						$elm$html$Html$Attributes$class('icon_container icon_container_edit pointer')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('icon icon_pen')
+							]),
+						_List_Nil)
+					])),
+				A2(
+				$elm$html$Html$a,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$href('#'),
+						$elm$html$Html$Attributes$class('image_category')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Voiture')
+					]))
+			]));
+}();
+var $author$project$Page$ImagesListPage$view = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$map,
+				$author$project$Page$ImagesListPage$PopupMsg,
+				$author$project$Popup$view(model.popup)),
+				A2(
+				$elm$html$Html$map,
+				$author$project$Page$ImagesListPage$NavbarMsg,
+				$author$project$Navbar$view(model.navbar)),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('container')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('images_section')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('images_head')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$h1,
+										_List_Nil,
+										_List_fromArray(
+											[
+												$elm$html$Html$text('images')
+											])),
+										$author$project$Page$ImagesListPage$renderButtonCreate
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('images_thumbnails')
+									]),
+								_List_fromArray(
+									[$author$project$Page$ImagesListPage$renderThumbnails, $author$project$Page$ImagesListPage$renderThumbnails, $author$project$Page$ImagesListPage$renderThumbnails]))
+							]))
+					])),
+				A2(
+				$elm$html$Html$map,
+				$author$project$Page$ImagesListPage$FooterMsg,
+				$author$project$Footer$view(model.footer))
+			]));
+};
 var $author$project$Main$currentView = function (model) {
 	var _v0 = model.page;
 	switch (_v0.$) {
@@ -6995,6 +7745,24 @@ var $author$project$Main$currentView = function (model) {
 				$elm$html$Html$map,
 				$author$project$Main$HomePageMsg,
 				$author$project$Page$HomePage$view(pageModel));
+		case 'ImagesListPage':
+			var pageModel = _v0.a;
+			return A2(
+				$elm$html$Html$map,
+				$author$project$Main$ImagesListPageMsg,
+				$author$project$Page$ImagesListPage$view(pageModel));
+		case 'EditImagePage':
+			var pageModel = _v0.a;
+			return A2(
+				$elm$html$Html$map,
+				$author$project$Main$EditImagePageMsg,
+				$author$project$Page$EditImagePage$view(pageModel));
+		case 'AddImagePage':
+			var pageModel = _v0.a;
+			return A2(
+				$elm$html$Html$map,
+				$author$project$Main$AddImagePageMsg,
+				$author$project$Page$AddImagePage$view(pageModel));
 		default:
 			var pageModel = _v0.a;
 			return A2(

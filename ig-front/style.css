@@ -41,6 +41,25 @@ button {
     border-radius: 15px;
 }
 
+.input_container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px; 
+}
+
+label {
+    margin-bottom: 10px;
+}
+
+input, select {
+    height: 30px;
+    padding-left: 5px;
+}
+
+input[type="file"] {
+    padding: 0;
+}
+
 /*********************************************************************/
 /*                              ICONS                                */
 /*********************************************************************/
@@ -146,6 +165,7 @@ button {
 /*********************************************************************/
 
 .btn {
+    text-decoration: none;
     border: none;
     color: black;
     padding: 15px 20px;
@@ -365,6 +385,134 @@ button {
 }
 
 /*********************************************************************/
+/*                              IMAGES                               */
+/*********************************************************************/
+
+.images_head {
+    padding: 0px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.images_thumbnails {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 30px;
+    align-items: center;
+}
+
+.images_thumbnail {
+    width: 280px;
+    height: 280px;
+    background: #333;
+    position: relative;
+    color: white;
+    display: flex;
+    margin-bottom: 50px;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    text-decoration: none;
+}
+
+.images_thumbnail:nth-of-type(3) {
+    margin: 0;
+}
+
+.images_thumbnails .icon_container {
+    position: absolute;
+    bottom: 50px;
+}
+
+.images_thumbnails .icon_container_edit {
+    right: 50px;
+}
+
+.images_thumbnails .icon_container_trash {
+    right: 0;
+}
+
+.image_category {
+    display: block;
+    line-height: 50px;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    background: #e0e0e0;
+    color: #333;
+    text-decoration: none;
+    text-align: center;
+}
+
+.image_tags {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+.image_tags .tag_thumbnails:nth-of-type(2) {
+    margin-left: 10px;
+}
+
+.images_section .link:first-of-type {
+    margin-bottom: 10px;
+}
+
+.images_section .link:nth-of-type(2) {
+    margin-bottom: 30px;
+}
+
+/*********************************************************************/
+/*                            EDIT IMAGE                             */
+/*********************************************************************/
+
+.edit_image_form {
+    width: 320px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.input_container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px; 
+}
+
+label {
+    margin-bottom: 10px;
+}
+
+input, select {
+    height: 30px;
+    padding-left: 5px;
+}
+
+input[type="file"] {
+    padding: 0;
+}
+
+.edit_image_form .btn {
+    justify-items: center;
+}
+
+/*********************************************************************/
+/*                             ADD IMAGE                             */
+/*********************************************************************/
+
+.add_image_form {
+    width: 320px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.add_image_form .btn {
+    justify-items: center;
+}
+
+/*********************************************************************/
 /*                              FOOTER                               */
 /*********************************************************************/
 
@@ -478,6 +626,25 @@ button {
     }
 
     .categories_thumbnail {
+        margin: 0;
+    }
+
+/*********************************************************************/
+/*                              IMAGES                               */
+/*********************************************************************/
+
+    .images_head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .images_thumbnails {
+        flex-direction: row;
+        justify-content: space-around;
+    }
+
+    .images_thumbnail {
         margin: 0;
     }
 }

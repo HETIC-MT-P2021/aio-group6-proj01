@@ -1,4 +1,4 @@
-module Page.CategoriesListPage exposing (..)
+module Page.ImagesListPage exposing (..)
 
 import Html exposing (Html, Attribute, h1, p, span, a, button, div, text, map)
 import Html.Attributes exposing (class, href)
@@ -46,11 +46,8 @@ update msg model =
 
 renderButtonCreate : Html Msg
 renderButtonCreate =
-    let
-        createPopupMsg = PopupMsg (Popup.ShowPopup Popup.CreatePopup "Entrez le titre de la nouvelle catégorie")
-    in
-        button [ class "btn primary", onClick createPopupMsg ] [ text "Créer" ]
-        
+    a [ href "/add", class "btn primary" ] [ text "Créer" ]
+
 renderThumbnails : Html Msg
 renderThumbnails =
     let
@@ -65,16 +62,19 @@ renderThumbnails =
             - Title of Popup
         -}
 
-        editPopupMsg = PopupMsg (Popup.ShowPopup Popup.EditPopup "Veuillez modifier le titre de la catégorie ?")
-        deletePopupMsg = PopupMsg (Popup.ShowPopup Popup.DeletePopup "Voulez-vous supprimer la catégorie ?")
+        deletePopupMsg = PopupMsg (Popup.ShowPopup Popup.DeletePopup "Voulez-vous supprimer l'image ?")
   
     in
-        button [ class "categories_thumbnail" ] 
-        [ p [ class "category_name" ] [ text "Voiture" ]
-        , button [ class "icon_container pointer", onClick (deletePopupMsg) ] 
+        button [ class "images_thumbnail" ] 
+        [ div [ class "image_tags" ] 
+            [ span [ class "tag_thumbnails" ] [ text "Rouge" ]
+            , span [ class "tag_thumbnails" ] [ text "BMW" ]
+            ]
+        , button [ class "icon_container icon_container_trash pointer", onClick (deletePopupMsg) ] 
             [ div [ class "icon icon_trash" ] [] ]
-        , button [ class "icon_container pointer", onClick (editPopupMsg) ] 
+        , a [ href "/voiture", class "icon_container icon_container_edit pointer" ] 
             [ div [ class "icon icon_pen" ] [] ]
+        , a [ href "#", class "image_category" ] [ text "Voiture" ]
         ]
 
 view : Model -> Html Msg
@@ -83,12 +83,12 @@ view model =
     [ map PopupMsg (Popup.view model.popup)
     , map NavbarMsg (Navbar.view model.navbar)
     , div [ class "container" ] 
-          [ div [ class "categories_section" ] 
-            [ div [ class "categories_head" ] 
-                [ h1 [] [ text "catégories" ]
+          [ div [ class "images_section" ] 
+            [ div [ class "images_head" ] 
+                [ h1 [] [ text "images" ]
                 , renderButtonCreate
                 ]
-            , div [ class "categories_thumbnails" ] 
+            , div [ class "images_thumbnails" ] 
                 [ renderThumbnails
                 , renderThumbnails
                 , renderThumbnails
