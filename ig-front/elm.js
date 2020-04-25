@@ -7585,10 +7585,8 @@ var $author$project$Page$ImagesListPage$renderButtonCreate = A2(
 			$elm$html$Html$text('Créer')
 		]));
 var $author$project$Page$ImagesListPage$renderThumbnails = function () {
-	var editPopupMsg = $author$project$Page$ImagesListPage$PopupMsg(
-		A2($author$project$Popup$ShowPopup, $author$project$Popup$EditPopup, 'Veuillez modifier le titre de la catégorie ?'));
 	var deletePopupMsg = $author$project$Page$ImagesListPage$PopupMsg(
-		A2($author$project$Popup$ShowPopup, $author$project$Popup$DeletePopup, 'Voulez-vous supprimer la catégorie ?'));
+		A2($author$project$Popup$ShowPopup, $author$project$Popup$DeletePopup, 'Voulez-vous supprimer l\'image ?'));
 	return A2(
 		$elm$html$Html$button,
 		_List_fromArray(
