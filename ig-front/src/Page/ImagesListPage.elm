@@ -46,7 +46,7 @@ update msg model =
 
 renderButtonCreate : Html Msg
 renderButtonCreate =
-    a [ href "/images/new", class "btn primary" ] [ text "Créer" ]
+    a [ href "/add", class "btn primary" ] [ text "Créer" ]
 
 renderThumbnails : Html Msg
 renderThumbnails =

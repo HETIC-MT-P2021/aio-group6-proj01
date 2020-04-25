@@ -41,6 +41,25 @@ button {
     border-radius: 15px;
 }
 
+.input_container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px; 
+}
+
+label {
+    margin-bottom: 10px;
+}
+
+input, select {
+    height: 30px;
+    padding-left: 5px;
+}
+
+input[type="file"] {
+    padding: 0;
+}
+
 /*********************************************************************/
 /*                              ICONS                                */
 /*********************************************************************/
@@ -146,6 +165,7 @@ button {
 /*********************************************************************/
 
 .btn {
+    text-decoration: none;
     border: none;
     color: black;
     padding: 15px 20px;
@@ -474,6 +494,21 @@ input[type="file"] {
 }
 
 .edit_image_form .btn {
+    justify-items: center;
+}
+
+/*********************************************************************/
+/*                             ADD IMAGE                             */
+/*********************************************************************/
+
+.add_image_form {
+    width: 320px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.add_image_form .btn {
     justify-items: center;
 }
 

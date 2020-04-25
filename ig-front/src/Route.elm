@@ -9,6 +9,7 @@ type Route
     | Home
     | Images
     | EditImage
+    | AddImage
     | Categories
 
 
@@ -29,5 +30,6 @@ matchRoute =
         , Parser.map Home (s "home")
         , Parser.map Images (s "images")
         , Parser.map EditImage (s "voiture")
+        , Parser.map AddImage (s "add")
         , Parser.map Categories (s "categories")
         ]

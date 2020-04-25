@@ -16,6 +16,7 @@ import Route exposing (Route)
 import Page.HomePage as Home
 import Page.ImagesListPage as ImagesList
 import Page.EditImagePage as EditImage
+import Page.AddImagePage as AddImage
 import Page.CategoriesListPage as CategoriesList
 
 -- MAIN
@@ -44,6 +45,7 @@ type Page
     | HomePage Home.Model
     | ImagesListPage ImagesList.Model
     | EditImagePage EditImage.Model
+    | AddImagePage AddImage.Model
     | CategoriesListPage CategoriesList.Model
 
 -- UPDATE
@@ -56,6 +58,7 @@ type Msg
     = HomePageMsg Home.Msg
     | ImagesListPageMsg ImagesList.Msg
     | EditImagePageMsg EditImage.Msg
+    | AddImagePageMsg AddImage.Msg
     | CategoriesListPageMsg CategoriesList.Msg
     | LinkClicked Browser.UrlRequest
     | UrlChanged Url
@@ -96,6 +99,15 @@ update msg model =
             EditImage.update subMsg pageModel
       in
       ( { model | page = EditImagePage updatedPageModel }
+      , Cmd.none
+      )
+
+    ( AddImagePageMsg subMsg, AddImagePage pageModel ) ->
+      let
+          ( updatedPageModel, updatedCmd ) =
+            AddImage.update subMsg pageModel
+      in
+      ( { model | page = AddImagePage updatedPageModel }
       , Cmd.none
       )
 
@@ -162,6 +174,13 @@ initCurrentPage ( model, existingCmds ) =
             in
             ( EditImagePage pageModel, Cmd.none )
 
+          Route.AddImage ->
+            let
+              ( pageModel, pageCmds ) =
+                AddImage.init
+            in
+            ( AddImagePage pageModel, Cmd.none )
+
           Route.Categories ->
             let
               ( pageModel, pageCmds ) =
@@ -198,6 +217,10 @@ currentView model =
     EditImagePage pageModel ->
       EditImage.view pageModel
         |> Html.map EditImagePageMsg
+
+    AddImagePage pageModel ->
+      AddImage.view pageModel
+        |> Html.map AddImagePageMsg
 
     CategoriesListPage pageModel ->
       CategoriesList.view pageModel
