@@ -53,3 +53,6 @@
 
 # Ignore Idea's software files
 /.idea
+
+# Environnement files
+/.env
