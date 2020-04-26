@@ -5349,6 +5349,9 @@ var $author$project$Main$AddImagePage = function (a) {
 var $author$project$Main$CategoriesListPage = function (a) {
 	return {$: 'CategoriesListPage', a: a};
 };
+var $author$project$Main$CategoriesListPageMsg = function (a) {
+	return {$: 'CategoriesListPageMsg', a: a};
+};
 var $author$project$Main$EditImagePage = function (a) {
 	return {$: 'EditImagePage', a: a};
 };
@@ -5385,18 +5388,51 @@ var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Page$AddImagePage$init = _Utils_Tuple2(
 	{footer: $author$project$Footer$init, navbar: $author$project$Navbar$init},
 	$elm$core$Platform$Cmd$none);
-var $author$project$Popup$EmptyPopup = {$: 'EmptyPopup'};
-var $author$project$Popup$init = {isPopupOpen: false, popupType: $author$project$Popup$EmptyPopup, title: 'Test'};
-var $author$project$Page$CategoriesListPage$init = _Utils_Tuple2(
-	{footer: $author$project$Footer$init, navbar: $author$project$Navbar$init, popup: $author$project$Popup$init},
-	$elm$core$Platform$Cmd$none);
-var $author$project$Page$EditImagePage$init = _Utils_Tuple2(
-	{footer: $author$project$Footer$init, navbar: $author$project$Navbar$init},
-	$elm$core$Platform$Cmd$none);
 var $krisajenkins$remotedata$RemoteData$Loading = {$: 'Loading'};
-var $author$project$Page$HomePage$ImagesReceived = function (a) {
-	return {$: 'ImagesReceived', a: a};
+var $author$project$Page$CategoriesListPage$CategoriesReceived = function (a) {
+	return {$: 'CategoriesReceived', a: a};
 };
+var $author$project$Categories$Category = F4(
+	function (id, title, addedAt, updatedAt) {
+		return {addedAt: addedAt, id: id, title: title, updatedAt: updatedAt};
+	});
+var $author$project$Categories$CategoryId = function (a) {
+	return {$: 'CategoryId', a: a};
+};
+var $elm$json$Json$Decode$int = _Json_decodeInt;
+var $author$project$Categories$idDecoder = A2($elm$json$Json$Decode$map, $author$project$Categories$CategoryId, $elm$json$Json$Decode$int);
+var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom = $elm$json$Json$Decode$map2($elm$core$Basics$apR);
+var $elm$json$Json$Decode$field = _Json_decodeField;
+var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required = F3(
+	function (key, valDecoder, decoder) {
+		return A2(
+			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom,
+			A2($elm$json$Json$Decode$field, key, valDecoder),
+			decoder);
+	});
+var $elm$json$Json$Decode$string = _Json_decodeString;
+var $author$project$Categories$categoryDecoder = A3(
+	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+	'updatedAt',
+	$elm$json$Json$Decode$string,
+	A3(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'addedAt',
+		$elm$json$Json$Decode$string,
+		A3(
+			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+			'title',
+			$elm$json$Json$Decode$string,
+			A3(
+				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+				'id',
+				$author$project$Categories$idDecoder,
+				$elm$json$Json$Decode$succeed($author$project$Categories$Category)))));
+var $elm$json$Json$Decode$list = _Json_decodeList;
+var $author$project$Categories$categoriesDecoder = A2(
+	$elm$json$Json$Decode$field,
+	'hydra:member',
+	$elm$json$Json$Decode$list($author$project$Categories$categoryDecoder));
 var $elm$core$Basics$composeR = F3(
 	function (f, g, x) {
 		return g(
@@ -6027,55 +6063,6 @@ var $krisajenkins$remotedata$RemoteData$fromResult = function (result) {
 		return $krisajenkins$remotedata$RemoteData$Success(x);
 	}
 };
-var $elm$json$Json$Decode$field = _Json_decodeField;
-var $author$project$Images$Image = F6(
-	function (id, category, path, description, addedAt, updatedAt) {
-		return {addedAt: addedAt, category: category, description: description, id: id, path: path, updatedAt: updatedAt};
-	});
-var $author$project$Images$ImageId = function (a) {
-	return {$: 'ImageId', a: a};
-};
-var $elm$json$Json$Decode$int = _Json_decodeInt;
-var $author$project$Images$idDecoder = A2($elm$json$Json$Decode$map, $author$project$Images$ImageId, $elm$json$Json$Decode$int);
-var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom = $elm$json$Json$Decode$map2($elm$core$Basics$apR);
-var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required = F3(
-	function (key, valDecoder, decoder) {
-		return A2(
-			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom,
-			A2($elm$json$Json$Decode$field, key, valDecoder),
-			decoder);
-	});
-var $elm$json$Json$Decode$string = _Json_decodeString;
-var $author$project$Images$imageDecoder = A3(
-	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-	'updatedAt',
-	$elm$json$Json$Decode$string,
-	A3(
-		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-		'addedAt',
-		$elm$json$Json$Decode$string,
-		A3(
-			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-			'description',
-			$elm$json$Json$Decode$string,
-			A3(
-				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-				'path',
-				$elm$json$Json$Decode$string,
-				A3(
-					$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-					'category',
-					$elm$json$Json$Decode$string,
-					A3(
-						$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-						'id',
-						$author$project$Images$idDecoder,
-						$elm$json$Json$Decode$succeed($author$project$Images$Image)))))));
-var $elm$json$Json$Decode$list = _Json_decodeList;
-var $author$project$Images$imagesDecoder = A2(
-	$elm$json$Json$Decode$field,
-	'hydra:member',
-	$elm$json$Json$Decode$list($author$project$Images$imageDecoder));
 var $elm$http$Http$Request = function (a) {
 	return {$: 'Request', a: a};
 };
@@ -6244,6 +6231,67 @@ var $elm$http$Http$request = function (r) {
 		$elm$http$Http$Request(
 			{allowCookiesFromOtherDomains: false, body: r.body, expect: r.expect, headers: r.headers, method: r.method, timeout: r.timeout, tracker: r.tracker, url: r.url}));
 };
+var $author$project$Page$CategoriesListPage$fetchCategories = $elm$http$Http$request(
+	{
+		body: $elm$http$Http$emptyBody,
+		expect: A2(
+			$elm$http$Http$expectJson,
+			A2($elm$core$Basics$composeR, $krisajenkins$remotedata$RemoteData$fromResult, $author$project$Page$CategoriesListPage$CategoriesReceived),
+			$author$project$Categories$categoriesDecoder),
+		headers: _List_Nil,
+		method: 'GET',
+		timeout: $elm$core$Maybe$Nothing,
+		tracker: $elm$core$Maybe$Nothing,
+		url: 'http://localhost:8001/api/categories'
+	});
+var $author$project$Popup$EmptyPopup = {$: 'EmptyPopup'};
+var $author$project$Popup$init = {isPopupOpen: false, popupType: $author$project$Popup$EmptyPopup, title: 'Test'};
+var $author$project$Page$CategoriesListPage$init = _Utils_Tuple2(
+	{categories: $krisajenkins$remotedata$RemoteData$Loading, footer: $author$project$Footer$init, navbar: $author$project$Navbar$init, popup: $author$project$Popup$init},
+	$author$project$Page$CategoriesListPage$fetchCategories);
+var $author$project$Page$EditImagePage$init = _Utils_Tuple2(
+	{footer: $author$project$Footer$init, navbar: $author$project$Navbar$init},
+	$elm$core$Platform$Cmd$none);
+var $author$project$Page$HomePage$ImagesReceived = function (a) {
+	return {$: 'ImagesReceived', a: a};
+};
+var $author$project$Images$Image = F6(
+	function (id, category, path, description, addedAt, updatedAt) {
+		return {addedAt: addedAt, category: category, description: description, id: id, path: path, updatedAt: updatedAt};
+	});
+var $author$project$Images$ImageId = function (a) {
+	return {$: 'ImageId', a: a};
+};
+var $author$project$Images$idDecoder = A2($elm$json$Json$Decode$map, $author$project$Images$ImageId, $elm$json$Json$Decode$int);
+var $author$project$Images$imageDecoder = A3(
+	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+	'updatedAt',
+	$elm$json$Json$Decode$string,
+	A3(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'addedAt',
+		$elm$json$Json$Decode$string,
+		A3(
+			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+			'description',
+			$elm$json$Json$Decode$string,
+			A3(
+				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+				'path',
+				$elm$json$Json$Decode$string,
+				A3(
+					$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+					'category',
+					$elm$json$Json$Decode$string,
+					A3(
+						$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+						'id',
+						$author$project$Images$idDecoder,
+						$elm$json$Json$Decode$succeed($author$project$Images$Image)))))));
+var $author$project$Images$imagesDecoder = A2(
+	$elm$json$Json$Decode$field,
+	'hydra:member',
+	$elm$json$Json$Decode$list($author$project$Images$imageDecoder));
 var $author$project$Page$HomePage$fetchImages = $elm$http$Http$request(
 	{
 		body: $elm$http$Http$emptyBody,
@@ -6322,7 +6370,7 @@ var $author$project$Main$initCurrentPage = function (_v0) {
 				var pageCmds = _v7.b;
 				return _Utils_Tuple2(
 					$author$project$Main$CategoriesListPage(pageModel),
-					$elm$core$Platform$Cmd$none);
+					A2($elm$core$Platform$Cmd$map, $author$project$Main$CategoriesListPageMsg, pageCmds));
 		}
 	}();
 	var currentPage = _v1.a;
@@ -6720,7 +6768,7 @@ var $author$project$Page$CategoriesListPage$update = F2(
 							footer: A2($author$project$Footer$update, footerMsg, model.footer)
 						}),
 					$elm$core$Platform$Cmd$none);
-			default:
+			case 'PopupMsg':
 				var popupMsg = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
@@ -6728,6 +6776,19 @@ var $author$project$Page$CategoriesListPage$update = F2(
 						{
 							popup: A2($author$project$Popup$update, popupMsg, model.popup)
 						}),
+					$elm$core$Platform$Cmd$none);
+			case 'FetchCategories':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{categories: $krisajenkins$remotedata$RemoteData$Loading}),
+					$author$project$Page$CategoriesListPage$fetchCategories);
+			default:
+				var response = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{categories: response}),
 					$elm$core$Platform$Cmd$none);
 		}
 	});
@@ -6965,9 +7026,6 @@ var $author$project$Main$update = F2(
 	});
 var $author$project$Main$AddImagePageMsg = function (a) {
 	return {$: 'AddImagePageMsg', a: a};
-};
-var $author$project$Main$CategoriesListPageMsg = function (a) {
-	return {$: 'CategoriesListPageMsg', a: a};
 };
 var $author$project$Main$EditImagePageMsg = function (a) {
 	return {$: 'EditImagePageMsg', a: a};
@@ -7586,6 +7644,159 @@ var $author$project$Popup$view = function (model) {
 		return A2($author$project$Popup$renderPopup, model, 'popup_overlay hidden');
 	}
 };
+var $author$project$Page$CategoriesListPage$buildErrorMessage = function (httpError) {
+	switch (httpError.$) {
+		case 'BadUrl':
+			var message = httpError.a;
+			return message;
+		case 'Timeout':
+			return 'Server is taking too long to respond. Please try again later.';
+		case 'NetworkError':
+			return 'Unable to reach server.';
+		case 'BadStatus':
+			var statusCode = httpError.a;
+			return 'Request failed with status code: ' + $elm$core$String$fromInt(statusCode);
+		default:
+			var message = httpError.a;
+			return message;
+	}
+};
+var $elm$html$Html$table = _VirtualDom_node('table');
+var $author$project$Categories$idToString = function (categoryId) {
+	var id = categoryId.a;
+	return $elm$core$String$fromInt(id);
+};
+var $elm$html$Html$td = _VirtualDom_node('td');
+var $elm$html$Html$tr = _VirtualDom_node('tr');
+var $author$project$Page$CategoriesListPage$viewCategory = function (category) {
+	return A2(
+		$elm$html$Html$tr,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$td,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						$author$project$Categories$idToString(category.id))
+					])),
+				A2(
+				$elm$html$Html$td,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(category.title)
+					])),
+				A2(
+				$elm$html$Html$td,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(category.addedAt)
+					])),
+				A2(
+				$elm$html$Html$td,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(category.updatedAt)
+					]))
+			]));
+};
+var $author$project$Page$CategoriesListPage$viewFetchError = function (errorMessage) {
+	var errorHeading = 'Couldn\'t fetch posts at this time.';
+	return A2(
+		$elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$h3,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(errorHeading)
+					])),
+				$elm$html$Html$text('Error: ' + errorMessage)
+			]));
+};
+var $elm$html$Html$th = _VirtualDom_node('th');
+var $author$project$Page$CategoriesListPage$viewTableHeader = A2(
+	$elm$html$Html$tr,
+	_List_Nil,
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$th,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$elm$html$Html$text('id')
+				])),
+			A2(
+			$elm$html$Html$th,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$elm$html$Html$text('title')
+				])),
+			A2(
+			$elm$html$Html$th,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$elm$html$Html$text('addedAt')
+				])),
+			A2(
+			$elm$html$Html$th,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$elm$html$Html$text('updatedAt')
+				]))
+		]));
+var $author$project$Page$CategoriesListPage$viewCategories = function (categories) {
+	switch (categories.$) {
+		case 'NotAsked':
+			return $elm$html$Html$text('test');
+		case 'Loading':
+			return A2(
+				$elm$html$Html$h3,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Loading...')
+					]));
+		case 'Success':
+			var actualCategories = categories.a;
+			return A2(
+				$elm$html$Html$div,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$h3,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Posts')
+							])),
+						A2(
+						$elm$html$Html$table,
+						_List_Nil,
+						_Utils_ap(
+							_List_fromArray(
+								[$author$project$Page$CategoriesListPage$viewTableHeader]),
+							A2($elm$core$List$map, $author$project$Page$CategoriesListPage$viewCategory, actualCategories)))
+					]));
+		default:
+			var httpError = categories.a;
+			return $author$project$Page$CategoriesListPage$viewFetchError(
+				$author$project$Page$CategoriesListPage$buildErrorMessage(httpError));
+	}
+};
 var $author$project$Page$CategoriesListPage$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -7600,6 +7811,7 @@ var $author$project$Page$CategoriesListPage$view = function (model) {
 				$elm$html$Html$map,
 				$author$project$Page$CategoriesListPage$NavbarMsg,
 				$author$project$Navbar$view(model.navbar)),
+				$author$project$Page$CategoriesListPage$viewCategories(model.categories),
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(
@@ -8019,7 +8231,6 @@ var $author$project$Page$HomePage$buildErrorMessage = function (httpError) {
 			return message;
 	}
 };
-var $elm$html$Html$table = _VirtualDom_node('table');
 var $author$project$Page$HomePage$viewFetchError = function (errorMessage) {
 	var errorHeading = 'Couldn\'t fetch posts at this time.';
 	return A2(
@@ -8041,8 +8252,6 @@ var $author$project$Images$idToString = function (imageId) {
 	var id = imageId.a;
 	return $elm$core$String$fromInt(id);
 };
-var $elm$html$Html$td = _VirtualDom_node('td');
-var $elm$html$Html$tr = _VirtualDom_node('tr');
 var $author$project$Page$HomePage$viewImage = function (image) {
 	return A2(
 		$elm$html$Html$tr,
@@ -8094,7 +8303,6 @@ var $author$project$Page$HomePage$viewImage = function (image) {
 					]))
 			]));
 };
-var $elm$html$Html$th = _VirtualDom_node('th');
 var $author$project$Page$HomePage$viewTableHeader = A2(
 	$elm$html$Html$tr,
 	_List_Nil,

@@ -186,7 +186,7 @@ initCurrentPage ( model, existingCmds ) =
               ( pageModel, pageCmds ) =
                 CategoriesList.init
             in
-            ( CategoriesListPage pageModel, Cmd.none )
+            ( CategoriesListPage pageModel, Cmd.map CategoriesListPageMsg pageCmds )
     in
     ( { model | page = currentPage }
     , Cmd.batch [ existingCmds, mappedPageCmds ]
