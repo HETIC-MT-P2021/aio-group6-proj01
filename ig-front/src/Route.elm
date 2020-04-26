@@ -3,6 +3,7 @@ module Route exposing (Route(..), parseUrl)
 import Url exposing (Url)
 import Url.Parser as Parser exposing ((</>), parse, Parser, oneOf, s, string)
 
+import Images exposing (ImageId)
 
 type Route
     = NotFound
