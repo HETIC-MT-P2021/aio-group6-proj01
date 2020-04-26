@@ -1,6 +1,6 @@
 module Page.ImagesListPage exposing (..)
 
-import Html exposing (Html, Attribute, h1, h3, p, table, th, td, tr, span, a, button, div, text, map)
+import Html exposing (..)
 import Html.Attributes exposing (class, href)
 import Html.Events exposing (onClick)
 
@@ -115,23 +115,6 @@ renderThumbnails =
         , a [ href "#", class "image_category" ] [ text "Voiture" ]
         ]
 
-viewTableHeader : Html Msg
-viewTableHeader =
-  tr []
-      [ th []
-          [ text "id" ]
-      , th []
-          [ text "category" ]
-      , th []
-          [ text "path" ]
-      , th []
-          [ text "description" ]
-      , th []
-          [ text "addedAt" ]
-      , th []
-          [ text "updatedAt" ]
-      ]
-
 viewImages : WebData (List Image) -> Html Msg
 viewImages images =
     case images of
@@ -144,8 +127,8 @@ viewImages images =
         RemoteData.Success actualImages ->
             div [] 
               [ h3 [] [ text "Posts" ]
-              , table []
-                  ([ viewTableHeader ] ++ List.map viewImage actualImages)
+              , ul []
+                  (List.map viewImage actualImages)
               ]
 
         RemoteData.Failure httpError ->
@@ -182,20 +165,24 @@ buildErrorMessage httpError =
 
 viewImage : Image -> Html Msg
 viewImage image =
-  tr []
-    [ td []
-        [ text (Images.idToString image.id) ]
-    , td []
-        [ text image.category ]
-    , td []
-        [ text image.path ]
-    , td []
-        [ text image.description ]
-    , td []
-        [ text image.addedAt ]
-    , td []
-        [ text image.updatedAt ]
-    ]
+    let
+        tags = List.map (\tag -> li [] [ text tag ]) image.tags
+    in
+    div []
+        [ p []
+            [ text (Images.idToString image.id) ]
+        , p []
+            [ text image.category ]
+        , ul [] tags
+        , p []
+            [ text image.path ]
+        , p []
+            [ text image.description ]
+        , p []
+            [ text image.addedAt ]
+        , p []
+            [ text image.updatedAt ]
+        ]
 
 view : Model -> Html Msg
 view model =

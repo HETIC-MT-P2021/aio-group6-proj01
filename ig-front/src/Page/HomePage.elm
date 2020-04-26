@@ -1,6 +1,6 @@
 module Page.HomePage exposing (..)
 
-import Html exposing (Html, Attribute, h1, p, span, a, button, div, tr, th, td, h3, table, text, map)
+import Html exposing (..)
 import Html.Attributes exposing (class, href)
 import Html.Events exposing (onClick)
 import Http
@@ -82,14 +82,6 @@ update msg model =
     ImagesReceived response ->
       ( { model | images = response }, Cmd.none )
 
-{-    GotText result ->
-      case result of
-        Ok fullText ->
-          ({ model | text = (Success fullText)  }, Cmd.none)
-
-        Err _ ->
-          ({ model | text = (Failure)  }, Cmd.none)
--}
 -- VIEW
 
 renderThumbnails : ThumbnailsType -> Html Msg
@@ -135,23 +127,6 @@ renderThumbnails thumbnailsType =
         , a [ href "#", class "home_image_category" ] [ text "Voiture" ]
         ]
 
-viewTableHeader : Html Msg
-viewTableHeader =
-  tr []
-      [ th []
-          [ text "id" ]
-      , th []
-          [ text "category" ]
-      , th []
-          [ text "path" ]
-      , th []
-          [ text "description" ]
-      , th []
-          [ text "addedAt" ]
-      , th []
-          [ text "updatedAt" ]
-      ]
-
 viewImages : WebData (List Image) -> Html Msg
 viewImages images =
     case images of
@@ -164,8 +139,8 @@ viewImages images =
         RemoteData.Success actualImages ->
             div [] 
               [ h3 [] [ text "Posts" ]
-              , table []
-                  ([ viewTableHeader ] ++ List.map viewImage actualImages)
+              , ul []
+                  (List.map viewImage actualImages)
               ]
 
         RemoteData.Failure httpError ->
@@ -201,21 +176,19 @@ buildErrorMessage httpError =
             message
 
 viewImage : Image -> Html Msg
-viewImage image =
-  tr []
-    [ td []
-        [ text (Images.idToString image.id) ]
-    , td []
-        [ text image.category ]
-    , td []
-        [ text image.path ]
-    , td []
-        [ text image.description ]
-    , td []
-        [ text image.addedAt ]
-    , td []
-        [ text image.updatedAt ]
-    ]
+viewImage image = 
+  let
+    tags = List.map (\tag -> li [] [ text tag ]) image.tags
+  in
+  div [] [
+    p [] [ text (Images.idToString image.id) ]
+  , p [] [ text image.category ]
+  , ul [] tags
+  , p [] [ text image.path ]
+  , p [] [ text image.description ]
+  , p [] [ text image.addedAt ]
+  , p [] [ text image.updatedAt ]
+  ]
 
 view : Model -> Html Msg
 view model =

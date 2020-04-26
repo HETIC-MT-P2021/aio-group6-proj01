@@ -9,7 +9,7 @@ type ImageId
 type alias Image =
     { id : ImageId
     , category : String
---    , tags : List String
+    , tags : List String
     , path : String
     , description : String
     , addedAt : String
@@ -29,7 +29,7 @@ imageDecoder =
     Decode.succeed Image
         |> required "id" idDecoder
         |> required "category" string
---        |> required "tags" (list)
+        |> required "tags" (list string)
         |> required "path" string
         |> required "description" string
         |> required "addedAt" string

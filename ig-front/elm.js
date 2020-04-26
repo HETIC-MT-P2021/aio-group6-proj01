@@ -6255,9 +6255,9 @@ var $author$project$Page$EditImagePage$init = _Utils_Tuple2(
 var $author$project$Page$HomePage$ImagesReceived = function (a) {
 	return {$: 'ImagesReceived', a: a};
 };
-var $author$project$Images$Image = F6(
-	function (id, category, path, description, addedAt, updatedAt) {
-		return {addedAt: addedAt, category: category, description: description, id: id, path: path, updatedAt: updatedAt};
+var $author$project$Images$Image = F7(
+	function (id, category, tags, path, description, addedAt, updatedAt) {
+		return {addedAt: addedAt, category: category, description: description, id: id, path: path, tags: tags, updatedAt: updatedAt};
 	});
 var $author$project$Images$ImageId = function (a) {
 	return {$: 'ImageId', a: a};
@@ -6281,13 +6281,17 @@ var $author$project$Images$imageDecoder = A3(
 				$elm$json$Json$Decode$string,
 				A3(
 					$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-					'category',
-					$elm$json$Json$Decode$string,
+					'tags',
+					$elm$json$Json$Decode$list($elm$json$Json$Decode$string),
 					A3(
 						$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-						'id',
-						$author$project$Images$idDecoder,
-						$elm$json$Json$Decode$succeed($author$project$Images$Image)))))));
+						'category',
+						$elm$json$Json$Decode$string,
+						A3(
+							$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+							'id',
+							$author$project$Images$idDecoder,
+							$elm$json$Json$Decode$succeed($author$project$Images$Image))))))));
 var $author$project$Images$imagesDecoder = A2(
 	$elm$json$Json$Decode$field,
 	'hydra:member',
@@ -8252,14 +8256,27 @@ var $author$project$Images$idToString = function (imageId) {
 	var id = imageId.a;
 	return $elm$core$String$fromInt(id);
 };
+var $elm$html$Html$li = _VirtualDom_node('li');
 var $author$project$Page$HomePage$viewImage = function (image) {
+	var tags = A2(
+		$elm$core$List$map,
+		function (tag) {
+			return A2(
+				$elm$html$Html$li,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(tag)
+					]));
+		},
+		image.tags);
 	return A2(
-		$elm$html$Html$tr,
+		$elm$html$Html$div,
 		_List_Nil,
 		_List_fromArray(
 			[
 				A2(
-				$elm$html$Html$td,
+				$elm$html$Html$p,
 				_List_Nil,
 				_List_fromArray(
 					[
@@ -8267,35 +8284,36 @@ var $author$project$Page$HomePage$viewImage = function (image) {
 						$author$project$Images$idToString(image.id))
 					])),
 				A2(
-				$elm$html$Html$td,
+				$elm$html$Html$p,
 				_List_Nil,
 				_List_fromArray(
 					[
 						$elm$html$Html$text(image.category)
 					])),
+				A2($elm$html$Html$ul, _List_Nil, tags),
 				A2(
-				$elm$html$Html$td,
+				$elm$html$Html$p,
 				_List_Nil,
 				_List_fromArray(
 					[
 						$elm$html$Html$text(image.path)
 					])),
 				A2(
-				$elm$html$Html$td,
+				$elm$html$Html$p,
 				_List_Nil,
 				_List_fromArray(
 					[
 						$elm$html$Html$text(image.description)
 					])),
 				A2(
-				$elm$html$Html$td,
+				$elm$html$Html$p,
 				_List_Nil,
 				_List_fromArray(
 					[
 						$elm$html$Html$text(image.addedAt)
 					])),
 				A2(
-				$elm$html$Html$td,
+				$elm$html$Html$p,
 				_List_Nil,
 				_List_fromArray(
 					[
@@ -8303,54 +8321,6 @@ var $author$project$Page$HomePage$viewImage = function (image) {
 					]))
 			]));
 };
-var $author$project$Page$HomePage$viewTableHeader = A2(
-	$elm$html$Html$tr,
-	_List_Nil,
-	_List_fromArray(
-		[
-			A2(
-			$elm$html$Html$th,
-			_List_Nil,
-			_List_fromArray(
-				[
-					$elm$html$Html$text('id')
-				])),
-			A2(
-			$elm$html$Html$th,
-			_List_Nil,
-			_List_fromArray(
-				[
-					$elm$html$Html$text('category')
-				])),
-			A2(
-			$elm$html$Html$th,
-			_List_Nil,
-			_List_fromArray(
-				[
-					$elm$html$Html$text('path')
-				])),
-			A2(
-			$elm$html$Html$th,
-			_List_Nil,
-			_List_fromArray(
-				[
-					$elm$html$Html$text('description')
-				])),
-			A2(
-			$elm$html$Html$th,
-			_List_Nil,
-			_List_fromArray(
-				[
-					$elm$html$Html$text('addedAt')
-				])),
-			A2(
-			$elm$html$Html$th,
-			_List_Nil,
-			_List_fromArray(
-				[
-					$elm$html$Html$text('updatedAt')
-				]))
-		]));
 var $author$project$Page$HomePage$viewImages = function (images) {
 	switch (images.$) {
 		case 'NotAsked':
@@ -8378,12 +8348,9 @@ var $author$project$Page$HomePage$viewImages = function (images) {
 								$elm$html$Html$text('Posts')
 							])),
 						A2(
-						$elm$html$Html$table,
+						$elm$html$Html$ul,
 						_List_Nil,
-						_Utils_ap(
-							_List_fromArray(
-								[$author$project$Page$HomePage$viewTableHeader]),
-							A2($elm$core$List$map, $author$project$Page$HomePage$viewImage, actualImages)))
+						A2($elm$core$List$map, $author$project$Page$HomePage$viewImage, actualImages))
 					]));
 		default:
 			var httpError = images.a;
@@ -8663,13 +8630,25 @@ var $author$project$Page$ImagesListPage$viewFetchError = function (errorMessage)
 			]));
 };
 var $author$project$Page$ImagesListPage$viewImage = function (image) {
+	var tags = A2(
+		$elm$core$List$map,
+		function (tag) {
+			return A2(
+				$elm$html$Html$li,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(tag)
+					]));
+		},
+		image.tags);
 	return A2(
-		$elm$html$Html$tr,
+		$elm$html$Html$div,
 		_List_Nil,
 		_List_fromArray(
 			[
 				A2(
-				$elm$html$Html$td,
+				$elm$html$Html$p,
 				_List_Nil,
 				_List_fromArray(
 					[
@@ -8677,35 +8656,36 @@ var $author$project$Page$ImagesListPage$viewImage = function (image) {
 						$author$project$Images$idToString(image.id))
 					])),
 				A2(
-				$elm$html$Html$td,
+				$elm$html$Html$p,
 				_List_Nil,
 				_List_fromArray(
 					[
 						$elm$html$Html$text(image.category)
 					])),
+				A2($elm$html$Html$ul, _List_Nil, tags),
 				A2(
-				$elm$html$Html$td,
+				$elm$html$Html$p,
 				_List_Nil,
 				_List_fromArray(
 					[
 						$elm$html$Html$text(image.path)
 					])),
 				A2(
-				$elm$html$Html$td,
+				$elm$html$Html$p,
 				_List_Nil,
 				_List_fromArray(
 					[
 						$elm$html$Html$text(image.description)
 					])),
 				A2(
-				$elm$html$Html$td,
+				$elm$html$Html$p,
 				_List_Nil,
 				_List_fromArray(
 					[
 						$elm$html$Html$text(image.addedAt)
 					])),
 				A2(
-				$elm$html$Html$td,
+				$elm$html$Html$p,
 				_List_Nil,
 				_List_fromArray(
 					[
@@ -8713,54 +8693,6 @@ var $author$project$Page$ImagesListPage$viewImage = function (image) {
 					]))
 			]));
 };
-var $author$project$Page$ImagesListPage$viewTableHeader = A2(
-	$elm$html$Html$tr,
-	_List_Nil,
-	_List_fromArray(
-		[
-			A2(
-			$elm$html$Html$th,
-			_List_Nil,
-			_List_fromArray(
-				[
-					$elm$html$Html$text('id')
-				])),
-			A2(
-			$elm$html$Html$th,
-			_List_Nil,
-			_List_fromArray(
-				[
-					$elm$html$Html$text('category')
-				])),
-			A2(
-			$elm$html$Html$th,
-			_List_Nil,
-			_List_fromArray(
-				[
-					$elm$html$Html$text('path')
-				])),
-			A2(
-			$elm$html$Html$th,
-			_List_Nil,
-			_List_fromArray(
-				[
-					$elm$html$Html$text('description')
-				])),
-			A2(
-			$elm$html$Html$th,
-			_List_Nil,
-			_List_fromArray(
-				[
-					$elm$html$Html$text('addedAt')
-				])),
-			A2(
-			$elm$html$Html$th,
-			_List_Nil,
-			_List_fromArray(
-				[
-					$elm$html$Html$text('updatedAt')
-				]))
-		]));
 var $author$project$Page$ImagesListPage$viewImages = function (images) {
 	switch (images.$) {
 		case 'NotAsked':
@@ -8788,12 +8720,9 @@ var $author$project$Page$ImagesListPage$viewImages = function (images) {
 								$elm$html$Html$text('Posts')
 							])),
 						A2(
-						$elm$html$Html$table,
+						$elm$html$Html$ul,
 						_List_Nil,
-						_Utils_ap(
-							_List_fromArray(
-								[$author$project$Page$ImagesListPage$viewTableHeader]),
-							A2($elm$core$List$map, $author$project$Page$ImagesListPage$viewImage, actualImages)))
+						A2($elm$core$List$map, $author$project$Page$ImagesListPage$viewImage, actualImages))
 					]));
 		default:
 			var httpError = images.a;
