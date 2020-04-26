@@ -1,6 +1,6 @@
 module Page.CategoriesListPage exposing (..)
 
-import Html exposing (Html, Attribute, h1, h3, table, tr, th, td, p, span, a, button, div, text, map)
+import Html exposing (..)
 import Html.Attributes exposing (class, href)
 import Html.Events exposing (onClick)
 
@@ -114,19 +114,6 @@ renderThumbnails =
             [ div [ class "icon icon_pen" ] [] ]
         ]
 
-viewTableHeader : Html Msg
-viewTableHeader =
-  tr []
-      [ th []
-          [ text "id" ]
-      , th []
-          [ text "title" ]
-      , th []
-          [ text "addedAt" ]
-      , th []
-          [ text "updatedAt" ]
-      ]
-
 viewCategories : WebData (List Category) -> Html Msg
 viewCategories categories =
     case categories of
@@ -139,8 +126,8 @@ viewCategories categories =
         RemoteData.Success actualCategories ->
             div [] 
               [ h3 [] [ text "Posts" ]
-              , table []
-                  ([ viewTableHeader ] ++ List.map viewCategory actualCategories)
+              , ul []
+                  (List.map viewCategory actualCategories)
               ]
 
         RemoteData.Failure httpError ->
@@ -177,14 +164,18 @@ buildErrorMessage httpError =
 
 viewCategory : Category -> Html Msg
 viewCategory category =
-  tr []
-    [ td []
+    let
+        images = List.map (\image -> li [] [ text image ]) category.images
+    in
+  div []
+    [ p []
         [ text (Categories.idToString category.id) ]
-    , td []
+    , p []
         [ text category.title ]
-    , td []
+    , ul [] images
+    , p []
         [ text category.addedAt ]
-    , td []
+    , p []
         [ text category.updatedAt ]
     ]
 

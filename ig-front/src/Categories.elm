@@ -9,7 +9,7 @@ type CategoryId
 type alias Category =
     { id : CategoryId
     , title : String
---    , images : List String
+    , images : List String
     , addedAt : String
     , updatedAt : String
     }
@@ -27,7 +27,7 @@ categoryDecoder =
     Decode.succeed Category
         |> required "id" idDecoder
         |> required "title" string
---        |> required "images" (list)
+        |> required "images" (list string)
         |> required "addedAt" string
         |> required "updatedAt" string
 

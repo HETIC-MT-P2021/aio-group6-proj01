@@ -5392,15 +5392,16 @@ var $krisajenkins$remotedata$RemoteData$Loading = {$: 'Loading'};
 var $author$project$Page$CategoriesListPage$CategoriesReceived = function (a) {
 	return {$: 'CategoriesReceived', a: a};
 };
-var $author$project$Categories$Category = F4(
-	function (id, title, addedAt, updatedAt) {
-		return {addedAt: addedAt, id: id, title: title, updatedAt: updatedAt};
+var $author$project$Categories$Category = F5(
+	function (id, title, images, addedAt, updatedAt) {
+		return {addedAt: addedAt, id: id, images: images, title: title, updatedAt: updatedAt};
 	});
 var $author$project$Categories$CategoryId = function (a) {
 	return {$: 'CategoryId', a: a};
 };
 var $elm$json$Json$Decode$int = _Json_decodeInt;
 var $author$project$Categories$idDecoder = A2($elm$json$Json$Decode$map, $author$project$Categories$CategoryId, $elm$json$Json$Decode$int);
+var $elm$json$Json$Decode$list = _Json_decodeList;
 var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom = $elm$json$Json$Decode$map2($elm$core$Basics$apR);
 var $elm$json$Json$Decode$field = _Json_decodeField;
 var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required = F3(
@@ -5421,14 +5422,17 @@ var $author$project$Categories$categoryDecoder = A3(
 		$elm$json$Json$Decode$string,
 		A3(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-			'title',
-			$elm$json$Json$Decode$string,
+			'images',
+			$elm$json$Json$Decode$list($elm$json$Json$Decode$string),
 			A3(
 				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-				'id',
-				$author$project$Categories$idDecoder,
-				$elm$json$Json$Decode$succeed($author$project$Categories$Category)))));
-var $elm$json$Json$Decode$list = _Json_decodeList;
+				'title',
+				$elm$json$Json$Decode$string,
+				A3(
+					$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+					'id',
+					$author$project$Categories$idDecoder,
+					$elm$json$Json$Decode$succeed($author$project$Categories$Category))))));
 var $author$project$Categories$categoriesDecoder = A2(
 	$elm$json$Json$Decode$field,
 	'hydra:member',
@@ -7665,21 +7669,31 @@ var $author$project$Page$CategoriesListPage$buildErrorMessage = function (httpEr
 			return message;
 	}
 };
-var $elm$html$Html$table = _VirtualDom_node('table');
 var $author$project$Categories$idToString = function (categoryId) {
 	var id = categoryId.a;
 	return $elm$core$String$fromInt(id);
 };
-var $elm$html$Html$td = _VirtualDom_node('td');
-var $elm$html$Html$tr = _VirtualDom_node('tr');
+var $elm$html$Html$li = _VirtualDom_node('li');
 var $author$project$Page$CategoriesListPage$viewCategory = function (category) {
+	var images = A2(
+		$elm$core$List$map,
+		function (image) {
+			return A2(
+				$elm$html$Html$li,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(image)
+					]));
+		},
+		category.images);
 	return A2(
-		$elm$html$Html$tr,
+		$elm$html$Html$div,
 		_List_Nil,
 		_List_fromArray(
 			[
 				A2(
-				$elm$html$Html$td,
+				$elm$html$Html$p,
 				_List_Nil,
 				_List_fromArray(
 					[
@@ -7687,21 +7701,22 @@ var $author$project$Page$CategoriesListPage$viewCategory = function (category) {
 						$author$project$Categories$idToString(category.id))
 					])),
 				A2(
-				$elm$html$Html$td,
+				$elm$html$Html$p,
 				_List_Nil,
 				_List_fromArray(
 					[
 						$elm$html$Html$text(category.title)
 					])),
+				A2($elm$html$Html$ul, _List_Nil, images),
 				A2(
-				$elm$html$Html$td,
+				$elm$html$Html$p,
 				_List_Nil,
 				_List_fromArray(
 					[
 						$elm$html$Html$text(category.addedAt)
 					])),
 				A2(
-				$elm$html$Html$td,
+				$elm$html$Html$p,
 				_List_Nil,
 				_List_fromArray(
 					[
@@ -7726,41 +7741,6 @@ var $author$project$Page$CategoriesListPage$viewFetchError = function (errorMess
 				$elm$html$Html$text('Error: ' + errorMessage)
 			]));
 };
-var $elm$html$Html$th = _VirtualDom_node('th');
-var $author$project$Page$CategoriesListPage$viewTableHeader = A2(
-	$elm$html$Html$tr,
-	_List_Nil,
-	_List_fromArray(
-		[
-			A2(
-			$elm$html$Html$th,
-			_List_Nil,
-			_List_fromArray(
-				[
-					$elm$html$Html$text('id')
-				])),
-			A2(
-			$elm$html$Html$th,
-			_List_Nil,
-			_List_fromArray(
-				[
-					$elm$html$Html$text('title')
-				])),
-			A2(
-			$elm$html$Html$th,
-			_List_Nil,
-			_List_fromArray(
-				[
-					$elm$html$Html$text('addedAt')
-				])),
-			A2(
-			$elm$html$Html$th,
-			_List_Nil,
-			_List_fromArray(
-				[
-					$elm$html$Html$text('updatedAt')
-				]))
-		]));
 var $author$project$Page$CategoriesListPage$viewCategories = function (categories) {
 	switch (categories.$) {
 		case 'NotAsked':
@@ -7788,12 +7768,9 @@ var $author$project$Page$CategoriesListPage$viewCategories = function (categorie
 								$elm$html$Html$text('Posts')
 							])),
 						A2(
-						$elm$html$Html$table,
+						$elm$html$Html$ul,
 						_List_Nil,
-						_Utils_ap(
-							_List_fromArray(
-								[$author$project$Page$CategoriesListPage$viewTableHeader]),
-							A2($elm$core$List$map, $author$project$Page$CategoriesListPage$viewCategory, actualCategories)))
+						A2($elm$core$List$map, $author$project$Page$CategoriesListPage$viewCategory, actualCategories))
 					]));
 		default:
 			var httpError = categories.a;
@@ -8256,7 +8233,6 @@ var $author$project$Images$idToString = function (imageId) {
 	var id = imageId.a;
 	return $elm$core$String$fromInt(id);
 };
-var $elm$html$Html$li = _VirtualDom_node('li');
 var $author$project$Page$HomePage$viewImage = function (image) {
 	var tags = A2(
 		$elm$core$List$map,
