@@ -35,14 +35,11 @@ services:
         ports:
             - "3308:3306" 
     elm: 
-        #image: wunsh/alpine-elm:latest
         build:
             context: /home/oussama/Documents/aio-group6-proj01/ig-front
             dockerfile: Dockerfile 
         ports: 
-            - "8001:8001"
-        #volumes: 
-         #   - /home/oussama/Documents/aio-group6-proj01/ig-front/src/:/home/oussama/Documents/aio-group6-proj01/ig-front/src/
-        #command: elm reactor
+          - "8001:80"
+
 
 
