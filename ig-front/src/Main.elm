@@ -158,14 +158,14 @@ initCurrentPage ( model, existingCmds ) =
               ( pageModel, pageCmds ) =
                 Home.init
             in
-            ( HomePage pageModel, Cmd.none )
+            ( HomePage pageModel, Cmd.map HomePageMsg pageCmds )
 
           Route.Images ->
             let
               ( pageModel, pageCmds ) =
                 ImagesList.init
             in
-            ( ImagesListPage pageModel, Cmd.none )
+            ( ImagesListPage pageModel, Cmd.map ImagesListPageMsg pageCmds )
 
           Route.EditImage ->
             let

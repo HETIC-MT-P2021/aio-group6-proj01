@@ -3,14 +3,11 @@ module Page.HomePage exposing (..)
 import Html exposing (Html, Attribute, h1, p, span, a, button, div, tr, th, td, h3, table, text, map)
 import Html.Attributes exposing (class, href)
 import Html.Events exposing (onClick)
-
 import Http
 import Json.Decode exposing (Decoder, field, string, int)
 import Json.Encode as Encode
-import RemoteData exposing (WebData)
-
 import Images exposing (Image, ImageId, imagesDecoder)
-import Categories exposing (Category, CategoryId, categoriesDecoder)
+import RemoteData exposing (WebData)
 
 import Navbar
 import Footer
@@ -28,49 +25,23 @@ type alias Model =
   , footer : Footer.Model
   , popup : Popup.Model
   , images : WebData (List Image)
-  , categories : WebData (List Category)
   }
 
 type ThumbnailsType
   = ThumbnailsCategories
   | ThumbnailsImages
 
-init : ( Model, (Cmd Msg, Cmd Msg) )
+init : ( Model, Cmd Msg )
 init =
     ( { navbar = Navbar.init
       , footer = Footer.init
       , popup = Popup.init
       , images = RemoteData.Loading
-      , categories = RemoteData.Loading
-      }, fetchAll )
+      }, fetchImages )
 
-fetchAll : (Cmd Msg, Cmd Msg)
-fetchAll =
-  (Http.request
-    { method = "GET"
-    , headers = []
-    , url = "http://localhost:8001/api/images"
-    , body = Http.emptyBody
-    , expect = imagesDecoder
-                |> Http.expectJson (RemoteData.fromResult >> ImagesReceived)
-    , timeout = Nothing
-    , tracker = Nothing
-    },
-
-    Http.request
-      { method = "GET"
-      , headers = []
-      , url = "http://localhost:8001/api/categories"
-      , body = Http.emptyBody
-      , expect = categoriesDecoder
-                  |> Http.expectJson (RemoteData.fromResult >> CategoriesReceived)
-      , timeout = Nothing
-      , tracker = Nothing
-      })
-
-fetchImages : (Cmd Msg, Cmd Msg)
+fetchImages : Cmd Msg
 fetchImages =
-  (Http.request
+  Http.request
     { method = "GET"
     , headers = []
     , url = "http://localhost:8001/api/images"
@@ -79,21 +50,7 @@ fetchImages =
                 |> Http.expectJson (RemoteData.fromResult >> ImagesReceived)
     , timeout = Nothing
     , tracker = Nothing
-    }, Cmd.none)
-
-fetchCategories : (Cmd Msg, Cmd Msg)
-fetchCategories =
-  (Cmd.none,
-   Http.request
-    { method = "GET"
-    , headers = []
-    , url = "http://localhost:8001/api/categories"
-    , body = Http.emptyBody
-    , expect = categoriesDecoder
-                |> Http.expectJson (RemoteData.fromResult >> CategoriesReceived)
-    , timeout = Nothing
-    , tracker = Nothing
-    })
+    }
 
 -- UPDATE
 
@@ -101,51 +58,29 @@ type Msg
   = NavbarMsg Navbar.Msg
   | FooterMsg Footer.Msg
   | PopupMsg Popup.Msg
-  -- Fetch all
-  | FetchAll
-  | AllReceived (WebData (List Image), WebData (List Category))
-  -- Fetch images
+  -- FetchData
   | FetchImages
   | ImagesReceived (WebData (List Image))
-  -- Fetch categories
-  | FetchCategories
-  | CategoriesReceived (WebData (List Category))
 
-update : Msg -> Model -> ( Model, (Cmd Msg, Cmd Msg) )
+update : Msg -> Model ->( Model, Cmd Msg )
 update msg model =
   case msg of
     NavbarMsg navbarMsg ->
-      ( { model | navbar = Navbar.update navbarMsg model.navbar }, (Cmd.none, Cmd.none) )
+      ( { model | navbar = Navbar.update navbarMsg model.navbar }, Cmd.none )
 
     FooterMsg footerMsg ->
-      ( { model | footer = Footer.update footerMsg model.footer }, (Cmd.none,Cmd.none) )
+      ( { model | footer = Footer.update footerMsg model.footer }, Cmd.none )
     
     PopupMsg popupMsg ->
-      ( { model | popup = Popup.update popupMsg model.popup }, (Cmd.none, Cmd.none) )
+      ( { model | popup = Popup.update popupMsg model.popup }, Cmd.none )
     
-    -- Fetch images
+    -- FetchData
 
     FetchImages ->
       ( { model | images = RemoteData.Loading }, fetchImages )
 
     ImagesReceived response ->
-      ( { model | images = response }, (Cmd.none, Cmd.none) )
-
-    -- Fetch categories
-
-    FetchCategories ->
-      ( { model | categories = RemoteData.Loading }, fetchCategories )
-
-    CategoriesReceived response ->
-      ( { model | categories = response }, (Cmd.none, Cmd.none) )
-
-    -- Fetch all
-
-    FetchAll ->
-      ( { model | images = RemoteData.Loading, categories = RemoteData.Loading }, fetchAll )
-
-    AllReceived (images, categories) ->
-      ( { model | images = images, categories = categories }, (Cmd.none, Cmd.none) )
+      ( { model | images = response }, Cmd.none )
 
 {-    GotText result ->
       case result of
@@ -200,10 +135,8 @@ renderThumbnails thumbnailsType =
         , a [ href "#", class "home_image_category" ] [ text "Voiture" ]
         ]
 
--- view images
-
-viewTableHeaderImages : Html Msg
-viewTableHeaderImages =
+viewTableHeader : Html Msg
+viewTableHeader =
   tr []
       [ th []
           [ text "id" ]
@@ -232,7 +165,7 @@ viewImages images =
             div [] 
               [ h3 [] [ text "Posts" ]
               , table []
-                  ([ viewTableHeaderImages ] ++ List.map viewImage actualImages)
+                  ([ viewTableHeader ] ++ List.map viewImage actualImages)
               ]
 
         RemoteData.Failure httpError ->
@@ -284,54 +217,6 @@ viewImage image =
         [ text image.updatedAt ]
     ]
 
--- view categories
-
-
-viewTableHeaderCategories : Html Msg
-viewTableHeaderCategories =
-  tr []
-      [ th []
-          [ text "id" ]
-      , th []
-          [ text "title" ]
-      , th []
-          [ text "addedAt" ]
-      , th []
-          [ text "updatedAt" ]
-      ]
-
-viewCategories : WebData (List Category) -> Html Msg
-viewCategories categories =
-    case categories of
-        RemoteData.NotAsked ->
-            text "test"
-
-        RemoteData.Loading ->
-            h3 [] [ text "Loading..." ]
-
-        RemoteData.Success actualCategories ->
-            div [] 
-              [ h3 [] [ text "Posts" ]
-              , table []
-                  ([ viewTableHeaderCategories ] ++ List.map viewCategory actualCategories)
-              ]
-
-        RemoteData.Failure httpError ->
-          viewFetchError (buildErrorMessage httpError)
-
-viewCategory : Category -> Html Msg
-viewCategory category =
-  tr []
-    [ td []
-        [ text (Categories.idToString category.id) ]
-    , td []
-        [ text category.title ]
-    , td []
-        [ text category.addedAt ]
-    , td []
-        [ text category.updatedAt ]
-    ]
-
 view : Model -> Html Msg
 view model =
   div []
@@ -339,7 +224,6 @@ view model =
     , map NavbarMsg (Navbar.view model.navbar)
 --    , viewMsg model
     , viewImages model.images
-    , viewCategories model.categories
     , div [ class "container" ] 
           [ div [ class "home_categories_section" ] 
             [ h1 [] [ text "catégories" ],

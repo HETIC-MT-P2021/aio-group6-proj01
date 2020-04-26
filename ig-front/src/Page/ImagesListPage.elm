@@ -17,12 +17,25 @@ import Images exposing (Image, ImageId, imagesDecoder)
 
 -- MODEL
 
+type GetData
+  = Failure
+  | Loading
+  | Success String
+
 type alias Model =
     { navbar : Navbar.Model
     , footer : Footer.Model
     , popup : Popup.Model
     , images : WebData (List Image)
     }
+
+init : ( Model, Cmd Msg )
+init =
+    ( { navbar = Navbar.init
+      , footer = Footer.init
+      , popup = Popup.init
+      , images = RemoteData.Loading
+      }, fetchImages )
 
 fetchImages : Cmd Msg
 fetchImages =
@@ -36,14 +49,6 @@ fetchImages =
     , timeout = Nothing
     , tracker = Nothing
     }
-
-init : ( Model, Cmd Msg )
-init =
-    ( { navbar = Navbar.init
-      , footer = Footer.init
-      , popup = Popup.init
-      , images = RemoteData.Loading
-      }, fetchImages )
 
 -- UPDATE
 
@@ -110,8 +115,8 @@ renderThumbnails =
         , a [ href "#", class "image_category" ] [ text "Voiture" ]
         ]
 
-viewTableHeaderImages : Html Msg
-viewTableHeaderImages =
+viewTableHeader : Html Msg
+viewTableHeader =
   tr []
       [ th []
           [ text "id" ]
@@ -126,6 +131,36 @@ viewTableHeaderImages =
       , th []
           [ text "updatedAt" ]
       ]
+
+viewImages : WebData (List Image) -> Html Msg
+viewImages images =
+    case images of
+        RemoteData.NotAsked ->
+            text "test"
+
+        RemoteData.Loading ->
+            h3 [] [ text "Loading..." ]
+
+        RemoteData.Success actualImages ->
+            div [] 
+              [ h3 [] [ text "Posts" ]
+              , table []
+                  ([ viewTableHeader ] ++ List.map viewImage actualImages)
+              ]
+
+        RemoteData.Failure httpError ->
+          viewFetchError (buildErrorMessage httpError)
+
+viewFetchError : String -> Html Msg
+viewFetchError errorMessage =
+    let
+        errorHeading =
+            "Couldn't fetch posts at this time."
+    in
+    div []
+        [ h3 [] [ text errorHeading ]
+        , text ("Error: " ++ errorMessage)
+        ]
 
 buildErrorMessage : Http.Error -> String
 buildErrorMessage httpError =
@@ -145,7 +180,6 @@ buildErrorMessage httpError =
         Http.BadBody message ->
             message
 
-
 viewImage : Image -> Html Msg
 viewImage image =
   tr []
@@ -162,36 +196,6 @@ viewImage image =
     , td []
         [ text image.updatedAt ]
     ]
-
-viewImages : WebData (List Image) -> Html Msg
-viewImages images =
-    case images of
-        RemoteData.NotAsked ->
-            text "test"
-
-        RemoteData.Loading ->
-            h3 [] [ text "Loading..." ]
-
-        RemoteData.Success actualImages ->
-            div [] 
-              [ h3 [] [ text "Posts" ]
-              , table []
-                  ([ viewTableHeaderImages ] ++ List.map viewImage actualImages)
-              ]
-
-        RemoteData.Failure httpError ->
-            viewFetchError (buildErrorMessage httpError)
-
-viewFetchError : String -> Html Msg
-viewFetchError errorMessage =
-    let
-        errorHeading =
-            "Couldn't fetch posts at this time."
-    in
-    div []
-        [ h3 [] [ text errorHeading ]
-        , text ("Error: " ++ errorMessage)
-        ]
 
 view : Model -> Html Msg
 view model =
