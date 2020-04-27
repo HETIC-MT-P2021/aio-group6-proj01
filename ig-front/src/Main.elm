@@ -120,7 +120,7 @@ update msg model =
             AddCategory.update subMsg pageModel
       in
       ( { model | page = AddCategoryPage updatedPageModel }
-      , Cmd.none
+      , Cmd.map AddCategoryPageMsg updatedCmd
       )
 
     ( LinkClicked urlRequest, _ ) ->
@@ -196,16 +196,16 @@ initCurrentPage ( model, existingCmds ) =
           Route.Categories ->
             let
               ( pageModel, pageCmds ) =
-                CategoriesList.init
+                CategoriesList.init model.navKey
             in
             ( CategoriesListPage pageModel, Cmd.map CategoriesListPageMsg pageCmds )
           
           Route.AddCategory ->
             let
               ( pageModel, pageCmds ) =
-                AddCategory.init
+                AddCategory.init model.navKey
             in
-            ( AddCategoryPage pageModel, Cmd.none )
+            ( AddCategoryPage pageModel, Cmd.map AddCategoryPageMsg pageCmds )
     in
     ( { model | page = currentPage }
     , Cmd.batch [ existingCmds, mappedPageCmds ]

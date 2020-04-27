@@ -5346,6 +5346,9 @@ var $author$project$Main$NotFoundPage = {$: 'NotFoundPage'};
 var $author$project$Main$AddCategoryPage = function (a) {
 	return {$: 'AddCategoryPage', a: a};
 };
+var $author$project$Main$AddCategoryPageMsg = function (a) {
+	return {$: 'AddCategoryPageMsg', a: a};
+};
 var $author$project$Main$AddImagePage = function (a) {
 	return {$: 'AddImagePage', a: a};
 };
@@ -5371,6 +5374,14 @@ var $author$project$Main$ImagesListPageMsg = function (a) {
 	return {$: 'ImagesListPageMsg', a: a};
 };
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
+var $author$project$Categories$CategoryId = function (a) {
+	return {$: 'CategoryId', a: a};
+};
+var $elm$core$Basics$negate = function (n) {
+	return -n;
+};
+var $author$project$Categories$emptyCategoryId = $author$project$Categories$CategoryId(-1);
+var $author$project$Categories$emptyCategory = {addedAt: '2020-04-25', id: $author$project$Categories$emptyCategoryId, title: '', updatedAt: '2020-04-25'};
 var $author$project$Footer$init = {
 	authors: _List_fromArray(
 		[
@@ -5388,9 +5399,11 @@ var $author$project$Navbar$init = {
 		])
 };
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
-var $author$project$Page$AddCategoryPage$init = _Utils_Tuple2(
-	{footer: $author$project$Footer$init, navbar: $author$project$Navbar$init},
-	$elm$core$Platform$Cmd$none);
+var $author$project$Page$AddCategoryPage$init = function (navKey) {
+	return _Utils_Tuple2(
+		{category: $author$project$Categories$emptyCategory, createError: $elm$core$Maybe$Nothing, footer: $author$project$Footer$init, navKey: navKey, navbar: $author$project$Navbar$init},
+		$elm$core$Platform$Cmd$none);
+};
 var $author$project$Page$AddImagePage$init = _Utils_Tuple2(
 	{footer: $author$project$Footer$init, navbar: $author$project$Navbar$init},
 	$elm$core$Platform$Cmd$none);
@@ -5398,16 +5411,12 @@ var $krisajenkins$remotedata$RemoteData$Loading = {$: 'Loading'};
 var $author$project$Page$CategoriesListPage$CategoriesReceived = function (a) {
 	return {$: 'CategoriesReceived', a: a};
 };
-var $author$project$Categories$Category = F5(
-	function (id, title, images, addedAt, updatedAt) {
-		return {addedAt: addedAt, id: id, images: images, title: title, updatedAt: updatedAt};
+var $author$project$Categories$Category = F4(
+	function (id, title, addedAt, updatedAt) {
+		return {addedAt: addedAt, id: id, title: title, updatedAt: updatedAt};
 	});
-var $author$project$Categories$CategoryId = function (a) {
-	return {$: 'CategoryId', a: a};
-};
 var $elm$json$Json$Decode$int = _Json_decodeInt;
 var $author$project$Categories$idDecoder = A2($elm$json$Json$Decode$map, $author$project$Categories$CategoryId, $elm$json$Json$Decode$int);
-var $elm$json$Json$Decode$list = _Json_decodeList;
 var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom = $elm$json$Json$Decode$map2($elm$core$Basics$apR);
 var $elm$json$Json$Decode$field = _Json_decodeField;
 var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required = F3(
@@ -5428,17 +5437,14 @@ var $author$project$Categories$categoryDecoder = A3(
 		$elm$json$Json$Decode$string,
 		A3(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-			'images',
-			$elm$json$Json$Decode$list($elm$json$Json$Decode$string),
+			'title',
+			$elm$json$Json$Decode$string,
 			A3(
 				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-				'title',
-				$elm$json$Json$Decode$string,
-				A3(
-					$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-					'id',
-					$author$project$Categories$idDecoder,
-					$elm$json$Json$Decode$succeed($author$project$Categories$Category))))));
+				'id',
+				$author$project$Categories$idDecoder,
+				$elm$json$Json$Decode$succeed($author$project$Categories$Category)))));
+var $elm$json$Json$Decode$list = _Json_decodeList;
 var $author$project$Categories$categoriesDecoder = A2(
 	$elm$json$Json$Decode$field,
 	'hydra:member',
@@ -6256,9 +6262,11 @@ var $author$project$Page$CategoriesListPage$fetchCategories = $elm$http$Http$req
 	});
 var $author$project$Popup$EmptyPopup = {$: 'EmptyPopup'};
 var $author$project$Popup$init = {isPopupOpen: false, popupType: $author$project$Popup$EmptyPopup, title: 'Test'};
-var $author$project$Page$CategoriesListPage$init = _Utils_Tuple2(
-	{categories: $krisajenkins$remotedata$RemoteData$Loading, footer: $author$project$Footer$init, navbar: $author$project$Navbar$init, popup: $author$project$Popup$init, saveError: $elm$core$Maybe$Nothing},
-	$author$project$Page$CategoriesListPage$fetchCategories);
+var $author$project$Page$CategoriesListPage$init = function (navKey) {
+	return _Utils_Tuple2(
+		{categories: $krisajenkins$remotedata$RemoteData$Loading, footer: $author$project$Footer$init, navKey: navKey, navbar: $author$project$Navbar$init, popup: $author$project$Popup$init, saveError: $elm$core$Maybe$Nothing},
+		$author$project$Page$CategoriesListPage$fetchCategories);
+};
 var $author$project$Page$EditImagePage$init = _Utils_Tuple2(
 	{footer: $author$project$Footer$init, navbar: $author$project$Navbar$init},
 	$elm$core$Platform$Cmd$none);
@@ -6379,19 +6387,19 @@ var $author$project$Main$initCurrentPage = function (_v0) {
 					$author$project$Main$AddImagePage(pageModel),
 					$elm$core$Platform$Cmd$none);
 			case 'Categories':
-				var _v7 = $author$project$Page$CategoriesListPage$init;
+				var _v7 = $author$project$Page$CategoriesListPage$init(model.navKey);
 				var pageModel = _v7.a;
 				var pageCmds = _v7.b;
 				return _Utils_Tuple2(
 					$author$project$Main$CategoriesListPage(pageModel),
 					A2($elm$core$Platform$Cmd$map, $author$project$Main$CategoriesListPageMsg, pageCmds));
 			default:
-				var _v8 = $author$project$Page$AddCategoryPage$init;
+				var _v8 = $author$project$Page$AddCategoryPage$init(model.navKey);
 				var pageModel = _v8.a;
 				var pageCmds = _v8.b;
 				return _Utils_Tuple2(
 					$author$project$Main$AddCategoryPage(pageModel),
-					$elm$core$Platform$Cmd$none);
+					A2($elm$core$Platform$Cmd$map, $author$project$Main$AddCategoryPageMsg, pageCmds));
 		}
 	}();
 	var currentPage = _v1.a;
@@ -6738,6 +6746,100 @@ var $elm$url$Url$toString = function (url) {
 					_Utils_ap(http, url.host)),
 				url.path)));
 };
+var $author$project$Page$AddCategoryPage$CategoryCreated = function (a) {
+	return {$: 'CategoryCreated', a: a};
+};
+var $elm$http$Http$jsonBody = function (value) {
+	return A2(
+		_Http_pair,
+		'application/json',
+		A2($elm$json$Json$Encode$encode, 0, value));
+};
+var $elm$json$Json$Encode$object = function (pairs) {
+	return _Json_wrap(
+		A3(
+			$elm$core$List$foldl,
+			F2(
+				function (_v0, obj) {
+					var k = _v0.a;
+					var v = _v0.b;
+					return A3(_Json_addField, k, v, obj);
+				}),
+			_Json_emptyObject(_Utils_Tuple0),
+			pairs));
+};
+var $elm$json$Json$Encode$string = _Json_wrap;
+var $author$project$Categories$newCategoryEncoder = function (category) {
+	var today = '2020-04-25';
+	return $elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'title',
+				$elm$json$Json$Encode$string(category.title)),
+				_Utils_Tuple2(
+				'addedAt',
+				$elm$json$Json$Encode$string(category.addedAt)),
+				_Utils_Tuple2(
+				'updatedAt',
+				$elm$json$Json$Encode$string(category.updatedAt))
+			]));
+};
+var $author$project$Page$AddCategoryPage$addCategory = function (category) {
+	return $elm$http$Http$request(
+		{
+			body: $elm$http$Http$jsonBody(
+				$author$project$Categories$newCategoryEncoder(category)),
+			expect: A2($elm$http$Http$expectJson, $author$project$Page$AddCategoryPage$CategoryCreated, $author$project$Categories$categoryDecoder),
+			headers: _List_Nil,
+			method: 'POST',
+			timeout: $elm$core$Maybe$Nothing,
+			tracker: $elm$core$Maybe$Nothing,
+			url: 'http://localhost:8001/api/categories'
+		});
+};
+var $author$project$Page$AddCategoryPage$buildErrorMessage = function (httpError) {
+	switch (httpError.$) {
+		case 'BadUrl':
+			var message = httpError.a;
+			return message;
+		case 'Timeout':
+			return 'Server is taking too long to respond. Please try again later.';
+		case 'NetworkError':
+			return 'Unable to reach server.';
+		case 'BadStatus':
+			var statusCode = httpError.a;
+			return 'Request failed with status code: ' + $elm$core$String$fromInt(statusCode);
+		default:
+			var message = httpError.a;
+			return message;
+	}
+};
+var $author$project$Route$routeToString = function (route) {
+	switch (route.$) {
+		case 'NotFound':
+			return '/not-found';
+		case 'Home':
+			return '/home';
+		case 'Images':
+			return '/images';
+		case 'EditImage':
+			return '/images';
+		case 'AddImage':
+			return '/images/add';
+		case 'Categories':
+			return '/categories';
+		default:
+			return '/category/new';
+	}
+};
+var $author$project$Route$pushUrl = F2(
+	function (route, navKey) {
+		return A2(
+			$elm$browser$Browser$Navigation$pushUrl,
+			navKey,
+			$author$project$Route$routeToString(route));
+	});
 var $author$project$Footer$update = F2(
 	function (msg, model) {
 		var items = msg.a;
@@ -6754,24 +6856,59 @@ var $author$project$Navbar$update = F2(
 	});
 var $author$project$Page$AddCategoryPage$update = F2(
 	function (msg, model) {
-		if (msg.$ === 'NavbarMsg') {
-			var navbarMsg = msg.a;
-			return _Utils_Tuple2(
-				_Utils_update(
+		switch (msg.$) {
+			case 'NavbarMsg':
+				var navbarMsg = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							navbar: A2($author$project$Navbar$update, navbarMsg, model.navbar)
+						}),
+					$elm$core$Platform$Cmd$none);
+			case 'FooterMsg':
+				var footerMsg = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							footer: A2($author$project$Footer$update, footerMsg, model.footer)
+						}),
+					$elm$core$Platform$Cmd$none);
+			case 'ChangeTitleCategory':
+				var title = msg.a;
+				var oldCategory = model.category;
+				var updateTitle = _Utils_update(
+					oldCategory,
+					{title: title});
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{category: updateTitle}),
+					$elm$core$Platform$Cmd$none);
+			case 'CategoryCreated':
+				if (msg.a.$ === 'Ok') {
+					var category = msg.a.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{category: category, createError: $elm$core$Maybe$Nothing}),
+						A2($author$project$Route$pushUrl, $author$project$Route$Categories, model.navKey));
+				} else {
+					var error = msg.a.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								createError: $elm$core$Maybe$Just(
+									$author$project$Page$AddCategoryPage$buildErrorMessage(error))
+							}),
+						$elm$core$Platform$Cmd$none);
+				}
+			default:
+				return _Utils_Tuple2(
 					model,
-					{
-						navbar: A2($author$project$Navbar$update, navbarMsg, model.navbar)
-					}),
-				$elm$core$Platform$Cmd$none);
-		} else {
-			var footerMsg = msg.a;
-			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{
-						footer: A2($author$project$Footer$update, footerMsg, model.footer)
-					}),
-				$elm$core$Platform$Cmd$none);
+					$author$project$Page$AddCategoryPage$addCategory(model.category));
 		}
 	});
 var $author$project$Page$AddImagePage$update = F2(
@@ -7074,7 +7211,7 @@ var $author$project$Main$update = F2(
 								{
 									page: $author$project$Main$AddCategoryPage(updatedPageModel)
 								}),
-							$elm$core$Platform$Cmd$none);
+							A2($elm$core$Platform$Cmd$map, $author$project$Main$AddCategoryPageMsg, updatedCmd));
 					} else {
 						break _v0$8;
 					}
@@ -7107,9 +7244,6 @@ var $author$project$Main$update = F2(
 		}
 		return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 	});
-var $author$project$Main$AddCategoryPageMsg = function (a) {
-	return {$: 'AddCategoryPageMsg', a: a};
-};
 var $author$project$Main$AddImagePageMsg = function (a) {
 	return {$: 'AddImagePageMsg', a: a};
 };
@@ -7136,7 +7270,6 @@ var $author$project$Page$AddCategoryPage$NavbarMsg = function (a) {
 };
 var $author$project$Page$AddCategoryPage$Submit = {$: 'Submit'};
 var $author$project$Page$AddCategoryPage$Text = {$: 'Text'};
-var $elm$json$Json$Encode$string = _Json_wrap;
 var $elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
 		return A2(
@@ -7146,11 +7279,63 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 	});
 var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
 var $elm$html$Html$div = _VirtualDom_node('div');
-var $elm$html$Html$form = _VirtualDom_node('form');
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
+var $elm$html$Html$li = _VirtualDom_node('li');
+var $author$project$Page$AddCategoryPage$AddCategory = {$: 'AddCategory'};
+var $author$project$Page$AddCategoryPage$ChangeTitleCategory = function (a) {
+	return {$: 'ChangeTitleCategory', a: a};
+};
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$input = _VirtualDom_node('input');
 var $elm$html$Html$label = _VirtualDom_node('label');
+var $elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var $elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var $elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'click',
+		$elm$json$Json$Decode$succeed(msg));
+};
+var $elm$html$Html$Events$alwaysStop = function (x) {
+	return _Utils_Tuple2(x, true);
+};
+var $elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
+	return {$: 'MayStopPropagation', a: a};
+};
+var $elm$html$Html$Events$stopPropagationOn = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
+	});
+var $elm$json$Json$Decode$at = F2(
+	function (fields, decoder) {
+		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
+	});
+var $elm$html$Html$Events$targetValue = A2(
+	$elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'value']),
+	$elm$json$Json$Decode$string);
+var $elm$html$Html$Events$onInput = function (tagger) {
+	return A2(
+		$elm$html$Html$Events$stopPropagationOn,
+		'input',
+		A2(
+			$elm$json$Json$Decode$map,
+			$elm$html$Html$Events$alwaysStop,
+			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
+};
 var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
 var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
 var $author$project$Page$AddCategoryPage$renderInput = F2(
@@ -7176,7 +7361,8 @@ var $author$project$Page$AddCategoryPage$renderInput = F2(
 						_List_fromArray(
 							[
 								$elm$html$Html$Attributes$type_('text'),
-								$elm$html$Html$Attributes$placeholder(title)
+								$elm$html$Html$Attributes$placeholder(title),
+								$elm$html$Html$Events$onInput($author$project$Page$AddCategoryPage$ChangeTitleCategory)
 							]),
 						_List_Nil)
 					]));
@@ -7185,7 +7371,8 @@ var $author$project$Page$AddCategoryPage$renderInput = F2(
 				$elm$html$Html$button,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('btn primary')
+						$elm$html$Html$Attributes$class('btn primary'),
+						$elm$html$Html$Events$onClick($author$project$Page$AddCategoryPage$AddCategory)
 					]),
 				_List_fromArray(
 					[
@@ -7193,6 +7380,7 @@ var $author$project$Page$AddCategoryPage$renderInput = F2(
 					]));
 		}
 	});
+var $elm$html$Html$ul = _VirtualDom_node('ul');
 var $elm$html$Html$p = _VirtualDom_node('p');
 var $elm$html$Html$a = _VirtualDom_node('a');
 var $elm$html$Html$Attributes$href = function (url) {
@@ -7219,7 +7407,6 @@ var $author$project$Footer$renderAuthor = function (author) {
 				$elm$html$Html$text(author.name)
 			]));
 };
-var $elm$html$Html$ul = _VirtualDom_node('ul');
 var $author$project$Footer$renderAuthors = function (authors) {
 	var author = A2($elm$core$List$map, $author$project$Footer$renderAuthor, authors);
 	return A2($elm$html$Html$ul, _List_Nil, author);
@@ -7266,6 +7453,14 @@ var $author$project$Navbar$view = function (model) {
 			]),
 		navbar);
 };
+var $author$project$Page$AddCategoryPage$viewError = function (maybeError) {
+	if (maybeError.$ === 'Just') {
+		var error = maybeError.a;
+		return $elm$html$Html$text(error);
+	} else {
+		return $elm$html$Html$text('');
+	}
+};
 var $author$project$Page$AddCategoryPage$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -7276,6 +7471,34 @@ var $author$project$Page$AddCategoryPage$view = function (model) {
 				$elm$html$Html$map,
 				$author$project$Page$AddCategoryPage$NavbarMsg,
 				$author$project$Navbar$view(model.navbar)),
+				$author$project$Page$AddCategoryPage$viewError(model.createError),
+				A2(
+				$elm$html$Html$ul,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$li,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(model.category.title)
+							])),
+						A2(
+						$elm$html$Html$li,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(model.category.addedAt)
+							])),
+						A2(
+						$elm$html$Html$li,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(model.category.updatedAt)
+							]))
+					])),
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(
@@ -7300,7 +7523,7 @@ var $author$project$Page$AddCategoryPage$view = function (model) {
 										$elm$html$Html$text('Ajout de catégorie')
 									])),
 								A2(
-								$elm$html$Html$form,
+								$elm$html$Html$div,
 								_List_fromArray(
 									[
 										$elm$html$Html$Attributes$class('add_category_form')
@@ -7327,6 +7550,7 @@ var $author$project$Page$AddImagePage$NavbarMsg = function (a) {
 };
 var $author$project$Page$AddImagePage$Submit = {$: 'Submit'};
 var $author$project$Page$AddImagePage$Text = {$: 'Text'};
+var $elm$html$Html$form = _VirtualDom_node('form');
 var $author$project$Page$AddImagePage$renderInput = F2(
 	function (title, inputType) {
 		switch (inputType.$) {
@@ -7545,23 +7769,6 @@ var $author$project$Page$CategoriesListPage$renderButtonCreate = function () {
 }();
 var $author$project$Popup$DeletePopup = {$: 'DeletePopup'};
 var $author$project$Popup$EditPopup = {$: 'EditPopup'};
-var $elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
-};
-var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var $elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			$elm$virtual_dom$VirtualDom$on,
-			event,
-			$elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
-var $elm$html$Html$Events$onClick = function (msg) {
-	return A2(
-		$elm$html$Html$Events$on,
-		'click',
-		$elm$json$Json$Decode$succeed(msg));
-};
 var $author$project$Page$CategoriesListPage$renderThumbnails = function () {
 	var editPopupMsg = $author$project$Page$CategoriesListPage$PopupMsg(
 		A2($author$project$Popup$ShowPopup, $author$project$Popup$EditPopup, 'Veuillez modifier le titre de la catégorie ?'));
@@ -7851,20 +8058,7 @@ var $author$project$Categories$idToString = function (categoryId) {
 	var id = categoryId.a;
 	return $elm$core$String$fromInt(id);
 };
-var $elm$html$Html$li = _VirtualDom_node('li');
 var $author$project$Page$CategoriesListPage$viewCategory = function (category) {
-	var images = A2(
-		$elm$core$List$map,
-		function (image) {
-			return A2(
-				$elm$html$Html$li,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text(image)
-					]));
-		},
-		category.images);
 	return A2(
 		$elm$html$Html$div,
 		_List_Nil,
@@ -7885,7 +8079,6 @@ var $author$project$Page$CategoriesListPage$viewCategory = function (category) {
 					[
 						$elm$html$Html$text(category.title)
 					])),
-				A2($elm$html$Html$ul, _List_Nil, images),
 				A2(
 				$elm$html$Html$p,
 				_List_Nil,

@@ -18,7 +18,7 @@ type CategoryId
 type alias Category =
     { id : CategoryId
     , title : String
-    , images : List String
+--    , images : List String
     , addedAt : String
     , updatedAt : String
     }
@@ -36,7 +36,7 @@ categoryDecoder =
     Decode.succeed Category
         |> required "id" idDecoder
         |> required "title" Decode.string
-        |> required "images" (Decode.list Decode.string)
+--        |> required "images" (Decode.list Decode.string)
         |> required "addedAt" Decode.string
         |> required "updatedAt" Decode.string
 
@@ -50,9 +50,9 @@ emptyCategory : Category
 emptyCategory =
     { id = emptyCategoryId
     , title = ""
-    , images = [""]
-    , addedAt = ""
-    , updatedAt = ""
+--    , images = [""]
+    , addedAt = "2020-04-25"
+    , updatedAt = "2020-04-25"
     }
 
 emptyCategoryId : CategoryId
@@ -62,12 +62,12 @@ emptyCategoryId =
 newCategoryEncoder : Category -> Encode.Value
 newCategoryEncoder category =
   let 
-    today = "2020-04-26T21:54:34.736Z"
+    today = "2020-04-25"
   in
   Encode.object
     [ ( "title", Encode.string category.title )
-    , ( "addedAt", Encode.string today )
-    , ( "updatedAt", Encode.string today )
+    , ( "addedAt", Encode.string category.addedAt )
+    , ( "updatedAt", Encode.string category.updatedAt )
     ]
 
 

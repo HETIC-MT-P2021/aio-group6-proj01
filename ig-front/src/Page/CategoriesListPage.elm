@@ -9,6 +9,8 @@ import Json.Decode exposing (Decoder, field, string, int)
 import Json.Encode as Encode
 import RemoteData exposing (WebData)
 
+import Browser.Navigation as Nav
+
 import Navbar
 import Footer
 import Popup
@@ -29,15 +31,17 @@ type alias Model =
     , popup : Popup.Model
     , categories : WebData (List Category)
     , saveError : Maybe String
+    , navKey : Nav.Key
     }
 
-init : ( Model, Cmd Msg )
-init =
+init : Nav.Key -> ( Model, Cmd Msg )
+init navKey =
     ( { navbar = Navbar.init
       , footer = Footer.init
       , popup = Popup.init 
       , categories = RemoteData.Loading
       , saveError = Nothing
+      , navKey = navKey
       }, fetchCategories )
 
 fetchCategories : Cmd Msg
@@ -168,15 +172,15 @@ buildErrorMessage httpError =
 
 viewCategory : Category -> Html Msg
 viewCategory category =
-    let
+    {-let
         images = List.map (\image -> li [] [ text image ]) category.images
-    in
+    in-}
   div []
     [ p []
         [ text (Categories.idToString category.id) ]
     , p []
         [ text category.title ]
-    , ul [] images
+    --, ul [] images
     , p []
         [ text category.addedAt ]
     , p []
