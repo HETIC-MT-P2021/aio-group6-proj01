@@ -5343,6 +5343,9 @@ var $elm$core$Task$perform = F2(
 	});
 var $elm$browser$Browser$application = _Browser_application;
 var $author$project$Main$NotFoundPage = {$: 'NotFoundPage'};
+var $author$project$Main$AddCategoryPage = function (a) {
+	return {$: 'AddCategoryPage', a: a};
+};
 var $author$project$Main$AddImagePage = function (a) {
 	return {$: 'AddImagePage', a: a};
 };
@@ -5385,6 +5388,9 @@ var $author$project$Navbar$init = {
 		])
 };
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
+var $author$project$Page$AddCategoryPage$init = _Utils_Tuple2(
+	{footer: $author$project$Footer$init, navbar: $author$project$Navbar$init},
+	$elm$core$Platform$Cmd$none);
 var $author$project$Page$AddImagePage$init = _Utils_Tuple2(
 	{footer: $author$project$Footer$init, navbar: $author$project$Navbar$init},
 	$elm$core$Platform$Cmd$none);
@@ -6251,7 +6257,7 @@ var $author$project$Page$CategoriesListPage$fetchCategories = $elm$http$Http$req
 var $author$project$Popup$EmptyPopup = {$: 'EmptyPopup'};
 var $author$project$Popup$init = {isPopupOpen: false, popupType: $author$project$Popup$EmptyPopup, title: 'Test'};
 var $author$project$Page$CategoriesListPage$init = _Utils_Tuple2(
-	{categories: $krisajenkins$remotedata$RemoteData$Loading, footer: $author$project$Footer$init, navbar: $author$project$Navbar$init, popup: $author$project$Popup$init},
+	{categories: $krisajenkins$remotedata$RemoteData$Loading, footer: $author$project$Footer$init, navbar: $author$project$Navbar$init, popup: $author$project$Popup$init, saveError: $elm$core$Maybe$Nothing},
 	$author$project$Page$CategoriesListPage$fetchCategories);
 var $author$project$Page$EditImagePage$init = _Utils_Tuple2(
 	{footer: $author$project$Footer$init, navbar: $author$project$Navbar$init},
@@ -6372,13 +6378,20 @@ var $author$project$Main$initCurrentPage = function (_v0) {
 				return _Utils_Tuple2(
 					$author$project$Main$AddImagePage(pageModel),
 					$elm$core$Platform$Cmd$none);
-			default:
+			case 'Categories':
 				var _v7 = $author$project$Page$CategoriesListPage$init;
 				var pageModel = _v7.a;
 				var pageCmds = _v7.b;
 				return _Utils_Tuple2(
 					$author$project$Main$CategoriesListPage(pageModel),
 					A2($elm$core$Platform$Cmd$map, $author$project$Main$CategoriesListPageMsg, pageCmds));
+			default:
+				var _v8 = $author$project$Page$AddCategoryPage$init;
+				var pageModel = _v8.a;
+				var pageCmds = _v8.b;
+				return _Utils_Tuple2(
+					$author$project$Main$AddCategoryPage(pageModel),
+					$elm$core$Platform$Cmd$none);
 		}
 	}();
 	var currentPage = _v1.a;
@@ -6392,6 +6405,7 @@ var $author$project$Main$initCurrentPage = function (_v0) {
 				[existingCmds, mappedPageCmds])));
 };
 var $author$project$Route$NotFound = {$: 'NotFound'};
+var $author$project$Route$AddCategory = {$: 'AddCategory'};
 var $author$project$Route$AddImage = {$: 'AddImage'};
 var $author$project$Route$Categories = {$: 'Categories'};
 var $author$project$Route$EditImage = {$: 'EditImage'};
@@ -6490,6 +6504,18 @@ var $elm$url$Url$Parser$s = function (str) {
 			}
 		});
 };
+var $elm$url$Url$Parser$slash = F2(
+	function (_v0, _v1) {
+		var parseBefore = _v0.a;
+		var parseAfter = _v1.a;
+		return $elm$url$Url$Parser$Parser(
+			function (state) {
+				return A2(
+					$elm$core$List$concatMap,
+					parseAfter,
+					parseBefore(state));
+			});
+	});
 var $elm$url$Url$Parser$top = $elm$url$Url$Parser$Parser(
 	function (state) {
 		return _List_fromArray(
@@ -6514,11 +6540,21 @@ var $author$project$Route$matchRoute = $elm$url$Url$Parser$oneOf(
 			A2(
 			$elm$url$Url$Parser$map,
 			$author$project$Route$AddImage,
-			$elm$url$Url$Parser$s('add')),
+			A2(
+				$elm$url$Url$Parser$slash,
+				$elm$url$Url$Parser$s('images'),
+				$elm$url$Url$Parser$s('new'))),
 			A2(
 			$elm$url$Url$Parser$map,
 			$author$project$Route$Categories,
-			$elm$url$Url$Parser$s('categories'))
+			$elm$url$Url$Parser$s('categories')),
+			A2(
+			$elm$url$Url$Parser$map,
+			$author$project$Route$AddCategory,
+			A2(
+				$elm$url$Url$Parser$slash,
+				$elm$url$Url$Parser$s('category'),
+				$elm$url$Url$Parser$s('new')))
 		]));
 var $elm$url$Url$Parser$getFirstMatch = function (states) {
 	getFirstMatch:
@@ -6715,6 +6751,28 @@ var $author$project$Navbar$update = F2(
 		return _Utils_update(
 			model,
 			{itemsNav: items});
+	});
+var $author$project$Page$AddCategoryPage$update = F2(
+	function (msg, model) {
+		if (msg.$ === 'NavbarMsg') {
+			var navbarMsg = msg.a;
+			return _Utils_Tuple2(
+				_Utils_update(
+					model,
+					{
+						navbar: A2($author$project$Navbar$update, navbarMsg, model.navbar)
+					}),
+				$elm$core$Platform$Cmd$none);
+		} else {
+			var footerMsg = msg.a;
+			return _Utils_Tuple2(
+				_Utils_update(
+					model,
+					{
+						footer: A2($author$project$Footer$update, footerMsg, model.footer)
+					}),
+				$elm$core$Platform$Cmd$none);
+		}
 	});
 var $author$project$Page$AddImagePage$update = F2(
 	function (msg, model) {
@@ -6915,7 +6973,7 @@ var $author$project$Page$ImagesListPage$update = F2(
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		var _v0 = _Utils_Tuple2(msg, model.page);
-		_v0$7:
+		_v0$8:
 		while (true) {
 			switch (_v0.a.$) {
 				case 'HomePageMsg':
@@ -6933,7 +6991,7 @@ var $author$project$Main$update = F2(
 								}),
 							$elm$core$Platform$Cmd$none);
 					} else {
-						break _v0$7;
+						break _v0$8;
 					}
 				case 'ImagesListPageMsg':
 					if (_v0.b.$ === 'ImagesListPage') {
@@ -6950,7 +7008,7 @@ var $author$project$Main$update = F2(
 								}),
 							$elm$core$Platform$Cmd$none);
 					} else {
-						break _v0$7;
+						break _v0$8;
 					}
 				case 'CategoriesListPageMsg':
 					if (_v0.b.$ === 'CategoriesListPage') {
@@ -6967,7 +7025,7 @@ var $author$project$Main$update = F2(
 								}),
 							$elm$core$Platform$Cmd$none);
 					} else {
-						break _v0$7;
+						break _v0$8;
 					}
 				case 'EditImagePageMsg':
 					if (_v0.b.$ === 'EditImagePage') {
@@ -6984,7 +7042,7 @@ var $author$project$Main$update = F2(
 								}),
 							$elm$core$Platform$Cmd$none);
 					} else {
-						break _v0$7;
+						break _v0$8;
 					}
 				case 'AddImagePageMsg':
 					if (_v0.b.$ === 'AddImagePage') {
@@ -7001,7 +7059,24 @@ var $author$project$Main$update = F2(
 								}),
 							$elm$core$Platform$Cmd$none);
 					} else {
-						break _v0$7;
+						break _v0$8;
+					}
+				case 'AddCategoryPageMsg':
+					if (_v0.b.$ === 'AddCategoryPage') {
+						var subMsg = _v0.a.a;
+						var pageModel = _v0.b.a;
+						var _v6 = A2($author$project$Page$AddCategoryPage$update, subMsg, pageModel);
+						var updatedPageModel = _v6.a;
+						var updatedCmd = _v6.b;
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									page: $author$project$Main$AddCategoryPage(updatedPageModel)
+								}),
+							$elm$core$Platform$Cmd$none);
+					} else {
+						break _v0$8;
 					}
 				case 'LinkClicked':
 					var urlRequest = _v0.a.a;
@@ -7032,6 +7107,9 @@ var $author$project$Main$update = F2(
 		}
 		return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 	});
+var $author$project$Main$AddCategoryPageMsg = function (a) {
+	return {$: 'AddCategoryPageMsg', a: a};
+};
 var $author$project$Main$AddImagePageMsg = function (a) {
 	return {$: 'AddImagePageMsg', a: a};
 };
@@ -7050,15 +7128,14 @@ var $author$project$Main$notFoundView = A2(
 		[
 			$elm$html$Html$text('Oops! The page you requested was not found!')
 		]));
-var $author$project$Page$AddImagePage$File = {$: 'File'};
-var $author$project$Page$AddImagePage$FooterMsg = function (a) {
+var $author$project$Page$AddCategoryPage$FooterMsg = function (a) {
 	return {$: 'FooterMsg', a: a};
 };
-var $author$project$Page$AddImagePage$NavbarMsg = function (a) {
+var $author$project$Page$AddCategoryPage$NavbarMsg = function (a) {
 	return {$: 'NavbarMsg', a: a};
 };
-var $author$project$Page$AddImagePage$Submit = {$: 'Submit'};
-var $author$project$Page$AddImagePage$Text = {$: 'Text'};
+var $author$project$Page$AddCategoryPage$Submit = {$: 'Submit'};
+var $author$project$Page$AddCategoryPage$Text = {$: 'Text'};
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
@@ -7076,6 +7153,180 @@ var $elm$html$Html$input = _VirtualDom_node('input');
 var $elm$html$Html$label = _VirtualDom_node('label');
 var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
 var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
+var $author$project$Page$AddCategoryPage$renderInput = F2(
+	function (title, inputType) {
+		if (inputType.$ === 'Text') {
+			return A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('input_container')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$label,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(title)
+							])),
+						A2(
+						$elm$html$Html$input,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$type_('text'),
+								$elm$html$Html$Attributes$placeholder(title)
+							]),
+						_List_Nil)
+					]));
+		} else {
+			return A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('btn primary')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Confirmer')
+					]));
+		}
+	});
+var $elm$html$Html$p = _VirtualDom_node('p');
+var $elm$html$Html$a = _VirtualDom_node('a');
+var $elm$html$Html$Attributes$href = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'href',
+		_VirtualDom_noJavaScriptUri(url));
+};
+var $elm$core$String$append = _String_append;
+var $author$project$Footer$renderMailto = function (mail) {
+	return A2($elm$core$String$append, 'mailto:', mail);
+};
+var $author$project$Footer$renderAuthor = function (author) {
+	return A2(
+		$elm$html$Html$a,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$href(
+				$author$project$Footer$renderMailto(author.mail)),
+				$elm$html$Html$Attributes$class('link')
+			]),
+		_List_fromArray(
+			[
+				$elm$html$Html$text(author.name)
+			]));
+};
+var $elm$html$Html$ul = _VirtualDom_node('ul');
+var $author$project$Footer$renderAuthors = function (authors) {
+	var author = A2($elm$core$List$map, $author$project$Footer$renderAuthor, authors);
+	return A2($elm$html$Html$ul, _List_Nil, author);
+};
+var $author$project$Footer$view = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('footer_container')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$p,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Image Gallery')
+					])),
+				$author$project$Footer$renderAuthors(model.authors)
+			]));
+};
+var $author$project$Navbar$renderItem = function (item) {
+	return A2(
+		$elm$html$Html$a,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('item_nav'),
+				$elm$html$Html$Attributes$href(item.link)
+			]),
+		_List_fromArray(
+			[
+				$elm$html$Html$text(item.name)
+			]));
+};
+var $author$project$Navbar$view = function (model) {
+	var navbar = A2($elm$core$List$map, $author$project$Navbar$renderItem, model.itemsNav);
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('navbar_container')
+			]),
+		navbar);
+};
+var $author$project$Page$AddCategoryPage$view = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$map,
+				$author$project$Page$AddCategoryPage$NavbarMsg,
+				$author$project$Navbar$view(model.navbar)),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('container')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('add_category_section')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$h1,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Ajout de catégorie')
+									])),
+								A2(
+								$elm$html$Html$form,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('add_category_form')
+									]),
+								_List_fromArray(
+									[
+										A2($author$project$Page$AddCategoryPage$renderInput, 'Titre', $author$project$Page$AddCategoryPage$Text),
+										A2($author$project$Page$AddCategoryPage$renderInput, '', $author$project$Page$AddCategoryPage$Submit)
+									]))
+							]))
+					])),
+				A2(
+				$elm$html$Html$map,
+				$author$project$Page$AddCategoryPage$FooterMsg,
+				$author$project$Footer$view(model.footer))
+			]));
+};
+var $author$project$Page$AddImagePage$File = {$: 'File'};
+var $author$project$Page$AddImagePage$FooterMsg = function (a) {
+	return {$: 'FooterMsg', a: a};
+};
+var $author$project$Page$AddImagePage$NavbarMsg = function (a) {
+	return {$: 'NavbarMsg', a: a};
+};
+var $author$project$Page$AddImagePage$Submit = {$: 'Submit'};
+var $author$project$Page$AddImagePage$Text = {$: 'Text'};
 var $author$project$Page$AddImagePage$renderInput = F2(
 	function (title, inputType) {
 		switch (inputType.$) {
@@ -7199,79 +7450,6 @@ var $author$project$Page$AddImagePage$renderSelect = function (label_txt) {
 					]))
 			]));
 };
-var $elm$html$Html$p = _VirtualDom_node('p');
-var $elm$html$Html$a = _VirtualDom_node('a');
-var $elm$html$Html$Attributes$href = function (url) {
-	return A2(
-		$elm$html$Html$Attributes$stringProperty,
-		'href',
-		_VirtualDom_noJavaScriptUri(url));
-};
-var $elm$core$String$append = _String_append;
-var $author$project$Footer$renderMailto = function (mail) {
-	return A2($elm$core$String$append, 'mailto:', mail);
-};
-var $author$project$Footer$renderAuthor = function (author) {
-	return A2(
-		$elm$html$Html$a,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$href(
-				$author$project$Footer$renderMailto(author.mail)),
-				$elm$html$Html$Attributes$class('link')
-			]),
-		_List_fromArray(
-			[
-				$elm$html$Html$text(author.name)
-			]));
-};
-var $elm$html$Html$ul = _VirtualDom_node('ul');
-var $author$project$Footer$renderAuthors = function (authors) {
-	var author = A2($elm$core$List$map, $author$project$Footer$renderAuthor, authors);
-	return A2($elm$html$Html$ul, _List_Nil, author);
-};
-var $author$project$Footer$view = function (model) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('footer_container')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$p,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Image Gallery')
-					])),
-				$author$project$Footer$renderAuthors(model.authors)
-			]));
-};
-var $author$project$Navbar$renderItem = function (item) {
-	return A2(
-		$elm$html$Html$a,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('item_nav'),
-				$elm$html$Html$Attributes$href(item.link)
-			]),
-		_List_fromArray(
-			[
-				$elm$html$Html$text(item.name)
-			]));
-};
-var $author$project$Navbar$view = function (model) {
-	var navbar = A2($elm$core$List$map, $author$project$Navbar$renderItem, model.itemsNav);
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('navbar_container')
-			]),
-		navbar);
-};
 var $author$project$Page$AddImagePage$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -7350,6 +7528,23 @@ var $author$project$Popup$ShowPopup = F2(
 	function (a, b) {
 		return {$: 'ShowPopup', a: a, b: b};
 	});
+var $author$project$Page$CategoriesListPage$renderButtonCreate = function () {
+	var createPopupMsg = $author$project$Page$CategoriesListPage$PopupMsg(
+		A2($author$project$Popup$ShowPopup, $author$project$Popup$CreatePopup, 'Entrez le titre de la nouvelle catégorie'));
+	return A2(
+		$elm$html$Html$a,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$href('/category/new'),
+				$elm$html$Html$Attributes$class('btn primary')
+			]),
+		_List_fromArray(
+			[
+				$elm$html$Html$text('Créer')
+			]));
+}();
+var $author$project$Popup$DeletePopup = {$: 'DeletePopup'};
+var $author$project$Popup$EditPopup = {$: 'EditPopup'};
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -7367,23 +7562,6 @@ var $elm$html$Html$Events$onClick = function (msg) {
 		'click',
 		$elm$json$Json$Decode$succeed(msg));
 };
-var $author$project$Page$CategoriesListPage$renderButtonCreate = function () {
-	var createPopupMsg = $author$project$Page$CategoriesListPage$PopupMsg(
-		A2($author$project$Popup$ShowPopup, $author$project$Popup$CreatePopup, 'Entrez le titre de la nouvelle catégorie'));
-	return A2(
-		$elm$html$Html$button,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('btn primary'),
-				$elm$html$Html$Events$onClick(createPopupMsg)
-			]),
-		_List_fromArray(
-			[
-				$elm$html$Html$text('Créer')
-			]));
-}();
-var $author$project$Popup$DeletePopup = {$: 'DeletePopup'};
-var $author$project$Popup$EditPopup = {$: 'EditPopup'};
 var $author$project$Page$CategoriesListPage$renderThumbnails = function () {
 	var editPopupMsg = $author$project$Page$CategoriesListPage$PopupMsg(
 		A2($author$project$Popup$ShowPopup, $author$project$Popup$EditPopup, 'Veuillez modifier le titre de la catégorie ?'));
@@ -8799,12 +8977,18 @@ var $author$project$Main$currentView = function (model) {
 				$elm$html$Html$map,
 				$author$project$Main$AddImagePageMsg,
 				$author$project$Page$AddImagePage$view(pageModel));
-		default:
+		case 'CategoriesListPage':
 			var pageModel = _v0.a;
 			return A2(
 				$elm$html$Html$map,
 				$author$project$Main$CategoriesListPageMsg,
 				$author$project$Page$CategoriesListPage$view(pageModel));
+		default:
+			var pageModel = _v0.a;
+			return A2(
+				$elm$html$Html$map,
+				$author$project$Main$AddCategoryPageMsg,
+				$author$project$Page$AddCategoryPage$view(pageModel));
 	}
 };
 var $author$project$Main$view = function (model) {

@@ -1,7 +1,16 @@
-module Categories exposing (Category, CategoryId, idToString, categoryDecoder, categoriesDecoder)
+module Categories exposing ( Category
+                           , CategoryId
+                           , idToString
+                           , categoryDecoder
+                           , categoriesDecoder
+                           , emptyCategory
+                           , newCategoryEncoder )
 
+import Json.Encode as Encode exposing(..)
 import Json.Decode as Decode exposing (Decoder, field, int, list, string)
 import Json.Decode.Pipeline exposing (required)
+
+import Time 
 
 type CategoryId
     = CategoryId Int
@@ -16,24 +25,49 @@ type alias Category =
 
 idDecoder : Decoder CategoryId
 idDecoder =
-    Decode.map CategoryId int
+    Decode.map CategoryId Decode.int
 
 categoriesDecoder : Decoder (List Category)
 categoriesDecoder =
-    field "hydra:member" (list categoryDecoder)
+    field "hydra:member" (Decode.list categoryDecoder)
 
 categoryDecoder : Decoder Category
 categoryDecoder =
     Decode.succeed Category
         |> required "id" idDecoder
-        |> required "title" string
-        |> required "images" (list string)
-        |> required "addedAt" string
-        |> required "updatedAt" string
+        |> required "title" Decode.string
+        |> required "images" (Decode.list Decode.string)
+        |> required "addedAt" Decode.string
+        |> required "updatedAt" Decode.string
 
 idToString : CategoryId -> String
 idToString categoryId =
     case categoryId of
         CategoryId id ->
             String.fromInt id
+
+emptyCategory : Category 
+emptyCategory =
+    { id = emptyCategoryId
+    , title = ""
+    , images = [""]
+    , addedAt = ""
+    , updatedAt = ""
+    }
+
+emptyCategoryId : CategoryId
+emptyCategoryId =
+    CategoryId -1
+
+newCategoryEncoder : Category -> Encode.Value
+newCategoryEncoder category =
+  let 
+    today = "2020-04-26T21:54:34.736Z"
+  in
+  Encode.object
+    [ ( "title", Encode.string category.title )
+    , ( "addedAt", Encode.string today )
+    , ( "updatedAt", Encode.string today )
+    ]
+
 

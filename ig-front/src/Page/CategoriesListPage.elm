@@ -13,7 +13,7 @@ import Navbar
 import Footer
 import Popup
 
-import Categories exposing (Category, CategoryId, categoriesDecoder)
+import Categories exposing (Category, CategoryId, categoriesDecoder, emptyCategory, newCategoryEncoder)
 
 
 -- MODEL
@@ -28,14 +28,16 @@ type alias Model =
     , footer : Footer.Model
     , popup : Popup.Model
     , categories : WebData (List Category)
+    , saveError : Maybe String
     }
 
 init : ( Model, Cmd Msg )
 init =
     ( { navbar = Navbar.init
       , footer = Footer.init
-      , popup = Popup.init
+      , popup = Popup.init 
       , categories = RemoteData.Loading
+      , saveError = Nothing
       }, fetchCategories )
 
 fetchCategories : Cmd Msg
@@ -57,11 +59,11 @@ type Msg
     = NavbarMsg Navbar.Msg
     | FooterMsg Footer.Msg
     | PopupMsg Popup.Msg
-    -- Fetch categories
+    -- GET CATEGORIES
     | FetchCategories
     | CategoriesReceived (WebData (List Category))
 
-update : Msg -> Model ->( Model, Cmd Msg )
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         NavbarMsg navbarMsg ->
@@ -72,6 +74,8 @@ update msg model =
         
         PopupMsg popupMsg ->
             ( { model | popup = Popup.update popupMsg model.popup }, Cmd.none )
+
+        -- GET CATEGORIES
 
         FetchCategories ->
             ( { model | categories = RemoteData.Loading }, fetchCategories )
@@ -86,7 +90,7 @@ renderButtonCreate =
     let
         createPopupMsg = PopupMsg (Popup.ShowPopup Popup.CreatePopup "Entrez le titre de la nouvelle catégorie")
     in
-        button [ class "btn primary", onClick createPopupMsg ] [ text "Créer" ]
+        a [ href "/category/new", class "btn primary" ] [ text "Créer" ]
         
 renderThumbnails : Html Msg
 renderThumbnails =

@@ -17,6 +17,7 @@ import Page.HomePage as Home
 import Page.ImagesListPage as ImagesList
 import Page.EditImagePage as EditImage
 import Page.AddImagePage as AddImage
+import Page.AddCategoryPage as AddCategory
 import Page.CategoriesListPage as CategoriesList
 
 -- MAIN
@@ -47,6 +48,7 @@ type Page
     | EditImagePage EditImage.Model
     | AddImagePage AddImage.Model
     | CategoriesListPage CategoriesList.Model
+    | AddCategoryPage AddCategory.Model
 
 -- UPDATE
 
@@ -59,6 +61,7 @@ type Msg
     | ImagesListPageMsg ImagesList.Msg
     | EditImagePageMsg EditImage.Msg
     | AddImagePageMsg AddImage.Msg
+    | AddCategoryPageMsg AddCategory.Msg
     | CategoriesListPageMsg CategoriesList.Msg
     | LinkClicked Browser.UrlRequest
     | UrlChanged Url
@@ -108,6 +111,15 @@ update msg model =
             AddImage.update subMsg pageModel
       in
       ( { model | page = AddImagePage updatedPageModel }
+      , Cmd.none
+      )
+
+    ( AddCategoryPageMsg subMsg, AddCategoryPage pageModel ) ->
+      let
+          ( updatedPageModel, updatedCmd ) =
+            AddCategory.update subMsg pageModel
+      in
+      ( { model | page = AddCategoryPage updatedPageModel }
       , Cmd.none
       )
 
@@ -187,6 +199,13 @@ initCurrentPage ( model, existingCmds ) =
                 CategoriesList.init
             in
             ( CategoriesListPage pageModel, Cmd.map CategoriesListPageMsg pageCmds )
+          
+          Route.AddCategory ->
+            let
+              ( pageModel, pageCmds ) =
+                AddCategory.init
+            in
+            ( AddCategoryPage pageModel, Cmd.none )
     in
     ( { model | page = currentPage }
     , Cmd.batch [ existingCmds, mappedPageCmds ]
@@ -225,6 +244,10 @@ currentView model =
     CategoriesListPage pageModel ->
       CategoriesList.view pageModel
         |> Html.map CategoriesListPageMsg
+
+    AddCategoryPage pageModel ->
+      AddCategory.view pageModel
+        |> Html.map AddCategoryPageMsg
 
 notFoundView : Html msg
 notFoundView =

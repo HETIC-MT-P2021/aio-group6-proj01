@@ -12,6 +12,7 @@ type Route
     | EditImage
     | AddImage
     | Categories
+    | AddCategory
 
 
 parseUrl : Url -> Route
@@ -23,7 +24,6 @@ parseUrl url =
         Nothing ->
             NotFound
 
-
 matchRoute : Parser (Route -> a) a
 matchRoute =
     oneOf
@@ -31,6 +31,7 @@ matchRoute =
         , Parser.map Home (s "home")
         , Parser.map Images (s "images")
         , Parser.map EditImage (s "voiture")
-        , Parser.map AddImage (s "add")
+        , Parser.map AddImage (s "images" </> s "new")
         , Parser.map Categories (s "categories")
+        , Parser.map AddCategory (s "category" </> s "new")
         ]
