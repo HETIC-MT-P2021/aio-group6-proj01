@@ -84,7 +84,7 @@ update msg model =
 
 renderButtonCreate : Html Msg
 renderButtonCreate =
-    a [ href "/add", class "btn primary" ] [ text "Créer" ]
+    a [ href "/images/new", class "btn primary" ] [ text "Créer" ]
 
 renderThumbnails : Html Msg
 renderThumbnails =
@@ -165,15 +165,15 @@ buildErrorMessage httpError =
 
 viewImage : Image -> Html Msg
 viewImage image =
-    let
+    {-let
         tags = List.map (\tag -> li [] [ text tag ]) image.tags
-    in
+    in-}
     div []
         [ p []
             [ text (Images.idToString image.id) ]
         , p []
             [ text image.category ]
-        , ul [] tags
+        --, ul [] tags
         , p []
             [ text image.path ]
         , p []

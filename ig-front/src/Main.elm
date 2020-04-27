@@ -111,7 +111,7 @@ update msg model =
             AddImage.update subMsg pageModel
       in
       ( { model | page = AddImagePage updatedPageModel }
-      , Cmd.none
+      , Cmd.map AddImagePageMsg updatedCmd
       )
 
     ( AddCategoryPageMsg subMsg, AddCategoryPage pageModel ) ->
@@ -189,9 +189,9 @@ initCurrentPage ( model, existingCmds ) =
           Route.AddImage ->
             let
               ( pageModel, pageCmds ) =
-                AddImage.init
+                AddImage.init model.navKey
             in
-            ( AddImagePage pageModel, Cmd.none )
+            ( AddImagePage pageModel, Cmd.map AddImagePageMsg pageCmds )
 
           Route.Categories ->
             let

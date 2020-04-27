@@ -177,13 +177,13 @@ buildErrorMessage httpError =
 
 viewImage : Image -> Html Msg
 viewImage image = 
-  let
+  {-let
     tags = List.map (\tag -> li [] [ text tag ]) image.tags
-  in
+  in-}
   div [] [
     p [] [ text (Images.idToString image.id) ]
   , p [] [ text image.category ]
-  , ul [] tags
+  --, ul [] tags
   , p [] [ text image.path ]
   , p [] [ text image.description ]
   , p [] [ text image.addedAt ]

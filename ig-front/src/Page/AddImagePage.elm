@@ -1,22 +1,49 @@
 module Page.AddImagePage exposing (Model, update, view, init, Msg(..))
 
-import Html exposing (Html, p, h1, div, form, input, label, select, option, button, text, map)
+import Html exposing (..)
 import Html.Attributes exposing (class, type_, placeholder, value, name, id, for)
+import Html.Events exposing (onClick, onInput, on)
+
+import Http
+import Json.Decode as Decode exposing (Decoder, field, string, int, map)
+import Json.Encode as Encode
+import RemoteData exposing (WebData)
+import File exposing (File)
+import Regex
+
+import Browser.Navigation as Nav
 
 import Navbar
 import Footer
+
+import Route
+
+import Images exposing ( Image
+                       , ImageId
+                       , imagesDecoder
+                       , imageDecoder
+                       , emptyImage
+                       , newImageEncoder )
 
 -- MODEL
 
 type alias Model =
     { navbar : Navbar.Model
     , footer : Footer.Model
+    , image : Image
+    , fileImage : List File
+    , createError : Maybe String
+    , navKey : Nav.Key
     }
 
-init : ( Model, Cmd Msg )
-init =
+init : Nav.Key -> ( Model, Cmd Msg )
+init navKey =
     ( { navbar = Navbar.init
       , footer = Footer.init
+      , image = emptyImage
+      , fileImage = []
+      , createError = Nothing
+      , navKey = navKey
       }, Cmd.none )
 
 -- UPDATE
@@ -24,6 +51,27 @@ init =
 type Msg 
     = NavbarMsg Navbar.Msg
     | FooterMsg Footer.Msg
+    | ChangeCategoryImage String
+    | ChangeDescImage String
+    | GotFiles (List File)
+    -- ADD IMAGE
+    | AddImage
+    | ImageCreated (Result Http.Error Image)
+
+addImage : Model -> Cmd Msg
+addImage model =
+    let 
+        filepath = "/images/" ++ getFilename model.fileImage
+    in 
+    Http.request
+        { method = "POST"
+        , headers = []
+        , url = "http://localhost:8001/api/images"
+        , body =  Http.jsonBody (newImageEncoder model.image filepath)
+        , expect = Http.expectJson ImageCreated imageDecoder
+        , timeout = Nothing
+        , tracker = Nothing
+        }
 
 update : Msg -> Model ->( Model, Cmd Msg )
 update msg model =
@@ -34,28 +82,63 @@ update msg model =
         FooterMsg footerMsg ->
             ( { model | footer = Footer.update footerMsg model.footer }, Cmd.none )
 
+        -- ADD IMAGE
+
+        ChangeCategoryImage category ->
+          let
+              oldImage =
+                model.image
+
+              updateCategory =
+                { oldImage | category = category }
+          in
+          ( { model | image = updateCategory }, Cmd.none )
+        
+        ChangeDescImage description ->
+          let
+              oldImage =
+                model.image
+
+              updateDesc =
+                { oldImage | description = description }
+          in
+          ( { model | image = updateDesc }, Cmd.none )
+
+        GotFiles files ->
+            ( { model | fileImage = files }, Cmd.none)
+        
+        ImageCreated (Ok image) ->
+          ( { model | image = image, createError = Nothing }
+          , Route.pushUrl Route.Images model.navKey )
+
+        ImageCreated (Err error) ->
+          ( { model | createError = Just (buildErrorMessage error) }, Cmd.none )
+
+        AddImage ->
+          ( model, addImage model )
+
 type InputType
     = Text
     | File
     | Submit
 
-renderInput : String -> InputType -> Html Msg
-renderInput title inputType=
-    case inputType of
-        Text ->
-            div [ class "input_container" ]
-                [ label [ ] [ text title ]
-                , input [ type_ "text", placeholder title ] []
-                ]
-            
-        File ->
-            div [ class "input_container" ]
-                [ label [ ] [ text title ]
-                , input [ type_ "file", placeholder title ] []
-                ]
+renderInputText : String -> (String -> Msg) -> Html Msg
+renderInputText title msg =
+    div [ class "input_container" ]
+        [ label [] [ text title ]
+        , input [ type_ "text", placeholder title, onInput msg ] []
+        ]
 
-        Submit ->
-            button [ class "btn primary" ] [ text "Confirmer" ]
+renderInputFile : Html Msg
+renderInputFile =
+    div [ class "input_container" ]
+        [ label [] []
+        , input [ type_ "file", on "change" (Decode.map GotFiles filesDecoder) ] []
+        ]
+
+renderInputSubmit : Html Msg
+renderInputSubmit =
+    button [ class "btn primary", onClick AddImage ] [ text "Confirmer" ]
 
 renderSelect : String -> Html Msg
 renderSelect label_txt =
@@ -67,22 +150,70 @@ renderSelect label_txt =
             ]
         ]
 
+viewError : Maybe String -> Html Msg
+viewError maybeError =
+    case maybeError of
+        Just error ->
+            text error
+
+        Nothing ->
+            text ""
+
+getFilename : List File -> String
+getFilename files =
+    let
+        filename = (Debug.toString files)
+        filenameReplaceStart = String.replace "[<" "" filename
+        filenameReplaceEnd = String.replace ">]" "" filenameReplaceStart
+    in
+        filenameReplaceEnd  
+
 view : Model -> Html Msg
 view model =
     div [] 
-        [ map NavbarMsg (Navbar.view model.navbar)
+        [ Html.map NavbarMsg (Navbar.view model.navbar)
+        , viewError model.createError
+        , ul [] 
+            [ li [] [ text model.image.category ]
+            , li [] [ text model.image.description ]
+            , li [] [ text model.image.addedAt ]
+            , li [] [ text model.image.updatedAt ]
+            ]
         , div [ class "container" ]
             [ div [ class "add_image_section" ] 
                 [ h1 [] [ text "Ajout d'image" ]
-                , form [ class "add_image_form" ]
-                    [ renderInput "Titre" Text
-                    , renderInput "Catégorie" Text
+                , div [ class "add_image_form" ]
+                    [ renderInputText "Catégorie" ChangeCategoryImage
+                    , renderInputText "Description" ChangeDescImage
                     , renderSelect "Tags"
                     , div [ class "add_image_tags" ]
-                        [ renderInput "" File ]
-                    , renderInput "" Submit
+                        [ renderInputFile ]
+                    , renderInputSubmit
                     ]
                 ]
             ]
-        , map FooterMsg (Footer.view model.footer)
+        , Html.map FooterMsg (Footer.view model.footer)
         ]
+
+filesDecoder : Decode.Decoder (List File)
+filesDecoder =
+  Decode.at ["target","files"] (Decode.list File.decoder)
+
+
+buildErrorMessage : Http.Error -> String
+buildErrorMessage httpError =
+    case httpError of
+        Http.BadUrl message ->
+            message
+
+        Http.Timeout ->
+            "Server is taking too long to respond. Please try again later."
+
+        Http.NetworkError ->
+            "Unable to reach server."
+
+        Http.BadStatus statusCode ->
+            "Request failed with status code: " ++ String.fromInt statusCode
+
+        Http.BadBody message ->
+            message

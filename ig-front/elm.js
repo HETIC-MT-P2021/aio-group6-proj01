@@ -4547,7 +4547,185 @@ function _Url_percentDecode(string)
 	{
 		return $elm$core$Maybe$Nothing;
 	}
-}var $author$project$Main$LinkClicked = function (a) {
+}
+
+
+// DECODER
+
+var _File_decoder = _Json_decodePrim(function(value) {
+	// NOTE: checks if `File` exists in case this is run on node
+	return (typeof File !== 'undefined' && value instanceof File)
+		? $elm$core$Result$Ok(value)
+		: _Json_expecting('a FILE', value);
+});
+
+
+// METADATA
+
+function _File_name(file) { return file.name; }
+function _File_mime(file) { return file.type; }
+function _File_size(file) { return file.size; }
+
+function _File_lastModified(file)
+{
+	return $elm$time$Time$millisToPosix(file.lastModified);
+}
+
+
+// DOWNLOAD
+
+var _File_downloadNode;
+
+function _File_getDownloadNode()
+{
+	return _File_downloadNode || (_File_downloadNode = document.createElement('a'));
+}
+
+var _File_download = F3(function(name, mime, content)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		var blob = new Blob([content], {type: mime});
+
+		// for IE10+
+		if (navigator.msSaveOrOpenBlob)
+		{
+			navigator.msSaveOrOpenBlob(blob, name);
+			return;
+		}
+
+		// for HTML5
+		var node = _File_getDownloadNode();
+		var objectUrl = URL.createObjectURL(blob);
+		node.href = objectUrl;
+		node.download = name;
+		_File_click(node);
+		URL.revokeObjectURL(objectUrl);
+	});
+});
+
+function _File_downloadUrl(href)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		var node = _File_getDownloadNode();
+		node.href = href;
+		node.download = '';
+		node.origin === location.origin || (node.target = '_blank');
+		_File_click(node);
+	});
+}
+
+
+// IE COMPATIBILITY
+
+function _File_makeBytesSafeForInternetExplorer(bytes)
+{
+	// only needed by IE10 and IE11 to fix https://github.com/elm/file/issues/10
+	// all other browsers can just run `new Blob([bytes])` directly with no problem
+	//
+	return new Uint8Array(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+}
+
+function _File_click(node)
+{
+	// only needed by IE10 and IE11 to fix https://github.com/elm/file/issues/11
+	// all other browsers have MouseEvent and do not need this conditional stuff
+	//
+	if (typeof MouseEvent === 'function')
+	{
+		node.dispatchEvent(new MouseEvent('click'));
+	}
+	else
+	{
+		var event = document.createEvent('MouseEvents');
+		event.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+		document.body.appendChild(node);
+		node.dispatchEvent(event);
+		document.body.removeChild(node);
+	}
+}
+
+
+// UPLOAD
+
+var _File_node;
+
+function _File_uploadOne(mimes)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		_File_node = document.createElement('input');
+		_File_node.type = 'file';
+		_File_node.accept = A2($elm$core$String$join, ',', mimes);
+		_File_node.addEventListener('change', function(event)
+		{
+			callback(_Scheduler_succeed(event.target.files[0]));
+		});
+		_File_click(_File_node);
+	});
+}
+
+function _File_uploadOneOrMore(mimes)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		_File_node = document.createElement('input');
+		_File_node.type = 'file';
+		_File_node.multiple = true;
+		_File_node.accept = A2($elm$core$String$join, ',', mimes);
+		_File_node.addEventListener('change', function(event)
+		{
+			var elmFiles = _List_fromArray(event.target.files);
+			callback(_Scheduler_succeed(_Utils_Tuple2(elmFiles.a, elmFiles.b)));
+		});
+		_File_click(_File_node);
+	});
+}
+
+
+// CONTENT
+
+function _File_toString(blob)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		var reader = new FileReader();
+		reader.addEventListener('loadend', function() {
+			callback(_Scheduler_succeed(reader.result));
+		});
+		reader.readAsText(blob);
+		return function() { reader.abort(); };
+	});
+}
+
+function _File_toBytes(blob)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		var reader = new FileReader();
+		reader.addEventListener('loadend', function() {
+			callback(_Scheduler_succeed(new DataView(reader.result)));
+		});
+		reader.readAsArrayBuffer(blob);
+		return function() { reader.abort(); };
+	});
+}
+
+function _File_toUrl(blob)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		var reader = new FileReader();
+		reader.addEventListener('loadend', function() {
+			callback(_Scheduler_succeed(reader.result));
+		});
+		reader.readAsDataURL(blob);
+		return function() { reader.abort(); };
+	});
+}
+
+var $author$project$Main$LinkClicked = function (a) {
 	return {$: 'LinkClicked', a: a};
 };
 var $author$project$Main$UrlChanged = function (a) {
@@ -5352,6 +5530,9 @@ var $author$project$Main$AddCategoryPageMsg = function (a) {
 var $author$project$Main$AddImagePage = function (a) {
 	return {$: 'AddImagePage', a: a};
 };
+var $author$project$Main$AddImagePageMsg = function (a) {
+	return {$: 'AddImagePageMsg', a: a};
+};
 var $author$project$Main$CategoriesListPage = function (a) {
 	return {$: 'CategoriesListPage', a: a};
 };
@@ -5404,9 +5585,16 @@ var $author$project$Page$AddCategoryPage$init = function (navKey) {
 		{category: $author$project$Categories$emptyCategory, createError: $elm$core$Maybe$Nothing, footer: $author$project$Footer$init, navKey: navKey, navbar: $author$project$Navbar$init},
 		$elm$core$Platform$Cmd$none);
 };
-var $author$project$Page$AddImagePage$init = _Utils_Tuple2(
-	{footer: $author$project$Footer$init, navbar: $author$project$Navbar$init},
-	$elm$core$Platform$Cmd$none);
+var $author$project$Images$ImageId = function (a) {
+	return {$: 'ImageId', a: a};
+};
+var $author$project$Images$emptyImageId = $author$project$Images$ImageId(-1);
+var $author$project$Images$emptyImage = {addedAt: '2020-04-25', category: '', description: '', id: $author$project$Images$emptyImageId, path: '', updatedAt: '2020-04-25'};
+var $author$project$Page$AddImagePage$init = function (navKey) {
+	return _Utils_Tuple2(
+		{createError: $elm$core$Maybe$Nothing, fileImage: _List_Nil, footer: $author$project$Footer$init, image: $author$project$Images$emptyImage, navKey: navKey, navbar: $author$project$Navbar$init},
+		$elm$core$Platform$Cmd$none);
+};
 var $krisajenkins$remotedata$RemoteData$Loading = {$: 'Loading'};
 var $author$project$Page$CategoriesListPage$CategoriesReceived = function (a) {
 	return {$: 'CategoriesReceived', a: a};
@@ -6273,13 +6461,10 @@ var $author$project$Page$EditImagePage$init = _Utils_Tuple2(
 var $author$project$Page$HomePage$ImagesReceived = function (a) {
 	return {$: 'ImagesReceived', a: a};
 };
-var $author$project$Images$Image = F7(
-	function (id, category, tags, path, description, addedAt, updatedAt) {
-		return {addedAt: addedAt, category: category, description: description, id: id, path: path, tags: tags, updatedAt: updatedAt};
+var $author$project$Images$Image = F6(
+	function (id, category, path, description, addedAt, updatedAt) {
+		return {addedAt: addedAt, category: category, description: description, id: id, path: path, updatedAt: updatedAt};
 	});
-var $author$project$Images$ImageId = function (a) {
-	return {$: 'ImageId', a: a};
-};
 var $author$project$Images$idDecoder = A2($elm$json$Json$Decode$map, $author$project$Images$ImageId, $elm$json$Json$Decode$int);
 var $author$project$Images$imageDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
@@ -6299,17 +6484,13 @@ var $author$project$Images$imageDecoder = A3(
 				$elm$json$Json$Decode$string,
 				A3(
 					$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-					'tags',
-					$elm$json$Json$Decode$list($elm$json$Json$Decode$string),
+					'category',
+					$elm$json$Json$Decode$string,
 					A3(
 						$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-						'category',
-						$elm$json$Json$Decode$string,
-						A3(
-							$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-							'id',
-							$author$project$Images$idDecoder,
-							$elm$json$Json$Decode$succeed($author$project$Images$Image))))))));
+						'id',
+						$author$project$Images$idDecoder,
+						$elm$json$Json$Decode$succeed($author$project$Images$Image)))))));
 var $author$project$Images$imagesDecoder = A2(
 	$elm$json$Json$Decode$field,
 	'hydra:member',
@@ -6380,12 +6561,12 @@ var $author$project$Main$initCurrentPage = function (_v0) {
 					$author$project$Main$EditImagePage(pageModel),
 					$elm$core$Platform$Cmd$none);
 			case 'AddImage':
-				var _v6 = $author$project$Page$AddImagePage$init;
+				var _v6 = $author$project$Page$AddImagePage$init(model.navKey);
 				var pageModel = _v6.a;
 				var pageCmds = _v6.b;
 				return _Utils_Tuple2(
 					$author$project$Main$AddImagePage(pageModel),
-					$elm$core$Platform$Cmd$none);
+					A2($elm$core$Platform$Cmd$map, $author$project$Main$AddImagePageMsg, pageCmds));
 			case 'Categories':
 				var _v7 = $author$project$Page$CategoriesListPage$init(model.navKey);
 				var pageModel = _v7.a;
@@ -6911,26 +7092,150 @@ var $author$project$Page$AddCategoryPage$update = F2(
 					$author$project$Page$AddCategoryPage$addCategory(model.category));
 		}
 	});
+var $author$project$Page$AddImagePage$ImageCreated = function (a) {
+	return {$: 'ImageCreated', a: a};
+};
+var $elm$core$String$replace = F3(
+	function (before, after, string) {
+		return A2(
+			$elm$core$String$join,
+			after,
+			A2($elm$core$String$split, before, string));
+	});
+var $elm$core$Debug$toString = _Debug_toString;
+var $author$project$Page$AddImagePage$getFilename = function (files) {
+	var filename = $elm$core$Debug$toString(files);
+	var filenameReplaceStart = A3($elm$core$String$replace, '[<', '', filename);
+	var filenameReplaceEnd = A3($elm$core$String$replace, '>]', '', filenameReplaceStart);
+	return filenameReplaceEnd;
+};
+var $author$project$Images$newImageEncoder = F2(
+	function (image, filepath) {
+		var today = '2020-04-25';
+		return $elm$json$Json$Encode$object(
+			_List_fromArray(
+				[
+					_Utils_Tuple2(
+					'category',
+					$elm$json$Json$Encode$string(image.category)),
+					_Utils_Tuple2(
+					'path',
+					$elm$json$Json$Encode$string(filepath)),
+					_Utils_Tuple2(
+					'description',
+					$elm$json$Json$Encode$string(image.description)),
+					_Utils_Tuple2(
+					'addedAt',
+					$elm$json$Json$Encode$string(image.addedAt)),
+					_Utils_Tuple2(
+					'updatedAt',
+					$elm$json$Json$Encode$string(image.updatedAt))
+				]));
+	});
+var $author$project$Page$AddImagePage$addImage = function (model) {
+	var filepath = '/images/' + $author$project$Page$AddImagePage$getFilename(model.fileImage);
+	return $elm$http$Http$request(
+		{
+			body: $elm$http$Http$jsonBody(
+				A2($author$project$Images$newImageEncoder, model.image, filepath)),
+			expect: A2($elm$http$Http$expectJson, $author$project$Page$AddImagePage$ImageCreated, $author$project$Images$imageDecoder),
+			headers: _List_Nil,
+			method: 'POST',
+			timeout: $elm$core$Maybe$Nothing,
+			tracker: $elm$core$Maybe$Nothing,
+			url: 'http://localhost:8001/api/images'
+		});
+};
+var $author$project$Page$AddImagePage$buildErrorMessage = function (httpError) {
+	switch (httpError.$) {
+		case 'BadUrl':
+			var message = httpError.a;
+			return message;
+		case 'Timeout':
+			return 'Server is taking too long to respond. Please try again later.';
+		case 'NetworkError':
+			return 'Unable to reach server.';
+		case 'BadStatus':
+			var statusCode = httpError.a;
+			return 'Request failed with status code: ' + $elm$core$String$fromInt(statusCode);
+		default:
+			var message = httpError.a;
+			return message;
+	}
+};
 var $author$project$Page$AddImagePage$update = F2(
 	function (msg, model) {
-		if (msg.$ === 'NavbarMsg') {
-			var navbarMsg = msg.a;
-			return _Utils_Tuple2(
-				_Utils_update(
+		switch (msg.$) {
+			case 'NavbarMsg':
+				var navbarMsg = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							navbar: A2($author$project$Navbar$update, navbarMsg, model.navbar)
+						}),
+					$elm$core$Platform$Cmd$none);
+			case 'FooterMsg':
+				var footerMsg = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							footer: A2($author$project$Footer$update, footerMsg, model.footer)
+						}),
+					$elm$core$Platform$Cmd$none);
+			case 'ChangeCategoryImage':
+				var category = msg.a;
+				var oldImage = model.image;
+				var updateCategory = _Utils_update(
+					oldImage,
+					{category: category});
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{image: updateCategory}),
+					$elm$core$Platform$Cmd$none);
+			case 'ChangeDescImage':
+				var description = msg.a;
+				var oldImage = model.image;
+				var updateDesc = _Utils_update(
+					oldImage,
+					{description: description});
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{image: updateDesc}),
+					$elm$core$Platform$Cmd$none);
+			case 'GotFiles':
+				var files = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{fileImage: files}),
+					$elm$core$Platform$Cmd$none);
+			case 'ImageCreated':
+				if (msg.a.$ === 'Ok') {
+					var image = msg.a.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{createError: $elm$core$Maybe$Nothing, image: image}),
+						A2($author$project$Route$pushUrl, $author$project$Route$Images, model.navKey));
+				} else {
+					var error = msg.a.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								createError: $elm$core$Maybe$Just(
+									$author$project$Page$AddImagePage$buildErrorMessage(error))
+							}),
+						$elm$core$Platform$Cmd$none);
+				}
+			default:
+				return _Utils_Tuple2(
 					model,
-					{
-						navbar: A2($author$project$Navbar$update, navbarMsg, model.navbar)
-					}),
-				$elm$core$Platform$Cmd$none);
-		} else {
-			var footerMsg = msg.a;
-			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{
-						footer: A2($author$project$Footer$update, footerMsg, model.footer)
-					}),
-				$elm$core$Platform$Cmd$none);
+					$author$project$Page$AddImagePage$addImage(model));
 		}
 	});
 var $author$project$Popup$update = F2(
@@ -7194,7 +7499,7 @@ var $author$project$Main$update = F2(
 								{
 									page: $author$project$Main$AddImagePage(updatedPageModel)
 								}),
-							$elm$core$Platform$Cmd$none);
+							A2($elm$core$Platform$Cmd$map, $author$project$Main$AddImagePageMsg, updatedCmd));
 					} else {
 						break _v0$8;
 					}
@@ -7244,9 +7549,6 @@ var $author$project$Main$update = F2(
 		}
 		return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 	});
-var $author$project$Main$AddImagePageMsg = function (a) {
-	return {$: 'AddImagePageMsg', a: a};
-};
 var $author$project$Main$EditImagePageMsg = function (a) {
 	return {$: 'EditImagePageMsg', a: a};
 };
@@ -7541,81 +7843,91 @@ var $author$project$Page$AddCategoryPage$view = function (model) {
 				$author$project$Footer$view(model.footer))
 			]));
 };
-var $author$project$Page$AddImagePage$File = {$: 'File'};
+var $author$project$Page$AddImagePage$ChangeCategoryImage = function (a) {
+	return {$: 'ChangeCategoryImage', a: a};
+};
+var $author$project$Page$AddImagePage$ChangeDescImage = function (a) {
+	return {$: 'ChangeDescImage', a: a};
+};
 var $author$project$Page$AddImagePage$FooterMsg = function (a) {
 	return {$: 'FooterMsg', a: a};
 };
 var $author$project$Page$AddImagePage$NavbarMsg = function (a) {
 	return {$: 'NavbarMsg', a: a};
 };
-var $author$project$Page$AddImagePage$Submit = {$: 'Submit'};
-var $author$project$Page$AddImagePage$Text = {$: 'Text'};
-var $elm$html$Html$form = _VirtualDom_node('form');
-var $author$project$Page$AddImagePage$renderInput = F2(
-	function (title, inputType) {
-		switch (inputType.$) {
-			case 'Text':
-				return A2(
-					$elm$html$Html$div,
+var $author$project$Page$AddImagePage$GotFiles = function (a) {
+	return {$: 'GotFiles', a: a};
+};
+var $elm$time$Time$Posix = function (a) {
+	return {$: 'Posix', a: a};
+};
+var $elm$time$Time$millisToPosix = $elm$time$Time$Posix;
+var $elm$file$File$decoder = _File_decoder;
+var $author$project$Page$AddImagePage$filesDecoder = A2(
+	$elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'files']),
+	$elm$json$Json$Decode$list($elm$file$File$decoder));
+var $author$project$Page$AddImagePage$renderInputFile = A2(
+	$elm$html$Html$div,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('input_container')
+		]),
+	_List_fromArray(
+		[
+			A2($elm$html$Html$label, _List_Nil, _List_Nil),
+			A2(
+			$elm$html$Html$input,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$type_('file'),
+					A2(
+					$elm$html$Html$Events$on,
+					'change',
+					A2($elm$json$Json$Decode$map, $author$project$Page$AddImagePage$GotFiles, $author$project$Page$AddImagePage$filesDecoder))
+				]),
+			_List_Nil)
+		]));
+var $author$project$Page$AddImagePage$AddImage = {$: 'AddImage'};
+var $author$project$Page$AddImagePage$renderInputSubmit = A2(
+	$elm$html$Html$button,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('btn primary'),
+			$elm$html$Html$Events$onClick($author$project$Page$AddImagePage$AddImage)
+		]),
+	_List_fromArray(
+		[
+			$elm$html$Html$text('Confirmer')
+		]));
+var $author$project$Page$AddImagePage$renderInputText = F2(
+	function (title, msg) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('input_container')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$label,
+					_List_Nil,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('input_container')
+							$elm$html$Html$text(title)
+						])),
+					A2(
+					$elm$html$Html$input,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$type_('text'),
+							$elm$html$Html$Attributes$placeholder(title),
+							$elm$html$Html$Events$onInput(msg)
 						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$label,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text(title)
-								])),
-							A2(
-							$elm$html$Html$input,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$type_('text'),
-									$elm$html$Html$Attributes$placeholder(title)
-								]),
-							_List_Nil)
-						]));
-			case 'File':
-				return A2(
-					$elm$html$Html$div,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('input_container')
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$label,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text(title)
-								])),
-							A2(
-							$elm$html$Html$input,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$type_('file'),
-									$elm$html$Html$Attributes$placeholder(title)
-								]),
-							_List_Nil)
-						]));
-			default:
-				return A2(
-					$elm$html$Html$button,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('btn primary')
-						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text('Confirmer')
-						]));
-		}
+					_List_Nil)
+				]));
 	});
 var $elm$html$Html$Attributes$for = $elm$html$Html$Attributes$stringProperty('htmlFor');
 var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
@@ -7674,6 +7986,14 @@ var $author$project$Page$AddImagePage$renderSelect = function (label_txt) {
 					]))
 			]));
 };
+var $author$project$Page$AddImagePage$viewError = function (maybeError) {
+	if (maybeError.$ === 'Just') {
+		var error = maybeError.a;
+		return $elm$html$Html$text(error);
+	} else {
+		return $elm$html$Html$text('');
+	}
+};
 var $author$project$Page$AddImagePage$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -7684,6 +8004,41 @@ var $author$project$Page$AddImagePage$view = function (model) {
 				$elm$html$Html$map,
 				$author$project$Page$AddImagePage$NavbarMsg,
 				$author$project$Navbar$view(model.navbar)),
+				$author$project$Page$AddImagePage$viewError(model.createError),
+				A2(
+				$elm$html$Html$ul,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$li,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(model.image.category)
+							])),
+						A2(
+						$elm$html$Html$li,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(model.image.description)
+							])),
+						A2(
+						$elm$html$Html$li,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(model.image.addedAt)
+							])),
+						A2(
+						$elm$html$Html$li,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(model.image.updatedAt)
+							]))
+					])),
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(
@@ -7708,15 +8063,15 @@ var $author$project$Page$AddImagePage$view = function (model) {
 										$elm$html$Html$text('Ajout d\'image')
 									])),
 								A2(
-								$elm$html$Html$form,
+								$elm$html$Html$div,
 								_List_fromArray(
 									[
 										$elm$html$Html$Attributes$class('add_image_form')
 									]),
 								_List_fromArray(
 									[
-										A2($author$project$Page$AddImagePage$renderInput, 'Titre', $author$project$Page$AddImagePage$Text),
-										A2($author$project$Page$AddImagePage$renderInput, 'Catégorie', $author$project$Page$AddImagePage$Text),
+										A2($author$project$Page$AddImagePage$renderInputText, 'Catégorie', $author$project$Page$AddImagePage$ChangeCategoryImage),
+										A2($author$project$Page$AddImagePage$renderInputText, 'Description', $author$project$Page$AddImagePage$ChangeDescImage),
 										$author$project$Page$AddImagePage$renderSelect('Tags'),
 										A2(
 										$elm$html$Html$div,
@@ -7725,10 +8080,8 @@ var $author$project$Page$AddImagePage$view = function (model) {
 												$elm$html$Html$Attributes$class('add_image_tags')
 											]),
 										_List_fromArray(
-											[
-												A2($author$project$Page$AddImagePage$renderInput, '', $author$project$Page$AddImagePage$File)
-											])),
-										A2($author$project$Page$AddImagePage$renderInput, '', $author$project$Page$AddImagePage$Submit)
+											[$author$project$Page$AddImagePage$renderInputFile])),
+										$author$project$Page$AddImagePage$renderInputSubmit
 									]))
 							]))
 					])),
@@ -8222,6 +8575,7 @@ var $author$project$Page$EditImagePage$NavbarMsg = function (a) {
 };
 var $author$project$Page$EditImagePage$Submit = {$: 'Submit'};
 var $author$project$Page$EditImagePage$Text = {$: 'Text'};
+var $elm$html$Html$form = _VirtualDom_node('form');
 var $author$project$Page$EditImagePage$renderInput = F2(
 	function (title, inputType) {
 		switch (inputType.$) {
@@ -8605,18 +8959,6 @@ var $author$project$Images$idToString = function (imageId) {
 	return $elm$core$String$fromInt(id);
 };
 var $author$project$Page$HomePage$viewImage = function (image) {
-	var tags = A2(
-		$elm$core$List$map,
-		function (tag) {
-			return A2(
-				$elm$html$Html$li,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text(tag)
-					]));
-		},
-		image.tags);
 	return A2(
 		$elm$html$Html$div,
 		_List_Nil,
@@ -8637,7 +8979,6 @@ var $author$project$Page$HomePage$viewImage = function (image) {
 					[
 						$elm$html$Html$text(image.category)
 					])),
-				A2($elm$html$Html$ul, _List_Nil, tags),
 				A2(
 				$elm$html$Html$p,
 				_List_Nil,
@@ -8848,7 +9189,7 @@ var $author$project$Page$ImagesListPage$renderButtonCreate = A2(
 	$elm$html$Html$a,
 	_List_fromArray(
 		[
-			$elm$html$Html$Attributes$href('/add'),
+			$elm$html$Html$Attributes$href('/images/new'),
 			$elm$html$Html$Attributes$class('btn primary')
 		]),
 	_List_fromArray(
@@ -8977,18 +9318,6 @@ var $author$project$Page$ImagesListPage$viewFetchError = function (errorMessage)
 			]));
 };
 var $author$project$Page$ImagesListPage$viewImage = function (image) {
-	var tags = A2(
-		$elm$core$List$map,
-		function (tag) {
-			return A2(
-				$elm$html$Html$li,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text(tag)
-					]));
-		},
-		image.tags);
 	return A2(
 		$elm$html$Html$div,
 		_List_Nil,
@@ -9009,7 +9338,6 @@ var $author$project$Page$ImagesListPage$viewImage = function (image) {
 					[
 						$elm$html$Html$text(image.category)
 					])),
-				A2($elm$html$Html$ul, _List_Nil, tags),
 				A2(
 				$elm$html$Html$p,
 				_List_Nil,
