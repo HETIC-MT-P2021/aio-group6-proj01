@@ -44,6 +44,11 @@ class Tag
     public function __construct()
     {
         $this->images = new ArrayCollection();
+
+        $this->setUpdatedAt(new \DateTime('now'));
+        if ($this->getAddedAt() === null) {
+            $this->setAddedAt(new \DateTime('now'));
+        }
     }
 
     public function getId(): ?int
