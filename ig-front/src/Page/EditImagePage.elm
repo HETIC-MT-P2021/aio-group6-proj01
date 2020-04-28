@@ -1,29 +1,69 @@
 module Page.EditImagePage exposing (Model, update, view, init, Msg(..))
 
-import Html exposing (Html, p, h1, div, form, input, label, select, option, button, text, map)
+import Html exposing (..)
 import Html.Attributes exposing (class, type_, placeholder, value, name, id, for)
+import Html.Events exposing (onClick, onInput, on)
+
+import Http
+import Json.Decode as Decode exposing (Decoder, field, string, int, map)
+import Json.Encode as Encode
+import RemoteData exposing (WebData)
+import File exposing (File)
+import Regex
+import Browser.Navigation as Nav
+
+import Route
 
 import Navbar
 import Footer
+
+import Images exposing (Image, ImageId, imageDecoder, imageEncoder)
+import ApiEndpoint
+import Error
 
 -- MODEL
 
 type alias Model =
     { navbar : Navbar.Model
     , footer : Footer.Model
+    , navKey : Nav.Key
+    , image : WebData Image
+    , fileImage : List File
+    , saveError : Maybe String
     }
 
-init : ( Model, Cmd Msg )
-init =
+init : ImageId -> Nav.Key -> ( Model, Cmd Msg )
+init imageId navKey =
     ( { navbar = Navbar.init
       , footer = Footer.init
-      }, Cmd.none )
+      , navKey = navKey
+      , image = RemoteData.Loading
+      , fileImage = []
+      , saveError = Nothing
+      }, fetchImage imageId )
+
+fetchImage : ImageId -> Cmd Msg
+fetchImage imageId =
+    Http.get
+        { url = ApiEndpoint.getImage ++ Images.idToString imageId
+        , expect =
+            imageDecoder
+                |> Http.expectJson (RemoteData.fromResult >> ImageReceived)
+        }
 
 -- UPDATE
 
 type Msg 
     = NavbarMsg Navbar.Msg
     | FooterMsg Footer.Msg
+    | ChangeCategoryImage String
+    | ChangeDescImage String
+    | GotFiles (List File)
+    -- GET IMAGE/{ID}
+    | ImageReceived (WebData Image)
+    -- PUT IMAGE/{ID}
+    | SaveImage
+    | ImageSaved (Result Http.Error Image)
 
 update : Msg -> Model ->( Model, Cmd Msg )
 update msg model =
@@ -34,28 +74,135 @@ update msg model =
         FooterMsg footerMsg ->
             ( { model | footer = Footer.update footerMsg model.footer }, Cmd.none )
 
-type InputType
-    = Text
-    | File
-    | Submit
+        ImageReceived image ->
+            ( { model | image = image }, Cmd.none )
 
-renderInput : String -> InputType -> Html Msg
-renderInput title inputType=
-    case inputType of
-        Text ->
-            div [ class "input_container" ]
-                [ label [ ] [ text title ]
-                , input [ type_ "text", placeholder title ] []
-                ]
-            
-        File ->
-            div [ class "input_container" ]
-                [ label [ ] [ text title ]
-                , input [ type_ "file", placeholder title ] []
-                ]
+        ChangeCategoryImage newCategory ->
+            let
+                updateCategory =
+                    RemoteData.map
+                        (\imageData ->
+                            { imageData | category = newCategory }
+                        )
+                        model.image
+            in
+            ( { model | image = updateCategory }, Cmd.none )
+        
+        ChangeDescImage newDescription ->
+            let
+                updateDesc =
+                    RemoteData.map
+                        (\imageData ->
+                            { imageData | description = newDescription }
+                        )
+                        model.image
+            in
+            ( { model | image = updateDesc }, Cmd.none )
 
-        Submit ->
-            button [ class "btn primary" ] [ text "Confirmer" ]            
+        GotFiles files ->
+            ( { model | fileImage = files }, Cmd.none)
+
+        SaveImage ->
+            ( model, saveImage model )
+
+        ImageSaved (Ok imageData) ->
+            let
+                image =
+                    RemoteData.succeed imageData
+            in
+            ( { model | image = image, saveError = Nothing }
+            , Route.pushUrl Route.Images model.navKey
+            )
+        
+        ImageSaved (Err error) ->
+            ( { model | saveError = Just (Error.buildErrorMessage error) }
+            , Cmd.none
+            )
+
+saveImage : Model -> Cmd Msg
+saveImage model =
+    case model.image of
+        RemoteData.Success imageData ->
+            let
+                editImageUrl =
+                    ApiEndpoint.putImage ++ Images.idToString imageData.id
+
+                filepath = ""
+            in
+            Http.request
+                { method = "PUT"
+                , headers = []
+                , url = editImageUrl
+                , body = Http.jsonBody (imageEncoder imageData filepath)
+                , expect = Http.expectJson ImageSaved imageDecoder
+                , timeout = Nothing
+                , tracker = Nothing
+                }
+
+        _ ->
+            Cmd.none
+
+-- VIEW
+
+view : Model -> Html Msg
+view model =
+    div [] 
+        [ Html.map NavbarMsg (Navbar.view model.navbar)
+        , div [ class "error_message" ] [ viewError model.saveError ]
+        , div [ class "container" ]
+            [ div [ class "edit_image_section" ] 
+                [ h1 [] [ text "Edition d'image" ]
+                , div [ class "edit_image_form" ]
+                    [ renderInputText "Catégorie" model.image ChangeCategoryImage
+                    , renderInputText "Description" model.image ChangeDescImage
+                    , renderSelect "Tags"
+                    , div [ class "edit_image_tags" ]
+                        [ renderInputFile ]
+                    , renderInputSubmit
+                    ]
+                ]
+            ]
+        , Html.map FooterMsg (Footer.view model.footer)
+        ]
+
+renderInputText : String -> WebData Image -> (String -> Msg) -> Html Msg
+renderInputText title image msg =
+    let 
+        valInput =
+            case image of
+                RemoteData.NotAsked ->
+                    ""
+
+                RemoteData.Loading ->
+                    ""
+
+                RemoteData.Success imageData ->
+                    case title of
+                        "Catégorie" ->
+                            imageData.category
+                        "Description" ->
+                            imageData.description
+                        _ ->
+                            ""
+
+                RemoteData.Failure httpError ->
+                    ""
+    in
+    div [ class "input_container" ]
+        [ label [] [ text title ]
+        , input [ type_ "text", placeholder title, value valInput, onInput msg ] []
+        ]
+
+renderInputFile : Html Msg
+renderInputFile =
+    div [ class "input_container" ]
+        [ label [] []
+        , input [ type_ "file" ] []
+        ]
+
+renderInputSubmit : Html Msg
+renderInputSubmit =
+    button [ class "btn primary", onClick SaveImage ] [ text "Confirmer" ]
 
 renderSelect : String -> Html Msg
 renderSelect label_txt =
@@ -67,22 +214,11 @@ renderSelect label_txt =
             ]
         ]
 
-view : Model -> Html Msg
-view model =
-    div [] 
-        [ map NavbarMsg (Navbar.view model.navbar)
-        , div [ class "container" ]
-            [ div [ class "edit_image_section" ] 
-                [ h1 [] [ text "Edition d'image" ]
-                , form [ class "edit_image_form" ]
-                    [ renderInput "Titre" Text
-                    , renderInput "Catégorie" Text
-                    , renderSelect "Tags"
-                    , div [ class "edit_image_tags" ]
-                        [ renderInput "" File ]
-                    , renderInput "" Submit
-                    ]
-                ]
-            ]
-        , map FooterMsg (Footer.view model.footer)
-        ]
+viewError : Maybe String -> Html Msg
+viewError maybeError =
+    case maybeError of
+        Just error ->
+            text error
+
+        Nothing ->
+            text ""
