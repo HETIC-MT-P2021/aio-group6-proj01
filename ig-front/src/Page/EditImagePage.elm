@@ -18,6 +18,8 @@ import Navbar
 import Footer
 
 import Images exposing (Image, ImageId, imageDecoder, imageEncoder)
+import ApiEndpoint
+import Error
 
 -- MODEL
 
@@ -43,7 +45,7 @@ init imageId navKey =
 fetchImage : ImageId -> Cmd Msg
 fetchImage imageId =
     Http.get
-        { url = "http://localhost:8001/api/images/" ++ Images.idToString imageId
+        { url = ApiEndpoint.getImage ++ Images.idToString imageId
         , expect =
             imageDecoder
                 |> Http.expectJson (RemoteData.fromResult >> ImageReceived)
@@ -113,7 +115,7 @@ update msg model =
             )
         
         ImageSaved (Err error) ->
-            ( { model | saveError = Just (buildErrorMessage error) }
+            ( { model | saveError = Just (Error.buildErrorMessage error) }
             , Cmd.none
             )
 
@@ -123,8 +125,7 @@ saveImage model =
         RemoteData.Success imageData ->
             let
                 editImageUrl =
-                    "http://localhost:8001/api/images/"
-                        ++ Images.idToString imageData.id
+                    ApiEndpoint.putImage ++ Images.idToString imageData.id
 
                 filepath = ""
             in
@@ -140,6 +141,29 @@ saveImage model =
 
         _ ->
             Cmd.none
+
+-- VIEW
+
+view : Model -> Html Msg
+view model =
+    div [] 
+        [ Html.map NavbarMsg (Navbar.view model.navbar)
+        , div [ class "error_message" ] [ viewError model.saveError ]
+        , div [ class "container" ]
+            [ div [ class "edit_image_section" ] 
+                [ h1 [] [ text "Edition d'image" ]
+                , div [ class "edit_image_form" ]
+                    [ renderInputText "Catégorie" model.image ChangeCategoryImage
+                    , renderInputText "Description" model.image ChangeDescImage
+                    , renderSelect "Tags"
+                    , div [ class "edit_image_tags" ]
+                        [ renderInputFile ]
+                    , renderInputSubmit
+                    ]
+                ]
+            ]
+        , Html.map FooterMsg (Footer.view model.footer)
+        ]
 
 renderInputText : String -> WebData Image -> (String -> Msg) -> Html Msg
 renderInputText title image msg =
@@ -190,27 +214,6 @@ renderSelect label_txt =
             ]
         ]
 
-view : Model -> Html Msg
-view model =
-    div [] 
-        [ Html.map NavbarMsg (Navbar.view model.navbar)
-        , viewError model.saveError
-        , div [ class "container" ]
-            [ div [ class "edit_image_section" ] 
-                [ h1 [] [ text "Edition d'image" ]
-                , div [ class "edit_image_form" ]
-                    [ renderInputText "Catégorie" model.image ChangeCategoryImage
-                    , renderInputText "Description" model.image ChangeDescImage
-                    , renderSelect "Tags"
-                    , div [ class "edit_image_tags" ]
-                        [ renderInputFile ]
-                    , renderInputSubmit
-                    ]
-                ]
-            ]
-        , Html.map FooterMsg (Footer.view model.footer)
-        ]
-
 viewError : Maybe String -> Html Msg
 viewError maybeError =
     case maybeError of
@@ -219,21 +222,3 @@ viewError maybeError =
 
         Nothing ->
             text ""
-
-buildErrorMessage : Http.Error -> String
-buildErrorMessage httpError =
-    case httpError of
-        Http.BadUrl message ->
-            message
-
-        Http.Timeout ->
-            "Server is taking too long to respond. Please try again later."
-
-        Http.NetworkError ->
-            "Unable to reach server."
-
-        Http.BadStatus statusCode ->
-            "Request failed with status code: " ++ String.fromInt statusCode
-
-        Http.BadBody message ->
-            message

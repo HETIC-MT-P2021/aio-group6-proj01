@@ -98,7 +98,6 @@ imageEncoder image filepath =
         , ( "addedAt", Encode.string image.updatedAt )
         ]
 
-
 encodeId : ImageId -> Encode.Value
 encodeId (ImageId id) =
     Encode.int id

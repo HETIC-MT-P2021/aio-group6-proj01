@@ -38,6 +38,8 @@ matchRoute =
         , Parser.map AddCategory (s "category" </> s "new")
         ]
 
+-- MAKE REDIRECTION TO routeToString
+
 pushUrl : Route -> Nav.Key -> Cmd msg
 pushUrl route navKey =
     routeToString route

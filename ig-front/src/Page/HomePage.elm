@@ -13,6 +13,9 @@ import Navbar
 import Footer
 import Popup
 
+import ApiEndpoint
+import Error
+
 -- MODEL
 
 type GetData
@@ -44,7 +47,7 @@ fetchImages =
   Http.request
     { method = "GET"
     , headers = []
-    , url = "http://localhost:8001/api/images"
+    , url = ApiEndpoint.getImagesList
     , body = Http.emptyBody
     , expect = imagesDecoder
                 |> Http.expectJson (RemoteData.fromResult >> ImagesReceived)
@@ -83,6 +86,38 @@ update msg model =
       ( { model | images = response }, Cmd.none )
 
 -- VIEW
+
+view : Model -> Html Msg
+view model =
+  div []
+    [ map PopupMsg (Popup.view model.popup)
+    , map NavbarMsg (Navbar.view model.navbar)
+--    , viewMsg model
+    , viewImages model.images
+    , div [ class "container" ] 
+          [ div [ class "home_categories_section" ] 
+            [ h1 [] [ text "catégories" ],
+              div [ class "home_categories_thumbnails" ] 
+                [ renderThumbnails ThumbnailsCategories
+                , renderThumbnails ThumbnailsCategories
+                , renderThumbnails ThumbnailsCategories
+                ]
+              , a [ href "/categories", class "link" ] [ text "Afficher toutes les catégories" ]
+              , a [ href "#", class "link" ] [ text "+ Créer une nouvelle catégorie" ]
+            ]
+          , div [ class "home_images_section" ] 
+              [ h1 [] [ text "images" ],
+                div [ class "home_images_thumbnails" ] 
+                  [ renderThumbnails ThumbnailsImages
+                  , renderThumbnails ThumbnailsImages
+                  , renderThumbnails ThumbnailsImages
+                  ]
+              , a [ href "/images", class "link" ] [ text "Afficher toutes les images" ]
+              , a [ href "#", class "link" ] [ text "+ Créer une nouvelle image" ]
+            ]
+          ]
+    , map FooterMsg (Footer.view model.footer)
+    ]
 
 renderThumbnails : ThumbnailsType -> Html Msg
 renderThumbnails thumbnailsType =
@@ -144,36 +179,11 @@ viewImages images =
               ]
 
         RemoteData.Failure httpError ->
-          viewFetchError (buildErrorMessage httpError)
+          viewFetchError (Error.buildErrorMessage httpError)
 
 viewFetchError : String -> Html Msg
 viewFetchError errorMessage =
-    let
-        errorHeading =
-            "Couldn't fetch posts at this time."
-    in
-    div []
-        [ h3 [] [ text errorHeading ]
-        , text ("Error: " ++ errorMessage)
-        ]
-
-buildErrorMessage : Http.Error -> String
-buildErrorMessage httpError =
-    case httpError of
-        Http.BadUrl message ->
-            message
-
-        Http.Timeout ->
-            "Server is taking too long to respond. Please try again later."
-
-        Http.NetworkError ->
-            "Unable to reach server."
-
-        Http.BadStatus statusCode ->
-            "Request failed with status code: " ++ String.fromInt statusCode
-
-        Http.BadBody message ->
-            message
+    div [ class "error_message" ] [ text errorMessage ] 
 
 viewImage : Image -> Html Msg
 viewImage image = 
@@ -189,36 +199,4 @@ viewImage image =
   , p [] [ text image.addedAt ]
   , p [] [ text image.updatedAt ]
   ]
-
-view : Model -> Html Msg
-view model =
-  div []
-    [ map PopupMsg (Popup.view model.popup)
-    , map NavbarMsg (Navbar.view model.navbar)
---    , viewMsg model
-    , viewImages model.images
-    , div [ class "container" ] 
-          [ div [ class "home_categories_section" ] 
-            [ h1 [] [ text "catégories" ],
-              div [ class "home_categories_thumbnails" ] 
-                [ renderThumbnails ThumbnailsCategories
-                , renderThumbnails ThumbnailsCategories
-                , renderThumbnails ThumbnailsCategories
-                ]
-              , a [ href "/categories", class "link" ] [ text "Afficher toutes les catégories" ]
-              , a [ href "#", class "link" ] [ text "+ Créer une nouvelle catégorie" ]
-            ]
-          , div [ class "home_images_section" ] 
-              [ h1 [] [ text "images" ],
-                div [ class "home_images_thumbnails" ] 
-                  [ renderThumbnails ThumbnailsImages
-                  , renderThumbnails ThumbnailsImages
-                  , renderThumbnails ThumbnailsImages
-                  ]
-              , a [ href "/images", class "link" ] [ text "Afficher toutes les images" ]
-              , a [ href "#", class "link" ] [ text "+ Créer une nouvelle image" ]
-            ]
-          ]
-    , map FooterMsg (Footer.view model.footer)
-    ]
   

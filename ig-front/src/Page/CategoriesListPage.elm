@@ -15,8 +15,13 @@ import Navbar
 import Footer
 import Popup
 
-import Categories exposing (Category, CategoryId, categoriesDecoder, emptyCategory, newCategoryEncoder)
-
+import ApiEndpoint
+import Error
+import Categories exposing ( Category
+                           , CategoryId
+                           , categoriesDecoder
+                           , emptyCategory
+                           , newCategoryEncoder )
 
 -- MODEL
 
@@ -49,7 +54,7 @@ fetchCategories =
   Http.request
     { method = "GET"
     , headers = []
-    , url = "http://localhost:8001/api/categories"
+    , url = ApiEndpoint.getCategoriesList
     , body = Http.emptyBody
     , expect = categoriesDecoder
                 |> Http.expectJson (RemoteData.fromResult >> CategoriesReceived)
@@ -88,6 +93,28 @@ update msg model =
             ( { model | categories = response }, Cmd.none )
 
 -- VIEW
+
+view : Model -> Html Msg
+view model =
+  div []
+    [ map PopupMsg (Popup.view model.popup)
+    , map NavbarMsg (Navbar.view model.navbar)
+    , viewCategories model.categories
+    , div [ class "container" ] 
+          [ div [ class "categories_section" ] 
+            [ div [ class "categories_head" ] 
+                [ h1 [] [ text "catégories" ]
+                , renderButtonCreate
+                ]
+            , div [ class "categories_thumbnails" ] 
+                [ renderThumbnails
+                , renderThumbnails
+                , renderThumbnails
+                ]
+            ]
+          ]
+    , map FooterMsg (Footer.view model.footer)
+    ]
 
 renderButtonCreate : Html Msg
 renderButtonCreate =
@@ -139,36 +166,11 @@ viewCategories categories =
               ]
 
         RemoteData.Failure httpError ->
-          viewFetchError (buildErrorMessage httpError)
+          viewFetchError (Error.buildErrorMessage httpError)
 
 viewFetchError : String -> Html Msg
 viewFetchError errorMessage =
-    let
-        errorHeading =
-            "Couldn't fetch posts at this time."
-    in
-    div []
-        [ h3 [] [ text errorHeading ]
-        , text ("Error: " ++ errorMessage)
-        ]
-
-buildErrorMessage : Http.Error -> String
-buildErrorMessage httpError =
-    case httpError of
-        Http.BadUrl message ->
-            message
-
-        Http.Timeout ->
-            "Server is taking too long to respond. Please try again later."
-
-        Http.NetworkError ->
-            "Unable to reach server."
-
-        Http.BadStatus statusCode ->
-            "Request failed with status code: " ++ String.fromInt statusCode
-
-        Http.BadBody message ->
-            message
+    div [ class "error_message" ] [ text errorMessage ] 
 
 viewCategory : Category -> Html Msg
 viewCategory category =
@@ -185,27 +187,5 @@ viewCategory category =
         [ text category.addedAt ]
     , p []
         [ text category.updatedAt ]
-    ]
-
-view : Model -> Html Msg
-view model =
-  div []
-    [ map PopupMsg (Popup.view model.popup)
-    , map NavbarMsg (Navbar.view model.navbar)
-    , viewCategories model.categories
-    , div [ class "container" ] 
-          [ div [ class "categories_section" ] 
-            [ div [ class "categories_head" ] 
-                [ h1 [] [ text "catégories" ]
-                , renderButtonCreate
-                ]
-            , div [ class "categories_thumbnails" ] 
-                [ renderThumbnails
-                , renderThumbnails
-                , renderThumbnails
-                ]
-            ]
-          ]
-    , map FooterMsg (Footer.view model.footer)
     ]
   

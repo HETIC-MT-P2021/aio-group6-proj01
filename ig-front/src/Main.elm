@@ -2,12 +2,9 @@ module Main exposing (..)
 
 import Browser exposing (application, UrlRequest, Document)
 import Browser.Navigation exposing (Key, load, pushUrl)
-import Html exposing (button, div, h3, text, a, Html, p)
-import Html.Attributes exposing (href)
-import Html.Events exposing (onClick)
+import Html exposing (h3, text, Html)
 import Url exposing (Url, toString)
 import Browser.Navigation as Nav
-
 
 import Route exposing (Route)
 
@@ -36,19 +33,31 @@ main =
 -- MODEL
 
 type alias Model =
-    { route : Route
-    , page : Page
-    , navKey : Nav.Key
-    }
+  { route : Route
+  , page : Page
+  , navKey : Nav.Key
+  }
+
+
+init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
+init flags url navKey =
+    let
+      model =
+        { route = Route.parseUrl url
+        , page = NotFoundPage
+        , navKey = navKey
+        }
+    in
+    initCurrentPage ( model, Cmd.none )
 
 type Page
-    = NotFoundPage
-    | HomePage Home.Model
-    | ImagesListPage ImagesList.Model
-    | EditImagePage EditImage.Model
-    | AddImagePage AddImage.Model
-    | CategoriesListPage CategoriesList.Model
-    | AddCategoryPage AddCategory.Model
+  = NotFoundPage
+  | HomePage Home.Model
+  | ImagesListPage ImagesList.Model
+  | EditImagePage EditImage.Model
+  | AddImagePage AddImage.Model
+  | CategoriesListPage CategoriesList.Model
+  | AddCategoryPage AddCategory.Model
 
 -- UPDATE
 
@@ -57,18 +66,23 @@ type UrlRequest
   | External String
 
 type Msg
-    = HomePageMsg Home.Msg
-    | ImagesListPageMsg ImagesList.Msg
-    | EditImagePageMsg EditImage.Msg
-    | AddImagePageMsg AddImage.Msg
-    | AddCategoryPageMsg AddCategory.Msg
-    | CategoriesListPageMsg CategoriesList.Msg
-    | LinkClicked Browser.UrlRequest
-    | UrlChanged Url
+  -- MSG PAGE
+  = HomePageMsg Home.Msg
+  | ImagesListPageMsg ImagesList.Msg
+  | EditImagePageMsg EditImage.Msg
+  | AddImagePageMsg AddImage.Msg
+  | AddCategoryPageMsg AddCategory.Msg
+  | CategoriesListPageMsg CategoriesList.Msg
+  -- MANAGE URL
+  | LinkClicked Browser.UrlRequest
+  | UrlChanged Url
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case ( msg, model.page ) of
+
+    -- UPDATE PAGE
+
     ( HomePageMsg subMsg, HomePage pageModel ) ->
       let
           ( updatedPageModel, updatedCmd ) =
@@ -87,19 +101,10 @@ update msg model =
       , Cmd.none
       )
 
-    ( CategoriesListPageMsg subMsg, CategoriesListPage pageModel ) ->
-      let
-          ( updatedPageModel, updatedCmd ) =
-            CategoriesList.update subMsg pageModel
-      in
-      ( { model | page = CategoriesListPage updatedPageModel }
-      , Cmd.none
-      )
-
     ( EditImagePageMsg subMsg, EditImagePage pageModel ) ->
       let
-          ( updatedPageModel, updatedCmd ) =
-            EditImage.update subMsg pageModel
+        ( updatedPageModel, updatedCmd ) =
+          EditImage.update subMsg pageModel
       in
       ( { model | page = EditImagePage updatedPageModel }
       , Cmd.map EditImagePageMsg updatedCmd
@@ -107,17 +112,26 @@ update msg model =
 
     ( AddImagePageMsg subMsg, AddImagePage pageModel ) ->
       let
-          ( updatedPageModel, updatedCmd ) =
-            AddImage.update subMsg pageModel
+        ( updatedPageModel, updatedCmd ) =
+          AddImage.update subMsg pageModel
       in
       ( { model | page = AddImagePage updatedPageModel }
       , Cmd.map AddImagePageMsg updatedCmd
       )
 
+    ( CategoriesListPageMsg subMsg, CategoriesListPage pageModel ) ->
+      let
+        ( updatedPageModel, updatedCmd ) =
+          CategoriesList.update subMsg pageModel
+      in
+      ( { model | page = CategoriesListPage updatedPageModel }
+      , Cmd.none
+      )
+
     ( AddCategoryPageMsg subMsg, AddCategoryPage pageModel ) ->
       let
-          ( updatedPageModel, updatedCmd ) =
-            AddCategory.update subMsg pageModel
+        ( updatedPageModel, updatedCmd ) =
+          AddCategory.update subMsg pageModel
       in
       ( { model | page = AddCategoryPage updatedPageModel }
       , Cmd.map AddCategoryPageMsg updatedCmd
@@ -138,7 +152,7 @@ update msg model =
     ( UrlChanged url, _ ) ->
       let
         newRoute =
-            Route.parseUrl url
+          Route.parseUrl url
       in
       ( { model | route = newRoute }, Cmd.none )
         |> initCurrentPage
@@ -146,67 +160,59 @@ update msg model =
     ( _, _ ) ->
       ( model, Cmd.none )
 
-init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
-init flags url navKey =
-    let
-        model =
-            { route = Route.parseUrl url
-            , page = NotFoundPage
-            , navKey = navKey
-            }
-    in
-    initCurrentPage ( model, Cmd.none )
-
 initCurrentPage : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
 initCurrentPage ( model, existingCmds ) =
-    let
-      ( currentPage, mappedPageCmds ) =
-        case model.route of
-          Route.NotFound ->
-            ( NotFoundPage, Cmd.none )
+  let
+    ( currentPage, mappedPageCmds ) =
+      
+      -- SHOW PAGES
 
-          Route.Home ->
-            let
-              ( pageModel, pageCmds ) =
-                Home.init
-            in
+      case model.route of
+        Route.NotFound ->
+          ( NotFoundPage, Cmd.none )
+
+        Route.Home ->
+          let
+            ( pageModel, pageCmds ) =
+              Home.init
+          in
             ( HomePage pageModel, Cmd.map HomePageMsg pageCmds )
 
-          Route.Images ->
-            let
-              ( pageModel, pageCmds ) =
-                ImagesList.init
-            in
+        Route.Images ->
+          let
+            ( pageModel, pageCmds ) =
+              ImagesList.init
+          in
             ( ImagesListPage pageModel, Cmd.map ImagesListPageMsg pageCmds )
           
-          Route.EditImage imageId ->
-            let
-              ( pageModel, pageCmds ) =
-                EditImage.init imageId model.navKey
-            in
+        Route.EditImage imageId ->
+          let
+            ( pageModel, pageCmds ) =
+              EditImage.init imageId model.navKey
+          in
             ( EditImagePage pageModel, Cmd.map EditImagePageMsg pageCmds )
 
-          Route.AddImage ->
-            let
-              ( pageModel, pageCmds ) =
-                AddImage.init model.navKey
-            in
+        Route.AddImage ->
+          let
+            ( pageModel, pageCmds ) =
+              AddImage.init model.navKey
+          in
             ( AddImagePage pageModel, Cmd.map AddImagePageMsg pageCmds )
 
-          Route.Categories ->
-            let
-              ( pageModel, pageCmds ) =
-                CategoriesList.init model.navKey
-            in
+        Route.Categories ->
+          let
+            ( pageModel, pageCmds ) =
+              CategoriesList.init model.navKey
+          in
             ( CategoriesListPage pageModel, Cmd.map CategoriesListPageMsg pageCmds )
           
-          Route.AddCategory ->
-            let
-              ( pageModel, pageCmds ) =
-                AddCategory.init model.navKey
-            in
+        Route.AddCategory ->
+          let
+            ( pageModel, pageCmds ) =
+              AddCategory.init model.navKey
+          in
             ( AddCategoryPage pageModel, Cmd.map AddCategoryPageMsg pageCmds )
-    in
+  in
     ( { model | page = currentPage }
     , Cmd.batch [ existingCmds, mappedPageCmds ]
     )
@@ -251,4 +257,4 @@ currentView model =
 
 notFoundView : Html msg
 notFoundView =
-    h3 [] [ text "Oops! The page you requested was not found!" ]
+    h3 [] [ text "Cette page n'a pas été trouvé" ]

@@ -6270,6 +6270,8 @@ var $krisajenkins$remotedata$RemoteData$fromResult = function (result) {
 		return $krisajenkins$remotedata$RemoteData$Success(x);
 	}
 };
+var $author$project$ApiEndpoint$getHostname = 'http://localhost:8001/api';
+var $author$project$ApiEndpoint$getCategoriesList = $author$project$ApiEndpoint$getHostname + '/categories';
 var $elm$http$Http$Request = function (a) {
 	return {$: 'Request', a: a};
 };
@@ -6449,7 +6451,7 @@ var $author$project$Page$CategoriesListPage$fetchCategories = $elm$http$Http$req
 		method: 'GET',
 		timeout: $elm$core$Maybe$Nothing,
 		tracker: $elm$core$Maybe$Nothing,
-		url: 'http://localhost:8001/api/categories'
+		url: $author$project$ApiEndpoint$getCategoriesList
 	});
 var $author$project$Popup$EmptyPopup = {$: 'EmptyPopup'};
 var $author$project$Popup$init = {isPopupOpen: false, popupType: $author$project$Popup$EmptyPopup, title: 'Test'};
@@ -6465,6 +6467,7 @@ var $elm$http$Http$get = function (r) {
 	return $elm$http$Http$request(
 		{body: $elm$http$Http$emptyBody, expect: r.expect, headers: _List_Nil, method: 'GET', timeout: $elm$core$Maybe$Nothing, tracker: $elm$core$Maybe$Nothing, url: r.url});
 };
+var $author$project$ApiEndpoint$getImage = $author$project$ApiEndpoint$getHostname + '/images/';
 var $author$project$Images$idToString = function (imageId) {
 	var id = imageId.a;
 	return $elm$core$String$fromInt(id);
@@ -6506,7 +6509,9 @@ var $author$project$Page$EditImagePage$fetchImage = function (imageId) {
 				$elm$http$Http$expectJson,
 				A2($elm$core$Basics$composeR, $krisajenkins$remotedata$RemoteData$fromResult, $author$project$Page$EditImagePage$ImageReceived),
 				$author$project$Images$imageDecoder),
-			url: 'http://localhost:8001/api/images/' + $author$project$Images$idToString(imageId)
+			url: _Utils_ap(
+				$author$project$ApiEndpoint$getImage,
+				$author$project$Images$idToString(imageId))
 		});
 };
 var $author$project$Page$EditImagePage$init = F2(
@@ -6518,6 +6523,7 @@ var $author$project$Page$EditImagePage$init = F2(
 var $author$project$Page$HomePage$ImagesReceived = function (a) {
 	return {$: 'ImagesReceived', a: a};
 };
+var $author$project$ApiEndpoint$getImagesList = $author$project$ApiEndpoint$getHostname + '/images';
 var $author$project$Images$imagesDecoder = A2(
 	$elm$json$Json$Decode$field,
 	'hydra:member',
@@ -6533,7 +6539,7 @@ var $author$project$Page$HomePage$fetchImages = $elm$http$Http$request(
 		method: 'GET',
 		timeout: $elm$core$Maybe$Nothing,
 		tracker: $elm$core$Maybe$Nothing,
-		url: 'http://localhost:8001/api/images'
+		url: $author$project$ApiEndpoint$getImagesList
 	});
 var $author$project$Page$HomePage$init = _Utils_Tuple2(
 	{footer: $author$project$Footer$init, images: $krisajenkins$remotedata$RemoteData$Loading, navbar: $author$project$Navbar$init, popup: $author$project$Popup$init},
@@ -6552,7 +6558,7 @@ var $author$project$Page$ImagesListPage$fetchImages = $elm$http$Http$request(
 		method: 'GET',
 		timeout: $elm$core$Maybe$Nothing,
 		tracker: $elm$core$Maybe$Nothing,
-		url: 'http://localhost:8001/api/images'
+		url: $author$project$ApiEndpoint$getImagesList
 	});
 var $author$project$Page$ImagesListPage$init = _Utils_Tuple2(
 	{footer: $author$project$Footer$init, images: $krisajenkins$remotedata$RemoteData$Loading, navbar: $author$project$Navbar$init, popup: $author$project$Popup$init},
@@ -7054,6 +7060,7 @@ var $author$project$Categories$newCategoryEncoder = function (category) {
 				$elm$json$Json$Encode$string(category.updatedAt))
 			]));
 };
+var $author$project$ApiEndpoint$postCategory = $author$project$ApiEndpoint$getHostname + '/categories';
 var $author$project$Page$AddCategoryPage$addCategory = function (category) {
 	return $elm$http$Http$request(
 		{
@@ -7064,24 +7071,24 @@ var $author$project$Page$AddCategoryPage$addCategory = function (category) {
 			method: 'POST',
 			timeout: $elm$core$Maybe$Nothing,
 			tracker: $elm$core$Maybe$Nothing,
-			url: 'http://localhost:8001/api/categories'
+			url: $author$project$ApiEndpoint$postCategory
 		});
 };
-var $author$project$Page$AddCategoryPage$buildErrorMessage = function (httpError) {
+var $author$project$Error$buildErrorMessage = function (httpError) {
 	switch (httpError.$) {
 		case 'BadUrl':
 			var message = httpError.a;
-			return message;
+			return 'L\'erreur suivante est survenue : ' + message;
 		case 'Timeout':
-			return 'Server is taking too long to respond. Please try again later.';
+			return 'Le serveur a pris trop de temps à répondre, merci de réessayer ultérieurement';
 		case 'NetworkError':
-			return 'Unable to reach server.';
+			return 'Impossible de récupérer les informations, merci de réessayer ultérieurement';
 		case 'BadStatus':
 			var statusCode = httpError.a;
-			return 'Request failed with status code: ' + $elm$core$String$fromInt(statusCode);
+			return 'La requête n\'a pas été effectué (code : ' + ($elm$core$String$fromInt(statusCode) + ')');
 		default:
 			var message = httpError.a;
-			return message;
+			return 'L\'erreur suivante est survenue : ' + message;
 	}
 };
 var $author$project$Route$routeToString = function (route) {
@@ -7171,7 +7178,7 @@ var $author$project$Page$AddCategoryPage$update = F2(
 							model,
 							{
 								createError: $elm$core$Maybe$Just(
-									$author$project$Page$AddCategoryPage$buildErrorMessage(error))
+									$author$project$Error$buildErrorMessage(error))
 							}),
 						$elm$core$Platform$Cmd$none);
 				}
@@ -7221,6 +7228,7 @@ var $author$project$Images$newImageEncoder = F2(
 					$elm$json$Json$Encode$string(image.updatedAt))
 				]));
 	});
+var $author$project$ApiEndpoint$postImage = $author$project$ApiEndpoint$getHostname + '/images';
 var $author$project$Page$AddImagePage$addImage = function (model) {
 	var filepath = '/images/' + $author$project$Page$AddImagePage$getFilename(model.fileImage);
 	return $elm$http$Http$request(
@@ -7232,25 +7240,8 @@ var $author$project$Page$AddImagePage$addImage = function (model) {
 			method: 'POST',
 			timeout: $elm$core$Maybe$Nothing,
 			tracker: $elm$core$Maybe$Nothing,
-			url: 'http://localhost:8001/api/images'
+			url: $author$project$ApiEndpoint$postImage
 		});
-};
-var $author$project$Page$AddImagePage$buildErrorMessage = function (httpError) {
-	switch (httpError.$) {
-		case 'BadUrl':
-			var message = httpError.a;
-			return message;
-		case 'Timeout':
-			return 'Server is taking too long to respond. Please try again later.';
-		case 'NetworkError':
-			return 'Unable to reach server.';
-		case 'BadStatus':
-			var statusCode = httpError.a;
-			return 'Request failed with status code: ' + $elm$core$String$fromInt(statusCode);
-		default:
-			var message = httpError.a;
-			return message;
-	}
 };
 var $author$project$Page$AddImagePage$update = F2(
 	function (msg, model) {
@@ -7317,7 +7308,7 @@ var $author$project$Page$AddImagePage$update = F2(
 							model,
 							{
 								createError: $elm$core$Maybe$Just(
-									$author$project$Page$AddImagePage$buildErrorMessage(error))
+									$author$project$Error$buildErrorMessage(error))
 							}),
 						$elm$core$Platform$Cmd$none);
 				}
@@ -7389,23 +7380,6 @@ var $author$project$Page$CategoriesListPage$update = F2(
 					$elm$core$Platform$Cmd$none);
 		}
 	});
-var $author$project$Page$EditImagePage$buildErrorMessage = function (httpError) {
-	switch (httpError.$) {
-		case 'BadUrl':
-			var message = httpError.a;
-			return message;
-		case 'Timeout':
-			return 'Server is taking too long to respond. Please try again later.';
-		case 'NetworkError':
-			return 'Unable to reach server.';
-		case 'BadStatus':
-			var statusCode = httpError.a;
-			return 'Request failed with status code: ' + $elm$core$String$fromInt(statusCode);
-		default:
-			var message = httpError.a;
-			return message;
-	}
-};
 var $krisajenkins$remotedata$RemoteData$NotAsked = {$: 'NotAsked'};
 var $krisajenkins$remotedata$RemoteData$map = F2(
 	function (f, data) {
@@ -7456,12 +7430,15 @@ var $author$project$Images$imageEncoder = F2(
 					$elm$json$Json$Encode$string(image.updatedAt))
 				]));
 	});
+var $author$project$ApiEndpoint$putImage = $author$project$ApiEndpoint$getHostname + '/images/';
 var $author$project$Page$EditImagePage$saveImage = function (model) {
 	var _v0 = model.image;
 	if (_v0.$ === 'Success') {
 		var imageData = _v0.a;
 		var filepath = '';
-		var editImageUrl = 'http://localhost:8001/api/images/' + $author$project$Images$idToString(imageData.id);
+		var editImageUrl = _Utils_ap(
+			$author$project$ApiEndpoint$putImage,
+			$author$project$Images$idToString(imageData.id));
 		return $elm$http$Http$request(
 			{
 				body: $elm$http$Http$jsonBody(
@@ -7563,7 +7540,7 @@ var $author$project$Page$EditImagePage$update = F2(
 							model,
 							{
 								saveError: $elm$core$Maybe$Just(
-									$author$project$Page$EditImagePage$buildErrorMessage(error))
+									$author$project$Error$buildErrorMessage(error))
 							}),
 						$elm$core$Platform$Cmd$none);
 				}
@@ -7699,30 +7676,13 @@ var $author$project$Main$update = F2(
 					} else {
 						break _v0$8;
 					}
-				case 'CategoriesListPageMsg':
-					if (_v0.b.$ === 'CategoriesListPage') {
-						var subMsg = _v0.a.a;
-						var pageModel = _v0.b.a;
-						var _v3 = A2($author$project$Page$CategoriesListPage$update, subMsg, pageModel);
-						var updatedPageModel = _v3.a;
-						var updatedCmd = _v3.b;
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									page: $author$project$Main$CategoriesListPage(updatedPageModel)
-								}),
-							$elm$core$Platform$Cmd$none);
-					} else {
-						break _v0$8;
-					}
 				case 'EditImagePageMsg':
 					if (_v0.b.$ === 'EditImagePage') {
 						var subMsg = _v0.a.a;
 						var pageModel = _v0.b.a;
-						var _v4 = A2($author$project$Page$EditImagePage$update, subMsg, pageModel);
-						var updatedPageModel = _v4.a;
-						var updatedCmd = _v4.b;
+						var _v3 = A2($author$project$Page$EditImagePage$update, subMsg, pageModel);
+						var updatedPageModel = _v3.a;
+						var updatedCmd = _v3.b;
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
@@ -7737,9 +7697,9 @@ var $author$project$Main$update = F2(
 					if (_v0.b.$ === 'AddImagePage') {
 						var subMsg = _v0.a.a;
 						var pageModel = _v0.b.a;
-						var _v5 = A2($author$project$Page$AddImagePage$update, subMsg, pageModel);
-						var updatedPageModel = _v5.a;
-						var updatedCmd = _v5.b;
+						var _v4 = A2($author$project$Page$AddImagePage$update, subMsg, pageModel);
+						var updatedPageModel = _v4.a;
+						var updatedCmd = _v4.b;
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
@@ -7747,6 +7707,23 @@ var $author$project$Main$update = F2(
 									page: $author$project$Main$AddImagePage(updatedPageModel)
 								}),
 							A2($elm$core$Platform$Cmd$map, $author$project$Main$AddImagePageMsg, updatedCmd));
+					} else {
+						break _v0$8;
+					}
+				case 'CategoriesListPageMsg':
+					if (_v0.b.$ === 'CategoriesListPage') {
+						var subMsg = _v0.a.a;
+						var pageModel = _v0.b.a;
+						var _v5 = A2($author$project$Page$CategoriesListPage$update, subMsg, pageModel);
+						var updatedPageModel = _v5.a;
+						var updatedCmd = _v5.b;
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									page: $author$project$Main$CategoriesListPage(updatedPageModel)
+								}),
+							$elm$core$Platform$Cmd$none);
 					} else {
 						break _v0$8;
 					}
@@ -7806,7 +7783,7 @@ var $author$project$Main$notFoundView = A2(
 	_List_Nil,
 	_List_fromArray(
 		[
-			$elm$html$Html$text('Oops! The page you requested was not found!')
+			$elm$html$Html$text('Cette page n\'a pas été trouvé')
 		]));
 var $author$project$Page$AddCategoryPage$FooterMsg = function (a) {
 	return {$: 'FooterMsg', a: a};
@@ -8017,7 +7994,16 @@ var $author$project$Page$AddCategoryPage$view = function (model) {
 				$elm$html$Html$map,
 				$author$project$Page$AddCategoryPage$NavbarMsg,
 				$author$project$Navbar$view(model.navbar)),
-				$author$project$Page$AddCategoryPage$viewError(model.createError),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('error_message')
+					]),
+				_List_fromArray(
+					[
+						$author$project$Page$AddCategoryPage$viewError(model.createError)
+					])),
 				A2(
 				$elm$html$Html$ul,
 				_List_Nil,
@@ -8248,7 +8234,16 @@ var $author$project$Page$AddImagePage$view = function (model) {
 				$elm$html$Html$map,
 				$author$project$Page$AddImagePage$NavbarMsg,
 				$author$project$Navbar$view(model.navbar)),
-				$author$project$Page$AddImagePage$viewError(model.createError),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('error_message')
+					]),
+				_List_fromArray(
+					[
+						$author$project$Page$AddImagePage$viewError(model.createError)
+					])),
 				A2(
 				$elm$html$Html$ul,
 				_List_Nil,
@@ -8634,23 +8629,6 @@ var $author$project$Popup$view = function (model) {
 		return A2($author$project$Popup$renderPopup, model, 'popup_overlay hidden');
 	}
 };
-var $author$project$Page$CategoriesListPage$buildErrorMessage = function (httpError) {
-	switch (httpError.$) {
-		case 'BadUrl':
-			var message = httpError.a;
-			return message;
-		case 'Timeout':
-			return 'Server is taking too long to respond. Please try again later.';
-		case 'NetworkError':
-			return 'Unable to reach server.';
-		case 'BadStatus':
-			var statusCode = httpError.a;
-			return 'Request failed with status code: ' + $elm$core$String$fromInt(statusCode);
-		default:
-			var message = httpError.a;
-			return message;
-	}
-};
 var $author$project$Categories$idToString = function (categoryId) {
 	var id = categoryId.a;
 	return $elm$core$String$fromInt(id);
@@ -8693,20 +8671,15 @@ var $author$project$Page$CategoriesListPage$viewCategory = function (category) {
 			]));
 };
 var $author$project$Page$CategoriesListPage$viewFetchError = function (errorMessage) {
-	var errorHeading = 'Couldn\'t fetch posts at this time.';
 	return A2(
 		$elm$html$Html$div,
-		_List_Nil,
 		_List_fromArray(
 			[
-				A2(
-				$elm$html$Html$h3,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text(errorHeading)
-					])),
-				$elm$html$Html$text('Error: ' + errorMessage)
+				$elm$html$Html$Attributes$class('error_message')
+			]),
+		_List_fromArray(
+			[
+				$elm$html$Html$text(errorMessage)
 			]));
 };
 var $author$project$Page$CategoriesListPage$viewCategories = function (categories) {
@@ -8743,7 +8716,7 @@ var $author$project$Page$CategoriesListPage$viewCategories = function (categorie
 		default:
 			var httpError = categories.a;
 			return $author$project$Page$CategoriesListPage$viewFetchError(
-				$author$project$Page$CategoriesListPage$buildErrorMessage(httpError));
+				$author$project$Error$buildErrorMessage(httpError));
 	}
 };
 var $author$project$Page$CategoriesListPage$view = function (model) {
@@ -8970,7 +8943,16 @@ var $author$project$Page$EditImagePage$view = function (model) {
 				$elm$html$Html$map,
 				$author$project$Page$EditImagePage$NavbarMsg,
 				$author$project$Navbar$view(model.navbar)),
-				$author$project$Page$EditImagePage$viewError(model.saveError),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('error_message')
+					]),
+				_List_fromArray(
+					[
+						$author$project$Page$EditImagePage$viewError(model.saveError)
+					])),
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(
@@ -9186,38 +9168,16 @@ var $author$project$Page$HomePage$renderThumbnails = function (thumbnailsType) {
 				]));
 	}
 };
-var $author$project$Page$HomePage$buildErrorMessage = function (httpError) {
-	switch (httpError.$) {
-		case 'BadUrl':
-			var message = httpError.a;
-			return message;
-		case 'Timeout':
-			return 'Server is taking too long to respond. Please try again later.';
-		case 'NetworkError':
-			return 'Unable to reach server.';
-		case 'BadStatus':
-			var statusCode = httpError.a;
-			return 'Request failed with status code: ' + $elm$core$String$fromInt(statusCode);
-		default:
-			var message = httpError.a;
-			return message;
-	}
-};
 var $author$project$Page$HomePage$viewFetchError = function (errorMessage) {
-	var errorHeading = 'Couldn\'t fetch posts at this time.';
 	return A2(
 		$elm$html$Html$div,
-		_List_Nil,
 		_List_fromArray(
 			[
-				A2(
-				$elm$html$Html$h3,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text(errorHeading)
-					])),
-				$elm$html$Html$text('Error: ' + errorMessage)
+				$elm$html$Html$Attributes$class('error_message')
+			]),
+		_List_fromArray(
+			[
+				$elm$html$Html$text(errorMessage)
 			]));
 };
 var $author$project$Page$HomePage$viewImage = function (image) {
@@ -9305,7 +9265,7 @@ var $author$project$Page$HomePage$viewImages = function (images) {
 		default:
 			var httpError = images.a;
 			return $author$project$Page$HomePage$viewFetchError(
-				$author$project$Page$HomePage$buildErrorMessage(httpError));
+				$author$project$Error$buildErrorMessage(httpError));
 	}
 };
 var $author$project$Page$HomePage$view = function (model) {
@@ -9545,38 +9505,16 @@ var $author$project$Page$ImagesListPage$renderThumbnails = function () {
 					]))
 			]));
 }();
-var $author$project$Page$ImagesListPage$buildErrorMessage = function (httpError) {
-	switch (httpError.$) {
-		case 'BadUrl':
-			var message = httpError.a;
-			return message;
-		case 'Timeout':
-			return 'Server is taking too long to respond. Please try again later.';
-		case 'NetworkError':
-			return 'Unable to reach server.';
-		case 'BadStatus':
-			var statusCode = httpError.a;
-			return 'Request failed with status code: ' + $elm$core$String$fromInt(statusCode);
-		default:
-			var message = httpError.a;
-			return message;
-	}
-};
 var $author$project$Page$ImagesListPage$viewFetchError = function (errorMessage) {
-	var errorHeading = 'Couldn\'t fetch posts at this time.';
 	return A2(
 		$elm$html$Html$div,
-		_List_Nil,
 		_List_fromArray(
 			[
-				A2(
-				$elm$html$Html$h3,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text(errorHeading)
-					])),
-				$elm$html$Html$text('Error: ' + errorMessage)
+				$elm$html$Html$Attributes$class('error_message')
+			]),
+		_List_fromArray(
+			[
+				$elm$html$Html$text(errorMessage)
 			]));
 };
 var $author$project$Page$ImagesListPage$viewImage = function (image) {
@@ -9664,7 +9602,7 @@ var $author$project$Page$ImagesListPage$viewImages = function (images) {
 		default:
 			var httpError = images.a;
 			return $author$project$Page$ImagesListPage$viewFetchError(
-				$author$project$Page$ImagesListPage$buildErrorMessage(httpError));
+				$author$project$Error$buildErrorMessage(httpError));
 	}
 };
 var $author$project$Page$ImagesListPage$view = function (model) {

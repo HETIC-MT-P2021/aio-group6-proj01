@@ -16,6 +16,8 @@ import Footer
 
 import Route
 
+import ApiEndpoint
+import Error
 import Categories exposing ( Category
                            , CategoryId
                            , categoriesDecoder
@@ -57,7 +59,7 @@ addCategory category =
   Http.request
     { method = "POST"
     , headers = []
-    , url = "http://localhost:8001/api/categories"
+    , url = ApiEndpoint.postCategory
     , body =  Http.jsonBody (newCategoryEncoder category)
     , expect = Http.expectJson CategoryCreated categoryDecoder
     , timeout = Nothing
@@ -90,7 +92,7 @@ update msg model =
           , Route.pushUrl Route.Categories model.navKey )
 
         CategoryCreated (Err error) ->
-          ( { model | createError = Just (buildErrorMessage error) }, Cmd.none )
+          ( { model | createError = Just (Error.buildErrorMessage error) }, Cmd.none )
 
         AddCategory ->
           ( model, addCategory model.category )
@@ -124,7 +126,7 @@ view : Model -> Html Msg
 view model =
     div [] 
         [ map NavbarMsg (Navbar.view model.navbar)
-        , viewError model.createError
+        , div [ class "error_message" ] [ viewError model.createError ]
         , ul [] 
             [ li [] [ text model.category.title ]
             , li [] [ text model.category.addedAt ]
@@ -141,21 +143,3 @@ view model =
             ]
         , map FooterMsg (Footer.view model.footer)
         ]
-
-buildErrorMessage : Http.Error -> String
-buildErrorMessage httpError =
-    case httpError of
-        Http.BadUrl message ->
-            message
-
-        Http.Timeout ->
-            "Server is taking too long to respond. Please try again later."
-
-        Http.NetworkError ->
-            "Unable to reach server."
-
-        Http.BadStatus statusCode ->
-            "Request failed with status code: " ++ String.fromInt statusCode
-
-        Http.BadBody message ->
-            message
