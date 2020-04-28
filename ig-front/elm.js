@@ -6512,7 +6512,7 @@ var $author$project$Page$EditImagePage$fetchImage = function (imageId) {
 var $author$project$Page$EditImagePage$init = F2(
 	function (imageId, navKey) {
 		return _Utils_Tuple2(
-			{fileImage: _List_Nil, footer: $author$project$Footer$init, image: $krisajenkins$remotedata$RemoteData$Loading, navKey: navKey, navbar: $author$project$Navbar$init},
+			{fileImage: _List_Nil, footer: $author$project$Footer$init, image: $krisajenkins$remotedata$RemoteData$Loading, navKey: navKey, navbar: $author$project$Navbar$init, saveError: $elm$core$Maybe$Nothing},
 			$author$project$Page$EditImagePage$fetchImage(imageId));
 	});
 var $author$project$Page$HomePage$ImagesReceived = function (a) {
@@ -7389,6 +7389,23 @@ var $author$project$Page$CategoriesListPage$update = F2(
 					$elm$core$Platform$Cmd$none);
 		}
 	});
+var $author$project$Page$EditImagePage$buildErrorMessage = function (httpError) {
+	switch (httpError.$) {
+		case 'BadUrl':
+			var message = httpError.a;
+			return message;
+		case 'Timeout':
+			return 'Server is taking too long to respond. Please try again later.';
+		case 'NetworkError':
+			return 'Unable to reach server.';
+		case 'BadStatus':
+			var statusCode = httpError.a;
+			return 'Request failed with status code: ' + $elm$core$String$fromInt(statusCode);
+		default:
+			var message = httpError.a;
+			return message;
+	}
+};
 var $krisajenkins$remotedata$RemoteData$NotAsked = {$: 'NotAsked'};
 var $krisajenkins$remotedata$RemoteData$map = F2(
 	function (f, data) {
@@ -7406,6 +7423,61 @@ var $krisajenkins$remotedata$RemoteData$map = F2(
 				return $krisajenkins$remotedata$RemoteData$Failure(error);
 		}
 	});
+var $author$project$Page$EditImagePage$ImageSaved = function (a) {
+	return {$: 'ImageSaved', a: a};
+};
+var $elm$json$Json$Encode$int = _Json_wrap;
+var $author$project$Images$encodeId = function (_v0) {
+	var id = _v0.a;
+	return $elm$json$Json$Encode$int(id);
+};
+var $author$project$Images$imageEncoder = F2(
+	function (image, filepath) {
+		return $elm$json$Json$Encode$object(
+			_List_fromArray(
+				[
+					_Utils_Tuple2(
+					'id',
+					$author$project$Images$encodeId(image.id)),
+					_Utils_Tuple2(
+					'category',
+					$elm$json$Json$Encode$string(image.category)),
+					_Utils_Tuple2(
+					'path',
+					$elm$json$Json$Encode$string(filepath)),
+					_Utils_Tuple2(
+					'description',
+					$elm$json$Json$Encode$string(image.description)),
+					_Utils_Tuple2(
+					'addedAt',
+					$elm$json$Json$Encode$string(image.addedAt)),
+					_Utils_Tuple2(
+					'addedAt',
+					$elm$json$Json$Encode$string(image.updatedAt))
+				]));
+	});
+var $author$project$Page$EditImagePage$saveImage = function (model) {
+	var _v0 = model.image;
+	if (_v0.$ === 'Success') {
+		var imageData = _v0.a;
+		var filepath = '';
+		var editImageUrl = 'http://localhost:8001/api/images/' + $author$project$Images$idToString(imageData.id);
+		return $elm$http$Http$request(
+			{
+				body: $elm$http$Http$jsonBody(
+					A2($author$project$Images$imageEncoder, imageData, filepath)),
+				expect: A2($elm$http$Http$expectJson, $author$project$Page$EditImagePage$ImageSaved, $author$project$Images$imageDecoder),
+				headers: _List_Nil,
+				method: 'PUT',
+				timeout: $elm$core$Maybe$Nothing,
+				tracker: $elm$core$Maybe$Nothing,
+				url: editImageUrl
+			});
+	} else {
+		return $elm$core$Platform$Cmd$none;
+	}
+};
+var $krisajenkins$remotedata$RemoteData$succeed = $krisajenkins$remotedata$RemoteData$Success;
 var $author$project$Page$EditImagePage$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -7464,13 +7536,37 @@ var $author$project$Page$EditImagePage$update = F2(
 						model,
 						{image: updateDesc}),
 					$elm$core$Platform$Cmd$none);
-			default:
+			case 'GotFiles':
 				var files = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{fileImage: files}),
 					$elm$core$Platform$Cmd$none);
+			case 'SaveImage':
+				return _Utils_Tuple2(
+					model,
+					$author$project$Page$EditImagePage$saveImage(model));
+			default:
+				if (msg.a.$ === 'Ok') {
+					var imageData = msg.a.a;
+					var image = $krisajenkins$remotedata$RemoteData$succeed(imageData);
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{image: image, saveError: $elm$core$Maybe$Nothing}),
+						A2($author$project$Route$pushUrl, $author$project$Route$Images, model.navKey));
+				} else {
+					var error = msg.a.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								saveError: $elm$core$Maybe$Just(
+									$author$project$Page$EditImagePage$buildErrorMessage(error))
+							}),
+						$elm$core$Platform$Cmd$none);
+				}
 		}
 	});
 var $author$project$Page$HomePage$update = F2(
@@ -7633,7 +7729,7 @@ var $author$project$Main$update = F2(
 								{
 									page: $author$project$Main$EditImagePage(updatedPageModel)
 								}),
-							$elm$core$Platform$Cmd$none);
+							A2($elm$core$Platform$Cmd$map, $author$project$Main$EditImagePageMsg, updatedCmd));
 					} else {
 						break _v0$8;
 					}
@@ -8714,13 +8810,18 @@ var $author$project$Page$CategoriesListPage$view = function (model) {
 				$author$project$Footer$view(model.footer))
 			]));
 };
+var $author$project$Page$EditImagePage$ChangeCategoryImage = function (a) {
+	return {$: 'ChangeCategoryImage', a: a};
+};
+var $author$project$Page$EditImagePage$ChangeDescImage = function (a) {
+	return {$: 'ChangeDescImage', a: a};
+};
 var $author$project$Page$EditImagePage$FooterMsg = function (a) {
 	return {$: 'FooterMsg', a: a};
 };
 var $author$project$Page$EditImagePage$NavbarMsg = function (a) {
 	return {$: 'NavbarMsg', a: a};
 };
-var $elm$html$Html$form = _VirtualDom_node('form');
 var $author$project$Page$EditImagePage$renderInputFile = A2(
 	$elm$html$Html$div,
 	_List_fromArray(
@@ -8738,18 +8839,20 @@ var $author$project$Page$EditImagePage$renderInputFile = A2(
 				]),
 			_List_Nil)
 		]));
+var $author$project$Page$EditImagePage$SaveImage = {$: 'SaveImage'};
 var $author$project$Page$EditImagePage$renderInputSubmit = A2(
 	$elm$html$Html$button,
 	_List_fromArray(
 		[
-			$elm$html$Html$Attributes$class('btn primary')
+			$elm$html$Html$Attributes$class('btn primary'),
+			$elm$html$Html$Events$onClick($author$project$Page$EditImagePage$SaveImage)
 		]),
 	_List_fromArray(
 		[
 			$elm$html$Html$text('Confirmer')
 		]));
-var $author$project$Page$EditImagePage$renderInputText = F2(
-	function (title, image) {
+var $author$project$Page$EditImagePage$renderInputText = F3(
+	function (title, image, msg) {
 		var valInput = function () {
 			switch (image.$) {
 				case 'NotAsked':
@@ -8792,7 +8895,8 @@ var $author$project$Page$EditImagePage$renderInputText = F2(
 						[
 							$elm$html$Html$Attributes$type_('text'),
 							$elm$html$Html$Attributes$placeholder(title),
-							$elm$html$Html$Attributes$value(valInput)
+							$elm$html$Html$Attributes$value(valInput),
+							$elm$html$Html$Events$onInput(msg)
 						]),
 					_List_Nil)
 				]));
@@ -8848,6 +8952,14 @@ var $author$project$Page$EditImagePage$renderSelect = function (label_txt) {
 					]))
 			]));
 };
+var $author$project$Page$EditImagePage$viewError = function (maybeError) {
+	if (maybeError.$ === 'Just') {
+		var error = maybeError.a;
+		return $elm$html$Html$text(error);
+	} else {
+		return $elm$html$Html$text('');
+	}
+};
 var $author$project$Page$EditImagePage$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -8858,6 +8970,7 @@ var $author$project$Page$EditImagePage$view = function (model) {
 				$elm$html$Html$map,
 				$author$project$Page$EditImagePage$NavbarMsg,
 				$author$project$Navbar$view(model.navbar)),
+				$author$project$Page$EditImagePage$viewError(model.saveError),
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(
@@ -8882,15 +8995,15 @@ var $author$project$Page$EditImagePage$view = function (model) {
 										$elm$html$Html$text('Edition d\'image')
 									])),
 								A2(
-								$elm$html$Html$form,
+								$elm$html$Html$div,
 								_List_fromArray(
 									[
 										$elm$html$Html$Attributes$class('edit_image_form')
 									]),
 								_List_fromArray(
 									[
-										A2($author$project$Page$EditImagePage$renderInputText, 'Catégorie', model.image),
-										A2($author$project$Page$EditImagePage$renderInputText, 'Description', model.image),
+										A3($author$project$Page$EditImagePage$renderInputText, 'Catégorie', model.image, $author$project$Page$EditImagePage$ChangeCategoryImage),
+										A3($author$project$Page$EditImagePage$renderInputText, 'Description', model.image, $author$project$Page$EditImagePage$ChangeDescImage),
 										$author$project$Page$EditImagePage$renderSelect('Tags'),
 										A2(
 										$elm$html$Html$div,

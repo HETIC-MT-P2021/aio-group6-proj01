@@ -102,7 +102,7 @@ update msg model =
             EditImage.update subMsg pageModel
       in
       ( { model | page = EditImagePage updatedPageModel }
-      , Cmd.none
+      , Cmd.map EditImagePageMsg updatedCmd
       )
 
     ( AddImagePageMsg subMsg, AddImagePage pageModel ) ->

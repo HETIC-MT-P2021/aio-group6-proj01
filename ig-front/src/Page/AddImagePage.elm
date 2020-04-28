@@ -161,7 +161,7 @@ getFilename files =
         filenameReplaceStart = String.replace "[<" "" filename
         filenameReplaceEnd = String.replace ">]" "" filenameReplaceStart
     in
-        filenameReplaceEnd  
+        filenameReplaceEnd
 
 view : Model -> Html Msg
 view model =

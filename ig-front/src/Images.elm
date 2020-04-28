@@ -87,7 +87,7 @@ idParser =
         \imageId ->
             Maybe.map ImageId (String.toInt imageId)
 
-imageEncoder : Image -> String-> Encode.Value
+imageEncoder : Image -> String -> Encode.Value
 imageEncoder image filepath =
     Encode.object
         [ ( "id", encodeId image.id )
