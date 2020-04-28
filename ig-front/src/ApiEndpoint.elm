@@ -20,6 +20,10 @@ putImage : String
 putImage =
     getHostname ++ "/images/"
 
+deleteImage : String
+deleteImage =
+    getHostname ++ "/images/"
+
 getCategoriesList : String
 getCategoriesList =
     getHostname ++ "/categories"
@@ -34,4 +38,8 @@ postCategory =
 
 putCategory : String
 putCategory =
+    getHostname ++ "/categories/"
+
+deleteCategory : String
+deleteCategory =
     getHostname ++ "/categories/"

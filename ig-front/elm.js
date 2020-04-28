@@ -6593,7 +6593,7 @@ var $author$project$Page$ImagesListPage$fetchImages = $elm$http$Http$request(
 		url: $author$project$ApiEndpoint$getImagesList
 	});
 var $author$project$Page$ImagesListPage$init = _Utils_Tuple2(
-	{footer: $author$project$Footer$init, images: $krisajenkins$remotedata$RemoteData$Loading, navbar: $author$project$Navbar$init, popup: $author$project$Popup$init},
+	{deleteError: $elm$core$Maybe$Nothing, footer: $author$project$Footer$init, images: $krisajenkins$remotedata$RemoteData$Loading, navbar: $author$project$Navbar$init, popup: $author$project$Popup$init},
 	$author$project$Page$ImagesListPage$fetchImages);
 var $elm$core$Platform$Cmd$map = _Platform_map;
 var $author$project$Main$initCurrentPage = function (_v0) {
@@ -7773,6 +7773,30 @@ var $author$project$Page$HomePage$update = F2(
 					$elm$core$Platform$Cmd$none);
 		}
 	});
+var $author$project$Page$ImagesListPage$ImageDeleted = function (a) {
+	return {$: 'ImageDeleted', a: a};
+};
+var $author$project$ApiEndpoint$deleteImage = $author$project$ApiEndpoint$getHostname + '/images/';
+var $elm$http$Http$expectString = function (toMsg) {
+	return A2(
+		$elm$http$Http$expectStringResponse,
+		toMsg,
+		$elm$http$Http$resolve($elm$core$Result$Ok));
+};
+var $author$project$Page$ImagesListPage$deleteImage = function (imageId) {
+	return $elm$http$Http$request(
+		{
+			body: $elm$http$Http$emptyBody,
+			expect: $elm$http$Http$expectString($author$project$Page$ImagesListPage$ImageDeleted),
+			headers: _List_Nil,
+			method: 'DELETE',
+			timeout: $elm$core$Maybe$Nothing,
+			tracker: $elm$core$Maybe$Nothing,
+			url: _Utils_ap(
+				$author$project$ApiEndpoint$deleteImage,
+				$author$project$Images$idToString(imageId))
+		});
+};
 var $author$project$Page$ImagesListPage$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -7809,13 +7833,32 @@ var $author$project$Page$ImagesListPage$update = F2(
 						model,
 						{images: $krisajenkins$remotedata$RemoteData$Loading}),
 					$author$project$Page$ImagesListPage$fetchImages);
-			default:
+			case 'ImagesReceived':
 				var response = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{images: response}),
 					$elm$core$Platform$Cmd$none);
+			case 'DeleteImage':
+				var imageId = msg.a;
+				return _Utils_Tuple2(
+					model,
+					$author$project$Page$ImagesListPage$deleteImage(imageId));
+			default:
+				if (msg.a.$ === 'Ok') {
+					return _Utils_Tuple2(model, $author$project$Page$ImagesListPage$fetchImages);
+				} else {
+					var error = msg.a.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								deleteError: $elm$core$Maybe$Just(
+									$author$project$Error$buildErrorMessage(error))
+							}),
+						$elm$core$Platform$Cmd$none);
+				}
 		}
 	});
 var $author$project$Main$update = F2(
@@ -7854,7 +7897,7 @@ var $author$project$Main$update = F2(
 								{
 									page: $author$project$Main$ImagesListPage(updatedPageModel)
 								}),
-							$elm$core$Platform$Cmd$none);
+							A2($elm$core$Platform$Cmd$map, $author$project$Main$ImagesListPageMsg, updatedCmd));
 					} else {
 						break _v0$9;
 					}
@@ -9749,93 +9792,96 @@ var $author$project$Page$ImagesListPage$renderButtonCreate = A2(
 		[
 			$elm$html$Html$text('Créer')
 		]));
-var $author$project$Page$ImagesListPage$renderThumbnails = function () {
-	var deletePopupMsg = $author$project$Page$ImagesListPage$PopupMsg(
-		A2($author$project$Popup$ShowPopup, $author$project$Popup$DeletePopup, 'Voulez-vous supprimer l\'image ?'));
-	return A2(
-		$elm$html$Html$button,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('images_thumbnail')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('image_tags')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$span,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('tag_thumbnails')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Rouge')
-							])),
-						A2(
-						$elm$html$Html$span,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('tag_thumbnails')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('BMW')
-							]))
-					])),
-				A2(
-				$elm$html$Html$button,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('icon_container icon_container_trash pointer'),
-						$elm$html$Html$Events$onClick(deletePopupMsg)
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('icon icon_trash')
-							]),
-						_List_Nil)
-					])),
-				A2(
-				$elm$html$Html$a,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$href('/image/1/edit'),
-						$elm$html$Html$Attributes$class('icon_container icon_container_edit pointer')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('icon icon_pen')
-							]),
-						_List_Nil)
-					])),
-				A2(
-				$elm$html$Html$a,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$href('#'),
-						$elm$html$Html$Attributes$class('image_category')
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Voiture')
-					]))
-			]));
-}();
+var $author$project$Page$ImagesListPage$renderThumbnails = A2(
+	$elm$html$Html$button,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('images_thumbnail')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('image_tags')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$span,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('tag_thumbnails')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Rouge')
+						])),
+					A2(
+					$elm$html$Html$span,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('tag_thumbnails')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('BMW')
+						]))
+				])),
+			A2(
+			$elm$html$Html$button,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('icon_container icon_container_trash pointer')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('icon icon_trash')
+						]),
+					_List_Nil)
+				])),
+			A2(
+			$elm$html$Html$a,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$href('/image/1/edit'),
+					$elm$html$Html$Attributes$class('icon_container icon_container_edit pointer')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('icon icon_pen')
+						]),
+					_List_Nil)
+				])),
+			A2(
+			$elm$html$Html$a,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$href('#'),
+					$elm$html$Html$Attributes$class('image_category')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Voiture')
+				]))
+		]));
+var $author$project$Page$ImagesListPage$viewDeleteError = function (maybeError) {
+	if (maybeError.$ === 'Just') {
+		var error = maybeError.a;
+		return 'La suppression n\'a pas été effectué, veuillez réeesayer';
+	} else {
+		return '';
+	}
+};
 var $author$project$Page$ImagesListPage$viewFetchError = function (errorMessage) {
 	return A2(
 		$elm$html$Html$div,
@@ -9848,6 +9894,9 @@ var $author$project$Page$ImagesListPage$viewFetchError = function (errorMessage)
 				$elm$html$Html$text(errorMessage)
 			]));
 };
+var $author$project$Page$ImagesListPage$DeleteImage = function (a) {
+	return {$: 'DeleteImage', a: a};
+};
 var $author$project$Page$ImagesListPage$viewImage = function (image) {
 	return A2(
 		$elm$html$Html$div,
@@ -9855,8 +9904,12 @@ var $author$project$Page$ImagesListPage$viewImage = function (image) {
 		_List_fromArray(
 			[
 				A2(
-				$elm$html$Html$p,
-				_List_Nil,
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick(
+						$author$project$Page$ImagesListPage$DeleteImage(image.id))
+					]),
 				_List_fromArray(
 					[
 						$elm$html$Html$text(
@@ -9951,6 +10004,8 @@ var $author$project$Page$ImagesListPage$view = function (model) {
 				$author$project$Page$ImagesListPage$NavbarMsg,
 				$author$project$Navbar$view(model.navbar)),
 				$author$project$Page$ImagesListPage$viewImages(model.images),
+				$author$project$Page$ImagesListPage$viewFetchError(
+				$author$project$Page$ImagesListPage$viewDeleteError(model.deleteError)),
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(

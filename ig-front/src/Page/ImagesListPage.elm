@@ -29,6 +29,7 @@ type alias Model =
     , footer : Footer.Model
     , popup : Popup.Model
     , images : WebData (List Image)
+    , deleteError : Maybe String
     }
 
 init : ( Model, Cmd Msg )
@@ -37,6 +38,7 @@ init =
       , footer = Footer.init
       , popup = Popup.init
       , images = RemoteData.Loading
+      , deleteError = Nothing
       }, fetchImages )
 
 fetchImages : Cmd Msg
@@ -58,9 +60,12 @@ type Msg
     = NavbarMsg Navbar.Msg
     | FooterMsg Footer.Msg
     | PopupMsg Popup.Msg
-    -- Fetch images
+    -- FETCH IMAGES
     | FetchImages
     | ImagesReceived (WebData (List Image))
+    -- DELETE IMAGE
+    | DeleteImage ImageId
+    | ImageDeleted (Result Http.Error String)
 
 update : Msg -> Model ->( Model, Cmd Msg )
 update msg model =
@@ -82,6 +87,29 @@ update msg model =
         ImagesReceived response ->
             ( { model | images = response }, Cmd.none )
 
+        DeleteImage imageId ->
+            ( model, deleteImage imageId )
+
+        ImageDeleted (Ok _) ->
+            ( model, fetchImages )
+
+        ImageDeleted (Err error) ->
+            ( { model | deleteError = Just (Error.buildErrorMessage error) }
+            , Cmd.none
+            )
+
+deleteImage : ImageId -> Cmd Msg
+deleteImage imageId =
+    Http.request
+        { method = "DELETE"
+        , headers = []
+        , url = ApiEndpoint.deleteImage ++ Images.idToString imageId
+        , body = Http.emptyBody
+        , expect = Http.expectString ImageDeleted
+        , timeout = Nothing
+        , tracker = Nothing
+        }
+
 -- VIEW
 
 view : Model -> Html Msg
@@ -90,6 +118,7 @@ view model =
     [ map PopupMsg (Popup.view model.popup)
     , map NavbarMsg (Navbar.view model.navbar)
     , viewImages model.images
+    , viewFetchError (viewDeleteError model.deleteError)
     , div [ class "container" ] 
           [ div [ class "images_section" ] 
             [ div [ class "images_head" ] 
@@ -112,32 +141,17 @@ renderButtonCreate =
 
 renderThumbnails : Html Msg
 renderThumbnails =
-    let
-        {-
-        3 types of popup :
-            - EditPopup
-            - CreatePopup
-            - DeletePopup
-        
-        Msg ShowPopup takes 2 args :
-            - PopupType
-            - Title of Popup
-        -}
-
-        deletePopupMsg = PopupMsg (Popup.ShowPopup Popup.DeletePopup "Voulez-vous supprimer l'image ?")
-  
-    in
-        button [ class "images_thumbnail" ] 
-        [ div [ class "image_tags" ] 
-            [ span [ class "tag_thumbnails" ] [ text "Rouge" ]
-            , span [ class "tag_thumbnails" ] [ text "BMW" ]
-            ]
-        , button [ class "icon_container icon_container_trash pointer", onClick (deletePopupMsg) ] 
-            [ div [ class "icon icon_trash" ] [] ]
-        , a [ href "/image/1/edit", class "icon_container icon_container_edit pointer" ] 
-            [ div [ class "icon icon_pen" ] [] ]
-        , a [ href "#", class "image_category" ] [ text "Voiture" ]
+    button [ class "images_thumbnail" ] 
+    [ div [ class "image_tags" ] 
+        [ span [ class "tag_thumbnails" ] [ text "Rouge" ]
+        , span [ class "tag_thumbnails" ] [ text "BMW" ]
         ]
+    , button [ class "icon_container icon_container_trash pointer" ] 
+        [ div [ class "icon icon_trash" ] [] ]
+    , a [ href "/image/1/edit", class "icon_container icon_container_edit pointer" ] 
+        [ div [ class "icon icon_pen" ] [] ]
+    , a [ href "#", class "image_category" ] [ text "Voiture" ]
+    ]
 
 viewImages : WebData (List Image) -> Html Msg
 viewImages images =
@@ -160,7 +174,16 @@ viewImages images =
 
 viewFetchError : String -> Html Msg
 viewFetchError errorMessage =
-    div [ class "error_message" ] [ text errorMessage ]    
+    div [ class "error_message" ] [ text errorMessage ]  
+
+viewDeleteError : Maybe String -> String
+viewDeleteError maybeError =
+    case maybeError of
+        Just error ->
+            "La suppression n'a pas été effectué, veuillez réeesayer"
+
+        Nothing ->
+            ""  
 
 viewImage : Image -> Html Msg
 viewImage image =
@@ -168,7 +191,7 @@ viewImage image =
         tags = List.map (\tag -> li [] [ text tag ]) image.tags
     in-}
     div []
-        [ p []
+        [ button [ onClick (DeleteImage image.id) ]
             [ text (Images.idToString image.id) ]
         , p []
             [ text image.category ]
