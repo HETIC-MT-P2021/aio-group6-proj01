@@ -32,7 +32,6 @@ class Image
      */
     private $tags;
 
-
     /**
      * @ORM\Column(type="string", length=255)
      */
@@ -52,6 +51,7 @@ class Image
      * @ORM\Column(type="date", nullable=true)
      */
     private $updatedAt;
+
     public function __construct()
     {
         $this->tags = new ArrayCollection();
