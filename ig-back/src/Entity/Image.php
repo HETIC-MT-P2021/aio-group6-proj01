@@ -21,13 +21,14 @@ class Image
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="images", nullable=true)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="images")
+     * @ORM\JoinColumn(nullable=true)
      */
     private $category;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Tag", mappedBy="images", nullable=true)
+     * @ORM\ManyToMany(targetEntity="App\Entity\Tag", mappedBy="images")
+     * @ORM\JoinColumn(nullable=true)
      */
     private $tags;
 

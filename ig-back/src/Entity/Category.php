@@ -26,7 +26,8 @@ class Category
     private $title;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Image", mappedBy="category", nullable=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Image", mappedBy="category")
+     * @ORM\JoinColumn(nullable=true)
      */
     private $images;
 

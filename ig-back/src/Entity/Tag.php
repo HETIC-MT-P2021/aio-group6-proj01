@@ -21,7 +21,8 @@ class Tag
     private $id;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Image", inversedBy="tags", nullable=true)
+     * @ORM\ManyToMany(targetEntity="App\Entity\Image", inversedBy="tags")
+     * @ORM\JoinColumn(nullable=true)
      */
     private $images;
 
