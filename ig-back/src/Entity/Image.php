@@ -22,15 +22,15 @@ class Image
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="images")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $category;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Tag", mappedBy="images")
+     * @ORM\JoinColumn(nullable=true)
      */
     private $tags;
-
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -43,7 +43,7 @@ class Image
     private $description;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="date", nullable=true)
      */
     private $addedAt;
 
@@ -51,9 +51,15 @@ class Image
      * @ORM\Column(type="date", nullable=true)
      */
     private $updatedAt;
+
     public function __construct()
     {
         $this->tags = new ArrayCollection();
+
+        $this->setUpdatedAt(new \DateTime('now'));
+        if ($this->getAddedAt() === null) {
+            $this->setAddedAt(new \DateTime('now'));
+        }
     }
 
     public function getId(): ?int

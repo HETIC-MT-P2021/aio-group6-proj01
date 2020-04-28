@@ -27,22 +27,28 @@ class Category
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Image", mappedBy="category")
+     * @ORM\JoinColumn(nullable=true)
      */
     private $images;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="date", nullable=true)
      */
     private $addedAt;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="date", nullable=true)
      */
     private $updatedAt;
 
     public function __construct()
     {
         $this->images = new ArrayCollection();
+
+        $this->setUpdatedAt(new \DateTime('now'));
+        if ($this->getAddedAt() === null) {
+            $this->setAddedAt(new \DateTime('now'));
+        }
     }
 
     public function getId(): ?int

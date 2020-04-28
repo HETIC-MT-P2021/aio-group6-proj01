@@ -22,6 +22,7 @@ class Tag
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Image", inversedBy="tags")
+     * @ORM\JoinColumn(nullable=true)
      */
     private $images;
 
@@ -31,7 +32,7 @@ class Tag
     private $title;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="date", nullable=true)
      */
     private $addedAt;
 
@@ -43,6 +44,11 @@ class Tag
     public function __construct()
     {
         $this->images = new ArrayCollection();
+
+        $this->setUpdatedAt(new \DateTime('now'));
+        if ($this->getAddedAt() === null) {
+            $this->setAddedAt(new \DateTime('now'));
+        }
     }
 
     public function getId(): ?int
