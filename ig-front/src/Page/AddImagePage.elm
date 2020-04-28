@@ -117,11 +117,6 @@ update msg model =
         AddImage ->
           ( model, addImage model )
 
-type InputType
-    = Text
-    | File
-    | Submit
-
 renderInputText : String -> (String -> Msg) -> Html Msg
 renderInputText title msg =
     div [ class "input_container" ]

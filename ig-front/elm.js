@@ -5542,6 +5542,9 @@ var $author$project$Main$CategoriesListPageMsg = function (a) {
 var $author$project$Main$EditImagePage = function (a) {
 	return {$: 'EditImagePage', a: a};
 };
+var $author$project$Main$EditImagePageMsg = function (a) {
+	return {$: 'EditImagePageMsg', a: a};
+};
 var $author$project$Main$HomePage = function (a) {
 	return {$: 'HomePage', a: a};
 };
@@ -6455,11 +6458,16 @@ var $author$project$Page$CategoriesListPage$init = function (navKey) {
 		{categories: $krisajenkins$remotedata$RemoteData$Loading, footer: $author$project$Footer$init, navKey: navKey, navbar: $author$project$Navbar$init, popup: $author$project$Popup$init, saveError: $elm$core$Maybe$Nothing},
 		$author$project$Page$CategoriesListPage$fetchCategories);
 };
-var $author$project$Page$EditImagePage$init = _Utils_Tuple2(
-	{footer: $author$project$Footer$init, navbar: $author$project$Navbar$init},
-	$elm$core$Platform$Cmd$none);
-var $author$project$Page$HomePage$ImagesReceived = function (a) {
-	return {$: 'ImagesReceived', a: a};
+var $author$project$Page$EditImagePage$ImageReceived = function (a) {
+	return {$: 'ImageReceived', a: a};
+};
+var $elm$http$Http$get = function (r) {
+	return $elm$http$Http$request(
+		{body: $elm$http$Http$emptyBody, expect: r.expect, headers: _List_Nil, method: 'GET', timeout: $elm$core$Maybe$Nothing, tracker: $elm$core$Maybe$Nothing, url: r.url});
+};
+var $author$project$Images$idToString = function (imageId) {
+	var id = imageId.a;
+	return $elm$core$String$fromInt(id);
 };
 var $author$project$Images$Image = F6(
 	function (id, category, path, description, addedAt, updatedAt) {
@@ -6491,6 +6499,25 @@ var $author$project$Images$imageDecoder = A3(
 						'id',
 						$author$project$Images$idDecoder,
 						$elm$json$Json$Decode$succeed($author$project$Images$Image)))))));
+var $author$project$Page$EditImagePage$fetchImage = function (imageId) {
+	return $elm$http$Http$get(
+		{
+			expect: A2(
+				$elm$http$Http$expectJson,
+				A2($elm$core$Basics$composeR, $krisajenkins$remotedata$RemoteData$fromResult, $author$project$Page$EditImagePage$ImageReceived),
+				$author$project$Images$imageDecoder),
+			url: 'http://localhost:8001/api/images/' + $author$project$Images$idToString(imageId)
+		});
+};
+var $author$project$Page$EditImagePage$init = F2(
+	function (imageId, navKey) {
+		return _Utils_Tuple2(
+			{fileImage: _List_Nil, footer: $author$project$Footer$init, image: $krisajenkins$remotedata$RemoteData$Loading, navKey: navKey, navbar: $author$project$Navbar$init},
+			$author$project$Page$EditImagePage$fetchImage(imageId));
+	});
+var $author$project$Page$HomePage$ImagesReceived = function (a) {
+	return {$: 'ImagesReceived', a: a};
+};
 var $author$project$Images$imagesDecoder = A2(
 	$elm$json$Json$Decode$field,
 	'hydra:member',
@@ -6554,12 +6581,13 @@ var $author$project$Main$initCurrentPage = function (_v0) {
 					$author$project$Main$ImagesListPage(pageModel),
 					A2($elm$core$Platform$Cmd$map, $author$project$Main$ImagesListPageMsg, pageCmds));
 			case 'EditImage':
-				var _v5 = $author$project$Page$EditImagePage$init;
+				var imageId = _v2.a;
+				var _v5 = A2($author$project$Page$EditImagePage$init, imageId, model.navKey);
 				var pageModel = _v5.a;
 				var pageCmds = _v5.b;
 				return _Utils_Tuple2(
 					$author$project$Main$EditImagePage(pageModel),
-					$elm$core$Platform$Cmd$none);
+					A2($elm$core$Platform$Cmd$map, $author$project$Main$EditImagePageMsg, pageCmds));
 			case 'AddImage':
 				var _v6 = $author$project$Page$AddImagePage$init(model.navKey);
 				var pageModel = _v6.a;
@@ -6597,7 +6625,9 @@ var $author$project$Route$NotFound = {$: 'NotFound'};
 var $author$project$Route$AddCategory = {$: 'AddCategory'};
 var $author$project$Route$AddImage = {$: 'AddImage'};
 var $author$project$Route$Categories = {$: 'Categories'};
-var $author$project$Route$EditImage = {$: 'EditImage'};
+var $author$project$Route$EditImage = function (a) {
+	return {$: 'EditImage', a: a};
+};
 var $author$project$Route$Home = {$: 'Home'};
 var $author$project$Route$Images = {$: 'Images'};
 var $elm$url$Url$Parser$Parser = function (a) {
@@ -6606,6 +6636,58 @@ var $elm$url$Url$Parser$Parser = function (a) {
 var $elm$url$Url$Parser$State = F5(
 	function (visited, unvisited, params, frag, value) {
 		return {frag: frag, params: params, unvisited: unvisited, value: value, visited: visited};
+	});
+var $elm$url$Url$Parser$custom = F2(
+	function (tipe, stringToSomething) {
+		return $elm$url$Url$Parser$Parser(
+			function (_v0) {
+				var visited = _v0.visited;
+				var unvisited = _v0.unvisited;
+				var params = _v0.params;
+				var frag = _v0.frag;
+				var value = _v0.value;
+				if (!unvisited.b) {
+					return _List_Nil;
+				} else {
+					var next = unvisited.a;
+					var rest = unvisited.b;
+					var _v2 = stringToSomething(next);
+					if (_v2.$ === 'Just') {
+						var nextValue = _v2.a;
+						return _List_fromArray(
+							[
+								A5(
+								$elm$url$Url$Parser$State,
+								A2($elm$core$List$cons, next, visited),
+								rest,
+								params,
+								frag,
+								value(nextValue))
+							]);
+					} else {
+						return _List_Nil;
+					}
+				}
+			});
+	});
+var $elm$core$Maybe$map = F2(
+	function (f, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return $elm$core$Maybe$Just(
+				f(value));
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
+var $author$project$Images$idParser = A2(
+	$elm$url$Url$Parser$custom,
+	'IMAGEID',
+	function (imageId) {
+		return A2(
+			$elm$core$Maybe$map,
+			$author$project$Images$ImageId,
+			$elm$core$String$toInt(imageId));
 	});
 var $elm$url$Url$Parser$mapState = F2(
 	function (func, _v0) {
@@ -6725,7 +6807,13 @@ var $author$project$Route$matchRoute = $elm$url$Url$Parser$oneOf(
 			A2(
 			$elm$url$Url$Parser$map,
 			$author$project$Route$EditImage,
-			$elm$url$Url$Parser$s('voiture')),
+			A2(
+				$elm$url$Url$Parser$slash,
+				$elm$url$Url$Parser$s('image'),
+				A2(
+					$elm$url$Url$Parser$slash,
+					$author$project$Images$idParser,
+					$elm$url$Url$Parser$s('edit')))),
 			A2(
 			$elm$url$Url$Parser$map,
 			$author$project$Route$AddImage,
@@ -7005,7 +7093,8 @@ var $author$project$Route$routeToString = function (route) {
 		case 'Images':
 			return '/images';
 		case 'EditImage':
-			return '/images';
+			var idImage = route.a;
+			return '/image/' + $author$project$Images$idToString(idImage);
 		case 'AddImage':
 			return '/images/add';
 		case 'Categories':
@@ -7300,26 +7389,88 @@ var $author$project$Page$CategoriesListPage$update = F2(
 					$elm$core$Platform$Cmd$none);
 		}
 	});
+var $krisajenkins$remotedata$RemoteData$NotAsked = {$: 'NotAsked'};
+var $krisajenkins$remotedata$RemoteData$map = F2(
+	function (f, data) {
+		switch (data.$) {
+			case 'Success':
+				var value = data.a;
+				return $krisajenkins$remotedata$RemoteData$Success(
+					f(value));
+			case 'Loading':
+				return $krisajenkins$remotedata$RemoteData$Loading;
+			case 'NotAsked':
+				return $krisajenkins$remotedata$RemoteData$NotAsked;
+			default:
+				var error = data.a;
+				return $krisajenkins$remotedata$RemoteData$Failure(error);
+		}
+	});
 var $author$project$Page$EditImagePage$update = F2(
 	function (msg, model) {
-		if (msg.$ === 'NavbarMsg') {
-			var navbarMsg = msg.a;
-			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{
-						navbar: A2($author$project$Navbar$update, navbarMsg, model.navbar)
-					}),
-				$elm$core$Platform$Cmd$none);
-		} else {
-			var footerMsg = msg.a;
-			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{
-						footer: A2($author$project$Footer$update, footerMsg, model.footer)
-					}),
-				$elm$core$Platform$Cmd$none);
+		switch (msg.$) {
+			case 'NavbarMsg':
+				var navbarMsg = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							navbar: A2($author$project$Navbar$update, navbarMsg, model.navbar)
+						}),
+					$elm$core$Platform$Cmd$none);
+			case 'FooterMsg':
+				var footerMsg = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							footer: A2($author$project$Footer$update, footerMsg, model.footer)
+						}),
+					$elm$core$Platform$Cmd$none);
+			case 'ImageReceived':
+				var image = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{image: image}),
+					$elm$core$Platform$Cmd$none);
+			case 'ChangeCategoryImage':
+				var newCategory = msg.a;
+				var updateCategory = A2(
+					$krisajenkins$remotedata$RemoteData$map,
+					function (imageData) {
+						return _Utils_update(
+							imageData,
+							{category: newCategory});
+					},
+					model.image);
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{image: updateCategory}),
+					$elm$core$Platform$Cmd$none);
+			case 'ChangeDescImage':
+				var newDescription = msg.a;
+				var updateDesc = A2(
+					$krisajenkins$remotedata$RemoteData$map,
+					function (imageData) {
+						return _Utils_update(
+							imageData,
+							{description: newDescription});
+					},
+					model.image);
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{image: updateDesc}),
+					$elm$core$Platform$Cmd$none);
+			default:
+				var files = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{fileImage: files}),
+					$elm$core$Platform$Cmd$none);
 		}
 	});
 var $author$project$Page$HomePage$update = F2(
@@ -7549,9 +7700,6 @@ var $author$project$Main$update = F2(
 		}
 		return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 	});
-var $author$project$Main$EditImagePageMsg = function (a) {
-	return {$: 'EditImagePageMsg', a: a};
-};
 var $elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
 var $elm$html$Html$map = $elm$virtual_dom$VirtualDom$map;
 var $elm$html$Html$h3 = _VirtualDom_node('h3');
@@ -8566,81 +8714,88 @@ var $author$project$Page$CategoriesListPage$view = function (model) {
 				$author$project$Footer$view(model.footer))
 			]));
 };
-var $author$project$Page$EditImagePage$File = {$: 'File'};
 var $author$project$Page$EditImagePage$FooterMsg = function (a) {
 	return {$: 'FooterMsg', a: a};
 };
 var $author$project$Page$EditImagePage$NavbarMsg = function (a) {
 	return {$: 'NavbarMsg', a: a};
 };
-var $author$project$Page$EditImagePage$Submit = {$: 'Submit'};
-var $author$project$Page$EditImagePage$Text = {$: 'Text'};
 var $elm$html$Html$form = _VirtualDom_node('form');
-var $author$project$Page$EditImagePage$renderInput = F2(
-	function (title, inputType) {
-		switch (inputType.$) {
-			case 'Text':
-				return A2(
-					$elm$html$Html$div,
+var $author$project$Page$EditImagePage$renderInputFile = A2(
+	$elm$html$Html$div,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('input_container')
+		]),
+	_List_fromArray(
+		[
+			A2($elm$html$Html$label, _List_Nil, _List_Nil),
+			A2(
+			$elm$html$Html$input,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$type_('file')
+				]),
+			_List_Nil)
+		]));
+var $author$project$Page$EditImagePage$renderInputSubmit = A2(
+	$elm$html$Html$button,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('btn primary')
+		]),
+	_List_fromArray(
+		[
+			$elm$html$Html$text('Confirmer')
+		]));
+var $author$project$Page$EditImagePage$renderInputText = F2(
+	function (title, image) {
+		var valInput = function () {
+			switch (image.$) {
+				case 'NotAsked':
+					return '';
+				case 'Loading':
+					return '';
+				case 'Success':
+					var imageData = image.a;
+					switch (title) {
+						case 'Catégorie':
+							return imageData.category;
+						case 'Description':
+							return imageData.description;
+						default:
+							return '';
+					}
+				default:
+					var httpError = image.a;
+					return '';
+			}
+		}();
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('input_container')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$label,
+					_List_Nil,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('input_container')
+							$elm$html$Html$text(title)
+						])),
+					A2(
+					$elm$html$Html$input,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$type_('text'),
+							$elm$html$Html$Attributes$placeholder(title),
+							$elm$html$Html$Attributes$value(valInput)
 						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$label,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text(title)
-								])),
-							A2(
-							$elm$html$Html$input,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$type_('text'),
-									$elm$html$Html$Attributes$placeholder(title)
-								]),
-							_List_Nil)
-						]));
-			case 'File':
-				return A2(
-					$elm$html$Html$div,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('input_container')
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$label,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text(title)
-								])),
-							A2(
-							$elm$html$Html$input,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$type_('file'),
-									$elm$html$Html$Attributes$placeholder(title)
-								]),
-							_List_Nil)
-						]));
-			default:
-				return A2(
-					$elm$html$Html$button,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('btn primary')
-						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text('Confirmer')
-						]));
-		}
+					_List_Nil)
+				]));
 	});
 var $author$project$Page$EditImagePage$renderSelect = function (label_txt) {
 	return A2(
@@ -8734,8 +8889,8 @@ var $author$project$Page$EditImagePage$view = function (model) {
 									]),
 								_List_fromArray(
 									[
-										A2($author$project$Page$EditImagePage$renderInput, 'Titre', $author$project$Page$EditImagePage$Text),
-										A2($author$project$Page$EditImagePage$renderInput, 'Catégorie', $author$project$Page$EditImagePage$Text),
+										A2($author$project$Page$EditImagePage$renderInputText, 'Catégorie', model.image),
+										A2($author$project$Page$EditImagePage$renderInputText, 'Description', model.image),
 										$author$project$Page$EditImagePage$renderSelect('Tags'),
 										A2(
 										$elm$html$Html$div,
@@ -8744,10 +8899,8 @@ var $author$project$Page$EditImagePage$view = function (model) {
 												$elm$html$Html$Attributes$class('edit_image_tags')
 											]),
 										_List_fromArray(
-											[
-												A2($author$project$Page$EditImagePage$renderInput, '', $author$project$Page$EditImagePage$File)
-											])),
-										A2($author$project$Page$EditImagePage$renderInput, '', $author$project$Page$EditImagePage$Submit)
+											[$author$project$Page$EditImagePage$renderInputFile])),
+										$author$project$Page$EditImagePage$renderInputSubmit
 									]))
 							]))
 					])),
@@ -8953,10 +9106,6 @@ var $author$project$Page$HomePage$viewFetchError = function (errorMessage) {
 					])),
 				$elm$html$Html$text('Error: ' + errorMessage)
 			]));
-};
-var $author$project$Images$idToString = function (imageId) {
-	var id = imageId.a;
-	return $elm$core$String$fromInt(id);
 };
 var $author$project$Page$HomePage$viewImage = function (image) {
 	return A2(
@@ -9257,7 +9406,7 @@ var $author$project$Page$ImagesListPage$renderThumbnails = function () {
 				$elm$html$Html$a,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$href('/voiture'),
+						$elm$html$Html$Attributes$href('/image/1/edit'),
 						$elm$html$Html$Attributes$class('icon_container icon_container_edit pointer')
 					]),
 				_List_fromArray(

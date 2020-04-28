@@ -110,7 +110,7 @@ renderThumbnails =
             ]
         , button [ class "icon_container icon_container_trash pointer", onClick (deletePopupMsg) ] 
             [ div [ class "icon icon_trash" ] [] ]
-        , a [ href "/voiture", class "icon_container icon_container_edit pointer" ] 
+        , a [ href "/image/1/edit", class "icon_container icon_container_edit pointer" ] 
             [ div [ class "icon icon_pen" ] [] ]
         , a [ href "#", class "image_category" ] [ text "Voiture" ]
         ]

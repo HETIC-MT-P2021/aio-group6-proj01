@@ -4,11 +4,14 @@ module Images exposing ( Image
                         , imageDecoder
                         , imagesDecoder
                         , emptyImage
-                        , newImageEncoder )
+                        , newImageEncoder
+                        , idParser
+                        , imageEncoder )
 
 import Json.Encode as Encode exposing(..)
 import Json.Decode as Decode exposing (Decoder, field, int, list, string)
 import Json.Decode.Pipeline exposing (required)
+import Url.Parser exposing (Parser, custom)
 
 import Time 
 
@@ -77,5 +80,27 @@ newImageEncoder image filepath =
     , ( "addedAt", Encode.string image.addedAt )
     , ( "updatedAt", Encode.string image.updatedAt )
     ]
+
+idParser : Parser (ImageId -> a) a
+idParser =
+    custom "IMAGEID" <|
+        \imageId ->
+            Maybe.map ImageId (String.toInt imageId)
+
+imageEncoder : Image -> String-> Encode.Value
+imageEncoder image filepath =
+    Encode.object
+        [ ( "id", encodeId image.id )
+        , ( "category", Encode.string image.category )
+        , ( "path", Encode.string filepath )
+        , ( "description", Encode.string image.description )
+        , ( "addedAt", Encode.string image.addedAt )
+        , ( "addedAt", Encode.string image.updatedAt )
+        ]
+
+
+encodeId : ImageId -> Encode.Value
+encodeId (ImageId id) =
+    Encode.int id
 
 

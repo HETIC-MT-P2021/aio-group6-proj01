@@ -1,17 +1,17 @@
 module Route exposing (Route(..), parseUrl, pushUrl)
 
 import Url exposing (Url)
-import Url.Parser as Parser exposing ((</>), parse, Parser, oneOf, s, string)
+import Url.Parser as Parser exposing ((</>), parse, Parser, oneOf, s, string, int)
 
 import Browser.Navigation as Nav
 
-import Images exposing (ImageId)
+import Images exposing (ImageId, idParser)
 
 type Route
     = NotFound
     | Home
     | Images
-    | EditImage
+    | EditImage ImageId
     | AddImage
     | Categories
     | AddCategory
@@ -32,7 +32,7 @@ matchRoute =
         [ Parser.map Home Parser.top
         , Parser.map Home (s "home")
         , Parser.map Images (s "images")
-        , Parser.map EditImage (s "voiture")
+        , Parser.map EditImage (s "image" </> Images.idParser </> s "edit")
         , Parser.map AddImage (s "images" </> s "new")
         , Parser.map Categories (s "categories")
         , Parser.map AddCategory (s "category" </> s "new")
@@ -56,8 +56,8 @@ routeToString route =
         Images ->
             "/images"
 
-        EditImage ->
-            "/images"
+        EditImage idImage ->
+            "/image/" ++ Images.idToString idImage
         
         AddImage ->
             "/images/add"        

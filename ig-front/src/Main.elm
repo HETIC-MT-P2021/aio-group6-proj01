@@ -178,13 +178,13 @@ initCurrentPage ( model, existingCmds ) =
                 ImagesList.init
             in
             ( ImagesListPage pageModel, Cmd.map ImagesListPageMsg pageCmds )
-
-          Route.EditImage ->
+          
+          Route.EditImage imageId ->
             let
               ( pageModel, pageCmds ) =
-                EditImage.init
+                EditImage.init imageId model.navKey
             in
-            ( EditImagePage pageModel, Cmd.none )
+            ( EditImagePage pageModel, Cmd.map EditImagePageMsg pageCmds )
 
           Route.AddImage ->
             let
