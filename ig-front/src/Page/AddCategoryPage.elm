@@ -124,9 +124,15 @@ viewError maybeError =
 
 view : Model -> Html Msg
 view model =
+    let
+        showError =
+            case model.createError of
+                Nothing -> div [] []
+                _ -> div [ class "error_message" ] [ viewError model.createError ]
+    in
     div [] 
         [ map NavbarMsg (Navbar.view model.navbar)
-        , div [ class "error_message" ] [ viewError model.createError ]
+        , showError
         , ul [] 
             [ li [] [ text model.category.title ]
             , li [] [ text model.category.addedAt ]

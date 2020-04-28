@@ -146,24 +146,30 @@ saveImage model =
 
 view : Model -> Html Msg
 view model =
-    div [] 
-        [ Html.map NavbarMsg (Navbar.view model.navbar)
-        , div [ class "error_message" ] [ viewError model.saveError ]
-        , div [ class "container" ]
-            [ div [ class "edit_image_section" ] 
-                [ h1 [] [ text "Edition d'image" ]
-                , div [ class "edit_image_form" ]
-                    [ renderInputText "Catégorie" model.image ChangeCategoryImage
-                    , renderInputText "Description" model.image ChangeDescImage
-                    , renderSelect "Tags"
-                    , div [ class "edit_image_tags" ]
-                        [ renderInputFile ]
-                    , renderInputSubmit
+    let
+        showError =
+            case model.saveError of
+                Nothing -> div [] []
+                _ -> div [ class "error_message" ] [ viewError model.saveError ]
+    in
+        div [] 
+            [ Html.map NavbarMsg (Navbar.view model.navbar)
+            , showError
+            , div [ class "container" ]
+                [ div [ class "edit_image_section" ] 
+                    [ h1 [] [ text "Edition d'image" ]
+                    , div [ class "edit_image_form" ]
+                        [ renderInputText "Catégorie" model.image ChangeCategoryImage
+                        , renderInputText "Description" model.image ChangeDescImage
+                        , renderSelect "Tags"
+                        , div [ class "edit_image_tags" ]
+                            [ renderInputFile ]
+                        , renderInputSubmit
+                        ]
                     ]
                 ]
+            , Html.map FooterMsg (Footer.view model.footer)
             ]
-        , Html.map FooterMsg (Footer.view model.footer)
-        ]
 
 renderInputText : String -> WebData Image -> (String -> Msg) -> Html Msg
 renderInputText title image msg =

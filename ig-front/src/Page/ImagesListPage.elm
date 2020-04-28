@@ -176,7 +176,9 @@ viewImages images =
 
 viewFetchError : String -> Html Msg
 viewFetchError errorMessage =
-    div [ class "error_message" ] [ text errorMessage ]  
+    case errorMessage of
+        "" -> div [ class "error_message hidden" ] [ text errorMessage ]
+        _ -> div [ class "error_message" ] [ text errorMessage ]  
 
 viewDeleteError : Maybe String -> String
 viewDeleteError maybeError =

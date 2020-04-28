@@ -167,30 +167,36 @@ getFilename files =
 
 view : Model -> Html Msg
 view model =
-    div [] 
-        [ Html.map NavbarMsg (Navbar.view model.navbar)
-        , div [ class "error_message" ] [ viewError model.createError ]
-        , ul [] 
-            [ li [] [ text model.image.category ]
-            , li [] [ text model.image.description ]
-            , li [] [ text model.image.addedAt ]
-            , li [] [ text model.image.updatedAt ]
-            ]
-        , div [ class "container" ]
-            [ div [ class "add_image_section" ] 
-                [ h1 [] [ text "Ajout d'image" ]
-                , div [ class "add_image_form" ]
-                    [ renderInputText "Catégorie" ChangeCategoryImage
-                    , renderInputText "Description" ChangeDescImage
-                    , renderSelect "Tags"
-                    , div [ class "add_image_tags" ]
-                        [ renderInputFile ]
-                    , renderInputSubmit
+    let
+        showError =
+            case model.createError of
+                Nothing -> div [] []
+                _ -> div [ class "error_message" ] [ viewError model.createError ]
+    in
+        div [] 
+            [ Html.map NavbarMsg (Navbar.view model.navbar)
+            , showError
+            , ul [] 
+                [ li [] [ text model.image.category ]
+                , li [] [ text model.image.description ]
+                , li [] [ text model.image.addedAt ]
+                , li [] [ text model.image.updatedAt ]
+                ]
+            , div [ class "container" ]
+                [ div [ class "add_image_section" ] 
+                    [ h1 [] [ text "Ajout d'image" ]
+                    , div [ class "add_image_form" ]
+                        [ renderInputText "Catégorie" ChangeCategoryImage
+                        , renderInputText "Description" ChangeDescImage
+                        , renderSelect "Tags"
+                        , div [ class "add_image_tags" ]
+                            [ renderInputFile ]
+                        , renderInputSubmit
+                        ]
                     ]
                 ]
+            , Html.map FooterMsg (Footer.view model.footer)
             ]
-        , Html.map FooterMsg (Footer.view model.footer)
-        ]
 
 filesDecoder : Decode.Decoder (List File)
 filesDecoder =
