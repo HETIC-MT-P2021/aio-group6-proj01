@@ -21,7 +21,7 @@ class Tag
     private $id;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Image", inversedBy="tags")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Image", inversedBy="tags", nullable=true)
      */
     private $images;
 
@@ -31,7 +31,7 @@ class Tag
     private $title;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="date", nullable=true)
      */
     private $addedAt;
 

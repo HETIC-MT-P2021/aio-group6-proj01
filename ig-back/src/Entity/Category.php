@@ -26,17 +26,17 @@ class Category
     private $title;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Image", mappedBy="category")
+     * @ORM\OneToMany(targetEntity="App\Entity\Image", mappedBy="category", nullable=true)
      */
     private $images;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="date", nullable=true)
      */
     private $addedAt;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="date", nullable=true)
      */
     private $updatedAt;
 

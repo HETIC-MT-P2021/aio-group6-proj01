@@ -21,13 +21,13 @@ class Image
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="images")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="images", nullable=true)
      * @ORM\JoinColumn(nullable=false)
      */
     private $category;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Tag", mappedBy="images")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Tag", mappedBy="images", nullable=true)
      */
     private $tags;
 
@@ -43,7 +43,7 @@ class Image
     private $description;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="date", nullable=true)
      */
     private $addedAt;
 
