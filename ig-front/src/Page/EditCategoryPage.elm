@@ -134,20 +134,26 @@ saveCategory category =
 
 view : Model -> Html Msg
 view model =
-    div [] 
-        [ Html.map NavbarMsg (Navbar.view model.navbar)
-        , div [ class "error_message" ] [ viewError model.saveError ]
-        , div [ class "container" ]
-            [ div [ class "add_category_section" ] 
-                [ h1 [] [ text "Ajout de catégorie" ]
-                , div [ class "add_category_form" ]
-                    [ renderInputText "Titre" model.category ChangeTitleCategory
-                    , renderInputSubmit
+    let
+        showError =
+            case model.saveError of
+                Nothing -> div [] []
+                _ -> div [ class "error_message" ] [ viewError model.saveError ]
+    in
+        div [] 
+            [ Html.map NavbarMsg (Navbar.view model.navbar)
+            , showError
+            , div [ class "container" ]
+                [ div [ class "add_category_section" ] 
+                    [ h1 [] [ text "Ajout de catégorie" ]
+                    , div [ class "add_category_form" ]
+                        [ renderInputText "Titre" model.category ChangeTitleCategory
+                        , renderInputSubmit
+                        ]
                     ]
                 ]
+            , Html.map FooterMsg (Footer.view model.footer)
             ]
-        , Html.map FooterMsg (Footer.view model.footer)
-        ]
 
 renderInputText : String -> WebData Category -> (String -> Msg) -> Html Msg
 renderInputText title category msg =

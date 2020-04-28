@@ -8264,6 +8264,23 @@ var $author$project$Page$AddCategoryPage$viewError = function (maybeError) {
 	}
 };
 var $author$project$Page$AddCategoryPage$view = function (model) {
+	var showError = function () {
+		var _v0 = model.createError;
+		if (_v0.$ === 'Nothing') {
+			return A2($elm$html$Html$div, _List_Nil, _List_Nil);
+		} else {
+			return A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('error_message')
+					]),
+				_List_fromArray(
+					[
+						$author$project$Page$AddCategoryPage$viewError(model.createError)
+					]));
+		}
+	}();
 	return A2(
 		$elm$html$Html$div,
 		_List_Nil,
@@ -8273,16 +8290,7 @@ var $author$project$Page$AddCategoryPage$view = function (model) {
 				$elm$html$Html$map,
 				$author$project$Page$AddCategoryPage$NavbarMsg,
 				$author$project$Navbar$view(model.navbar)),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('error_message')
-					]),
-				_List_fromArray(
-					[
-						$author$project$Page$AddCategoryPage$viewError(model.createError)
-					])),
+				showError,
 				A2(
 				$elm$html$Html$ul,
 				_List_Nil,
@@ -8504,6 +8512,23 @@ var $author$project$Page$AddImagePage$viewError = function (maybeError) {
 	}
 };
 var $author$project$Page$AddImagePage$view = function (model) {
+	var showError = function () {
+		var _v0 = model.createError;
+		if (_v0.$ === 'Nothing') {
+			return A2($elm$html$Html$div, _List_Nil, _List_Nil);
+		} else {
+			return A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('error_message')
+					]),
+				_List_fromArray(
+					[
+						$author$project$Page$AddImagePage$viewError(model.createError)
+					]));
+		}
+	}();
 	return A2(
 		$elm$html$Html$div,
 		_List_Nil,
@@ -8513,16 +8538,7 @@ var $author$project$Page$AddImagePage$view = function (model) {
 				$elm$html$Html$map,
 				$author$project$Page$AddImagePage$NavbarMsg,
 				$author$project$Navbar$view(model.navbar)),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('error_message')
-					]),
-				_List_fromArray(
-					[
-						$author$project$Page$AddImagePage$viewError(model.createError)
-					])),
+				showError,
 				A2(
 				$elm$html$Html$ul,
 				_List_Nil,
@@ -8944,16 +8960,29 @@ var $author$project$Page$CategoriesListPage$viewCategory = function (category) {
 			]));
 };
 var $author$project$Page$CategoriesListPage$viewFetchError = function (errorMessage) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('error_message')
-			]),
-		_List_fromArray(
-			[
-				$elm$html$Html$text(errorMessage)
-			]));
+	if (errorMessage === '') {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('error_message hidden')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text(errorMessage)
+				]));
+	} else {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('error_message')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text(errorMessage)
+				]));
+	}
 };
 var $author$project$Page$CategoriesListPage$viewCategories = function (categories) {
 	switch (categories.$) {
@@ -9143,6 +9172,23 @@ var $author$project$Page$EditCategoryPage$viewError = function (maybeError) {
 	}
 };
 var $author$project$Page$EditCategoryPage$view = function (model) {
+	var showError = function () {
+		var _v0 = model.saveError;
+		if (_v0.$ === 'Nothing') {
+			return A2($elm$html$Html$div, _List_Nil, _List_Nil);
+		} else {
+			return A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('error_message')
+					]),
+				_List_fromArray(
+					[
+						$author$project$Page$EditCategoryPage$viewError(model.saveError)
+					]));
+		}
+	}();
 	return A2(
 		$elm$html$Html$div,
 		_List_Nil,
@@ -9152,16 +9198,7 @@ var $author$project$Page$EditCategoryPage$view = function (model) {
 				$elm$html$Html$map,
 				$author$project$Page$EditCategoryPage$NavbarMsg,
 				$author$project$Navbar$view(model.navbar)),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('error_message')
-					]),
-				_List_fromArray(
-					[
-						$author$project$Page$EditCategoryPage$viewError(model.saveError)
-					])),
+				showError,
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(
@@ -9355,6 +9392,23 @@ var $author$project$Page$EditImagePage$viewError = function (maybeError) {
 	}
 };
 var $author$project$Page$EditImagePage$view = function (model) {
+	var showError = function () {
+		var _v0 = model.saveError;
+		if (_v0.$ === 'Nothing') {
+			return A2($elm$html$Html$div, _List_Nil, _List_Nil);
+		} else {
+			return A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('error_message')
+					]),
+				_List_fromArray(
+					[
+						$author$project$Page$EditImagePage$viewError(model.saveError)
+					]));
+		}
+	}();
 	return A2(
 		$elm$html$Html$div,
 		_List_Nil,
@@ -9364,16 +9418,7 @@ var $author$project$Page$EditImagePage$view = function (model) {
 				$elm$html$Html$map,
 				$author$project$Page$EditImagePage$NavbarMsg,
 				$author$project$Navbar$view(model.navbar)),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('error_message')
-					]),
-				_List_fromArray(
-					[
-						$author$project$Page$EditImagePage$viewError(model.saveError)
-					])),
+				showError,
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(
@@ -9592,16 +9637,29 @@ var $author$project$Page$HomePage$renderThumbnails = function (thumbnailsType) {
 	}
 };
 var $author$project$Page$HomePage$viewFetchError = function (errorMessage) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('error_message')
-			]),
-		_List_fromArray(
-			[
-				$elm$html$Html$text(errorMessage)
-			]));
+	if (errorMessage === '') {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('error_message hidden')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text(errorMessage)
+				]));
+	} else {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('error_message')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text(errorMessage)
+				]));
+	}
 };
 var $author$project$Page$HomePage$viewImage = function (image) {
 	return A2(
@@ -9932,16 +9990,29 @@ var $author$project$Page$ImagesListPage$viewDeleteError = function (maybeError) 
 	}
 };
 var $author$project$Page$ImagesListPage$viewFetchError = function (errorMessage) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('error_message')
-			]),
-		_List_fromArray(
-			[
-				$elm$html$Html$text(errorMessage)
-			]));
+	if (errorMessage === '') {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('error_message hidden')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text(errorMessage)
+				]));
+	} else {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('error_message')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text(errorMessage)
+				]));
+	}
 };
 var $author$project$Page$ImagesListPage$DeleteImage = function (a) {
 	return {$: 'DeleteImage', a: a};
