@@ -6463,7 +6463,7 @@ var $author$project$Popup$EmptyPopup = {$: 'EmptyPopup'};
 var $author$project$Popup$init = {isPopupOpen: false, popupType: $author$project$Popup$EmptyPopup, title: 'Test'};
 var $author$project$Page$CategoriesListPage$init = function (navKey) {
 	return _Utils_Tuple2(
-		{categories: $krisajenkins$remotedata$RemoteData$Loading, footer: $author$project$Footer$init, navKey: navKey, navbar: $author$project$Navbar$init, popup: $author$project$Popup$init, saveError: $elm$core$Maybe$Nothing},
+		{categories: $krisajenkins$remotedata$RemoteData$Loading, deleteError: $elm$core$Maybe$Nothing, footer: $author$project$Footer$init, navKey: navKey, navbar: $author$project$Navbar$init, popup: $author$project$Popup$init, saveError: $elm$core$Maybe$Nothing},
 		$author$project$Page$CategoriesListPage$fetchCategories);
 };
 var $author$project$Page$EditCategoryPage$CategoryReceived = function (a) {
@@ -7383,6 +7383,30 @@ var $author$project$Page$AddImagePage$update = F2(
 					$author$project$Page$AddImagePage$addImage(model));
 		}
 	});
+var $author$project$Page$CategoriesListPage$CategoryDeleted = function (a) {
+	return {$: 'CategoryDeleted', a: a};
+};
+var $author$project$ApiEndpoint$deleteCategory = $author$project$ApiEndpoint$getHostname + '/categories/';
+var $elm$http$Http$expectString = function (toMsg) {
+	return A2(
+		$elm$http$Http$expectStringResponse,
+		toMsg,
+		$elm$http$Http$resolve($elm$core$Result$Ok));
+};
+var $author$project$Page$CategoriesListPage$deleteCategory = function (categoryId) {
+	return $elm$http$Http$request(
+		{
+			body: $elm$http$Http$emptyBody,
+			expect: $elm$http$Http$expectString($author$project$Page$CategoriesListPage$CategoryDeleted),
+			headers: _List_Nil,
+			method: 'DELETE',
+			timeout: $elm$core$Maybe$Nothing,
+			tracker: $elm$core$Maybe$Nothing,
+			url: _Utils_ap(
+				$author$project$ApiEndpoint$deleteCategory,
+				$author$project$Categories$idToString(categoryId))
+		});
+};
 var $author$project$Popup$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -7436,13 +7460,32 @@ var $author$project$Page$CategoriesListPage$update = F2(
 						model,
 						{categories: $krisajenkins$remotedata$RemoteData$Loading}),
 					$author$project$Page$CategoriesListPage$fetchCategories);
-			default:
+			case 'CategoriesReceived':
 				var response = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{categories: response}),
 					$elm$core$Platform$Cmd$none);
+			case 'DeleteCategory':
+				var categoryId = msg.a;
+				return _Utils_Tuple2(
+					model,
+					$author$project$Page$CategoriesListPage$deleteCategory(categoryId));
+			default:
+				if (msg.a.$ === 'Ok') {
+					return _Utils_Tuple2(model, $author$project$Page$CategoriesListPage$fetchCategories);
+				} else {
+					var error = msg.a.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								deleteError: $elm$core$Maybe$Just(
+									$author$project$Error$buildErrorMessage(error))
+							}),
+						$elm$core$Platform$Cmd$none);
+				}
 		}
 	});
 var $krisajenkins$remotedata$RemoteData$NotAsked = {$: 'NotAsked'};
@@ -7777,12 +7820,6 @@ var $author$project$Page$ImagesListPage$ImageDeleted = function (a) {
 	return {$: 'ImageDeleted', a: a};
 };
 var $author$project$ApiEndpoint$deleteImage = $author$project$ApiEndpoint$getHostname + '/images/';
-var $elm$http$Http$expectString = function (toMsg) {
-	return A2(
-		$elm$http$Http$expectStringResponse,
-		toMsg,
-		$elm$http$Http$resolve($elm$core$Result$Ok));
-};
 var $author$project$Page$ImagesListPage$deleteImage = function (imageId) {
 	return $elm$http$Http$request(
 		{
@@ -7948,7 +7985,7 @@ var $author$project$Main$update = F2(
 								{
 									page: $author$project$Main$CategoriesListPage(updatedPageModel)
 								}),
-							$elm$core$Platform$Cmd$none);
+							A2($elm$core$Platform$Cmd$map, $author$project$Main$CategoriesListPageMsg, updatedCmd));
 					} else {
 						break _v0$9;
 					}
@@ -8601,64 +8638,58 @@ var $author$project$Page$CategoriesListPage$renderButtonCreate = function () {
 				$elm$html$Html$text('Créer')
 			]));
 }();
-var $author$project$Popup$DeletePopup = {$: 'DeletePopup'};
-var $author$project$Page$CategoriesListPage$renderThumbnails = function () {
-	var deletePopupMsg = $author$project$Page$CategoriesListPage$PopupMsg(
-		A2($author$project$Popup$ShowPopup, $author$project$Popup$DeletePopup, 'Voulez-vous supprimer la catégorie ?'));
-	return A2(
-		$elm$html$Html$button,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('categories_thumbnail')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$p,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('category_name')
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Voiture')
-					])),
-				A2(
-				$elm$html$Html$button,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('icon_container icon_container_trash pointer'),
-						$elm$html$Html$Events$onClick(deletePopupMsg)
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('icon icon_trash')
-							]),
-						_List_Nil)
-					])),
-				A2(
-				$elm$html$Html$a,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$href('/category/1/edit'),
-						$elm$html$Html$Attributes$class('icon_container icon_container_edit pointer')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('icon icon_pen')
-							]),
-						_List_Nil)
-					]))
-			]));
-}();
+var $author$project$Page$CategoriesListPage$renderThumbnails = A2(
+	$elm$html$Html$button,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('categories_thumbnail')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$p,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('category_name')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Voiture')
+				])),
+			A2(
+			$elm$html$Html$button,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('icon_container icon_container_trash pointer')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('icon icon_trash')
+						]),
+					_List_Nil)
+				])),
+			A2(
+			$elm$html$Html$a,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$href('/category/1/edit'),
+					$elm$html$Html$Attributes$class('icon_container icon_container_edit pointer')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('icon icon_pen')
+						]),
+					_List_Nil)
+				]))
+		]));
 var $author$project$Popup$HidePopup = {$: 'HidePopup'};
 var $author$project$Popup$renderCreatePopup = F2(
 	function (model, classname) {
@@ -8868,6 +8899,9 @@ var $author$project$Popup$view = function (model) {
 		return A2($author$project$Popup$renderPopup, model, 'popup_overlay hidden');
 	}
 };
+var $author$project$Page$CategoriesListPage$DeleteCategory = function (a) {
+	return {$: 'DeleteCategory', a: a};
+};
 var $author$project$Page$CategoriesListPage$viewCategory = function (category) {
 	return A2(
 		$elm$html$Html$div,
@@ -8875,8 +8909,12 @@ var $author$project$Page$CategoriesListPage$viewCategory = function (category) {
 		_List_fromArray(
 			[
 				A2(
-				$elm$html$Html$p,
-				_List_Nil,
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick(
+						$author$project$Page$CategoriesListPage$DeleteCategory(category.id))
+					]),
 				_List_fromArray(
 					[
 						$elm$html$Html$text(
@@ -8954,6 +8992,14 @@ var $author$project$Page$CategoriesListPage$viewCategories = function (categorie
 				$author$project$Error$buildErrorMessage(httpError));
 	}
 };
+var $author$project$Page$CategoriesListPage$viewDeleteError = function (maybeError) {
+	if (maybeError.$ === 'Just') {
+		var error = maybeError.a;
+		return 'La suppression n\'a pas été effectué, veuillez réeesayer';
+	} else {
+		return '';
+	}
+};
 var $author$project$Page$CategoriesListPage$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -8969,6 +9015,8 @@ var $author$project$Page$CategoriesListPage$view = function (model) {
 				$author$project$Page$CategoriesListPage$NavbarMsg,
 				$author$project$Navbar$view(model.navbar)),
 				$author$project$Page$CategoriesListPage$viewCategories(model.categories),
+				$author$project$Page$CategoriesListPage$viewFetchError(
+				$author$project$Page$CategoriesListPage$viewDeleteError(model.deleteError)),
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(
@@ -9389,6 +9437,7 @@ var $author$project$Page$HomePage$PopupMsg = function (a) {
 };
 var $author$project$Page$HomePage$ThumbnailsCategories = {$: 'ThumbnailsCategories'};
 var $author$project$Page$HomePage$ThumbnailsImages = {$: 'ThumbnailsImages'};
+var $author$project$Popup$DeletePopup = {$: 'DeletePopup'};
 var $author$project$Popup$EditPopup = {$: 'EditPopup'};
 var $elm$html$Html$span = _VirtualDom_node('span');
 var $author$project$Page$HomePage$renderThumbnails = function (thumbnailsType) {

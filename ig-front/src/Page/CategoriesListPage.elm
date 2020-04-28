@@ -36,6 +36,7 @@ type alias Model =
     , popup : Popup.Model
     , categories : WebData (List Category)
     , saveError : Maybe String
+    , deleteError : Maybe String 
     , navKey : Nav.Key
     }
 
@@ -46,6 +47,7 @@ init navKey =
       , popup = Popup.init 
       , categories = RemoteData.Loading
       , saveError = Nothing
+      , deleteError = Nothing 
       , navKey = navKey
       }, fetchCategories )
 
@@ -71,6 +73,9 @@ type Msg
     -- GET CATEGORIES
     | FetchCategories
     | CategoriesReceived (WebData (List Category))
+    -- DELETE CATEGORY
+    | DeleteCategory CategoryId
+    | CategoryDeleted (Result Http.Error String)
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -92,6 +97,31 @@ update msg model =
         CategoriesReceived response ->
             ( { model | categories = response }, Cmd.none )
 
+        -- DELETE CATEGORY
+
+        DeleteCategory categoryId ->
+            ( model, deleteCategory categoryId )
+
+        CategoryDeleted (Ok _) ->
+            ( model, fetchCategories )
+
+        CategoryDeleted (Err error) ->
+            ( { model | deleteError = Just (Error.buildErrorMessage error) }
+            , Cmd.none
+            )
+
+deleteCategory : CategoryId -> Cmd Msg
+deleteCategory categoryId =
+    Http.request
+        { method = "DELETE"
+        , headers = []
+        , url = ApiEndpoint.deleteCategory ++ Categories.idToString categoryId
+        , body = Http.emptyBody
+        , expect = Http.expectString CategoryDeleted
+        , timeout = Nothing
+        , tracker = Nothing
+        }
+
 -- VIEW
 
 view : Model -> Html Msg
@@ -100,6 +130,7 @@ view model =
     [ map PopupMsg (Popup.view model.popup)
     , map NavbarMsg (Navbar.view model.navbar)
     , viewCategories model.categories
+    , viewFetchError (viewDeleteError model.deleteError)
     , div [ class "container" ] 
           [ div [ class "categories_section" ] 
             [ div [ class "categories_head" ] 
@@ -125,28 +156,13 @@ renderButtonCreate =
         
 renderThumbnails : Html Msg
 renderThumbnails =
-    let
-        {-
-        3 types of popup :
-            - EditPopup
-            - CreatePopup
-            - DeletePopup
-        
-        Msg ShowPopup takes 2 args :
-            - PopupType
-            - Title of Popup
-        -}
-
-        deletePopupMsg = PopupMsg (Popup.ShowPopup Popup.DeletePopup "Voulez-vous supprimer la catégorie ?")
-  
-    in
-        button [ class "categories_thumbnail" ] 
-        [ p [ class "category_name" ] [ text "Voiture" ]
-        , button [ class "icon_container icon_container_trash pointer", onClick (deletePopupMsg) ] 
-            [ div [ class "icon icon_trash" ] [] ]
-        , a [ href "/category/1/edit", class "icon_container icon_container_edit pointer" ] 
-            [ div [ class "icon icon_pen" ] [] ]
-        ]
+    button [ class "categories_thumbnail" ] 
+    [ p [ class "category_name" ] [ text "Voiture" ]
+    , button [ class "icon_container icon_container_trash pointer" ] 
+        [ div [ class "icon icon_trash" ] [] ]
+    , a [ href "/category/1/edit", class "icon_container icon_container_edit pointer" ] 
+        [ div [ class "icon icon_pen" ] [] ]
+    ]
 
 viewCategories : WebData (List Category) -> Html Msg
 viewCategories categories =
@@ -167,17 +183,13 @@ viewCategories categories =
         RemoteData.Failure httpError ->
           viewFetchError (Error.buildErrorMessage httpError)
 
-viewFetchError : String -> Html Msg
-viewFetchError errorMessage =
-    div [ class "error_message" ] [ text errorMessage ] 
-
 viewCategory : Category -> Html Msg
 viewCategory category =
     {-let
         images = List.map (\image -> li [] [ text image ]) category.images
     in-}
   div []
-    [ p []
+    [ button [ onClick (DeleteCategory category.id) ]
         [ text (Categories.idToString category.id) ]
     , p []
         [ text category.title ]
@@ -187,4 +199,18 @@ viewCategory category =
     , p []
         [ text category.updatedAt ]
     ]
+
+viewFetchError : String -> Html Msg
+viewFetchError errorMessage =
+    div [ class "error_message" ] [ text errorMessage ]  
+
+viewDeleteError : Maybe String -> String
+viewDeleteError maybeError =
+    case maybeError of
+        Just error ->
+            "La suppression n'a pas été effectué, veuillez réeesayer"
+
+        Nothing ->
+            ""  
+
   

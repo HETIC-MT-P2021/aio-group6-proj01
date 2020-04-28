@@ -129,7 +129,7 @@ update msg model =
           CategoriesList.update subMsg pageModel
       in
       ( { model | page = CategoriesListPage updatedPageModel }
-      , Cmd.none
+      , Cmd.map CategoriesListPageMsg updatedCmd
       )
 
     ( EditCategoryPageMsg subMsg, EditCategoryPage pageModel ) ->

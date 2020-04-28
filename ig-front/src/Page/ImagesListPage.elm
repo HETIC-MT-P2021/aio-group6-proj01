@@ -87,6 +87,8 @@ update msg model =
         ImagesReceived response ->
             ( { model | images = response }, Cmd.none )
 
+        -- DELETE IMAGE
+
         DeleteImage imageId ->
             ( model, deleteImage imageId )
 
