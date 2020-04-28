@@ -5,10 +5,9 @@ import Html.Attributes exposing (class, type_, placeholder, value, name, id, for
 import Html.Events exposing (onClick, onInput)
 
 import Http
-import Json.Decode exposing (Decoder, field, string, int)
+import Json.Decode as Decode exposing (Decoder, field, string, int, map)
 import Json.Encode as Encode
 import RemoteData exposing (WebData)
-
 import Browser.Navigation as Nav
 
 import Navbar
@@ -23,26 +22,27 @@ import Categories exposing ( Category
                            , categoriesDecoder
                            , categoryDecoder
                            , emptyCategory
-                           , newCategoryEncoder )
+                           , newCategoryEncoder
+                           , categoryEncoder )
 
 -- MODEL
 
 type alias Model =
     { navbar : Navbar.Model
     , footer : Footer.Model
-    , category : Category
+    , category : WebData Category
     , saveError : Maybe String
     , navKey : Nav.Key
     }
 
-init : Nav.Key -> ( Model, Cmd Msg )
-init navKey =
+init : CategoryId -> Nav.Key -> ( Model, Cmd Msg )
+init categoryId navKey =
     ( { navbar = Navbar.init
       , footer = Footer.init
-      , category = emptyCategory
+      , category = RemoteData.Loading
       , saveError = Nothing
       , navKey = navKey
-      }, Cmd.none )
+      }, fetchCategory categoryId )
 
 fetchCategory : CategoryId -> Cmd Msg
 fetchCategory categoryId =
@@ -60,20 +60,11 @@ type Msg
     | FooterMsg Footer.Msg
     | ChangeTitleCategory String
     -- GET CATEGORY/{ID}    
-    | CategoryReceived WebData Category
+    | CategoryReceived (WebData Category)
     -- PUT CATEGORY/{ID}
+    | SaveCategory
+    | CategorySaved (Result Http.Error Category)
 
-addCategory : Category -> Cmd Msg
-addCategory category =
-  Http.request
-    { method = "POST"
-    , headers = []
-    , url = ApiEndpoint.postCategory
-    , body =  Http.jsonBody (newCategoryEncoder category)
-    , expect = Http.expectJson CategoryCreated categoryDecoder
-    , timeout = Nothing
-    , tracker = Nothing
-    }
 
 update : Msg -> Model ->( Model, Cmd Msg )
 update msg model =
@@ -90,8 +81,8 @@ update msg model =
             let
                 updateTitle =
                     RemoteData.map
-                        (\imageData ->
-                            { imageData | title = newTitle }
+                        (\categoryData ->
+                            { categoryData | title = newTitle }
                         )
                         model.category
             in
@@ -100,18 +91,52 @@ update msg model =
         CategoryReceived category ->
             ( { model | category = category }, Cmd.none )
 
+        SaveCategory ->
+            ( model, saveCategory model.category )
+
+        CategorySaved (Ok categoryData) ->
+            let
+                category =
+                    RemoteData.succeed categoryData
+            in
+            ( { model | category = category, saveError = Nothing }
+            , Route.pushUrl Route.Categories model.navKey
+            )
+        
+        CategorySaved (Err error) ->
+            ( { model | saveError = Just (Error.buildErrorMessage error) }
+            , Cmd.none
+            )
+
+saveCategory : WebData Category -> Cmd Msg
+saveCategory category =
+    case category of
+        RemoteData.Success categoryData ->
+            let
+                editCategoryUrl =
+                    ApiEndpoint.putCategory ++ Categories.idToString categoryData.id
+            in
+            Http.request
+                { method = "PUT"
+                , headers = []
+                , url = editCategoryUrl
+                , body = Http.jsonBody (categoryEncoder categoryData)
+                , expect = Http.expectJson CategorySaved categoryDecoder
+                , timeout = Nothing
+                , tracker = Nothing
+                }
+
+        _ ->
+            Cmd.none
+
+
 -- VIEW
 
 view : Model -> Html Msg
 view model =
     div [] 
-        [ map NavbarMsg (Navbar.view model.navbar)
-        , div [ class "error_message" ] [ viewError model.createError ]
-        , ul [] 
-            [ li [] [ text model.category.title ]
-            , li [] [ text model.category.addedAt ]
-            , li [] [ text model.category.updatedAt ]
-            ]
+        [ Html.map NavbarMsg (Navbar.view model.navbar)
+        , div [ class "error_message" ] [ viewError model.saveError ]
         , div [ class "container" ]
             [ div [ class "add_category_section" ] 
                 [ h1 [] [ text "Ajout de catégorie" ]
@@ -121,7 +146,7 @@ view model =
                     ]
                 ]
             ]
-        , map FooterMsg (Footer.view model.footer)
+        , Html.map FooterMsg (Footer.view model.footer)
         ]
 
 renderInputText : String -> WebData Category -> (String -> Msg) -> Html Msg
@@ -137,7 +162,7 @@ renderInputText title category msg =
 
                 RemoteData.Success categoryData ->
                     case title of
-                        "Title" ->
+                        "Titre" ->
                             categoryData.title
                         _ ->
                             ""
@@ -152,7 +177,7 @@ renderInputText title category msg =
 
 renderInputSubmit : Html Msg
 renderInputSubmit =
-    --button [ class "btn primary", onClick SaveImage ] [ text "Confirmer" ]
+    button [ class "btn primary", onClick SaveCategory ] [ text "Confirmer" ]
 
 viewError : Maybe String -> Html Msg
 viewError maybeError =

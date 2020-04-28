@@ -31,3 +31,7 @@ getCategory =
 postCategory : String
 postCategory =
     getHostname ++ "/categories"
+
+putCategory : String
+putCategory =
+    getHostname ++ "/categories/"

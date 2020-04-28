@@ -14,8 +14,10 @@ import Page.HomePage as Home
 import Page.ImagesListPage as ImagesList
 import Page.EditImagePage as EditImage
 import Page.AddImagePage as AddImage
-import Page.AddCategoryPage as AddCategory
 import Page.CategoriesListPage as CategoriesList
+import Page.EditCategoryPage as EditCategory
+import Page.AddCategoryPage as AddCategory
+
 
 -- MAIN
 
@@ -57,6 +59,7 @@ type Page
   | EditImagePage EditImage.Model
   | AddImagePage AddImage.Model
   | CategoriesListPage CategoriesList.Model
+  | EditCategoryPage EditCategory.Model
   | AddCategoryPage AddCategory.Model
 
 -- UPDATE
@@ -71,8 +74,9 @@ type Msg
   | ImagesListPageMsg ImagesList.Msg
   | EditImagePageMsg EditImage.Msg
   | AddImagePageMsg AddImage.Msg
-  | AddCategoryPageMsg AddCategory.Msg
   | CategoriesListPageMsg CategoriesList.Msg
+  | EditCategoryPageMsg EditCategory.Msg
+  | AddCategoryPageMsg AddCategory.Msg
   -- MANAGE URL
   | LinkClicked Browser.UrlRequest
   | UrlChanged Url
@@ -127,6 +131,16 @@ update msg model =
       ( { model | page = CategoriesListPage updatedPageModel }
       , Cmd.none
       )
+
+    ( EditCategoryPageMsg subMsg, EditCategoryPage pageModel ) ->
+      let
+        ( updatedPageModel, updatedCmd ) =
+          EditCategory.update subMsg pageModel
+      in
+      ( { model | page = EditCategoryPage updatedPageModel }
+      , Cmd.map EditCategoryPageMsg updatedCmd
+      )
+
 
     ( AddCategoryPageMsg subMsg, AddCategoryPage pageModel ) ->
       let
@@ -206,12 +220,19 @@ initCurrentPage ( model, existingCmds ) =
           in
             ( CategoriesListPage pageModel, Cmd.map CategoriesListPageMsg pageCmds )
           
+        Route.EditCategory categoryId ->
+          let
+            ( pageModel, pageCmds ) =
+              EditCategory.init categoryId model.navKey
+          in
+            ( EditCategoryPage pageModel, Cmd.map EditCategoryPageMsg pageCmds )
+
         Route.AddCategory ->
           let
             ( pageModel, pageCmds ) =
               AddCategory.init model.navKey
           in
-            ( AddCategoryPage pageModel, Cmd.map AddCategoryPageMsg pageCmds )
+            ( AddCategoryPage pageModel, Cmd.map AddCategoryPageMsg pageCmds ) 
   in
     ( { model | page = currentPage }
     , Cmd.batch [ existingCmds, mappedPageCmds ]
@@ -250,6 +271,10 @@ currentView model =
     CategoriesListPage pageModel ->
       CategoriesList.view pageModel
         |> Html.map CategoriesListPageMsg
+
+    EditCategoryPage pageModel ->
+      EditCategory.view pageModel
+        |> Html.map EditCategoryPageMsg
 
     AddCategoryPage pageModel ->
       AddCategory.view pageModel

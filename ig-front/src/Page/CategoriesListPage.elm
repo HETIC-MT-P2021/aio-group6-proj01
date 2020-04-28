@@ -137,15 +137,14 @@ renderThumbnails =
             - Title of Popup
         -}
 
-        editPopupMsg = PopupMsg (Popup.ShowPopup Popup.EditPopup "Veuillez modifier le titre de la catégorie ?")
         deletePopupMsg = PopupMsg (Popup.ShowPopup Popup.DeletePopup "Voulez-vous supprimer la catégorie ?")
   
     in
         button [ class "categories_thumbnail" ] 
         [ p [ class "category_name" ] [ text "Voiture" ]
-        , button [ class "icon_container pointer", onClick (deletePopupMsg) ] 
+        , button [ class "icon_container icon_container_trash pointer", onClick (deletePopupMsg) ] 
             [ div [ class "icon icon_trash" ] [] ]
-        , button [ class "icon_container pointer", onClick (editPopupMsg) ] 
+        , a [ href "/category/1/edit", class "icon_container icon_container_edit pointer" ] 
             [ div [ class "icon icon_pen" ] [] ]
         ]
 

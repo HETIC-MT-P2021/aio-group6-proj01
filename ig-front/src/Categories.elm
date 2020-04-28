@@ -4,11 +4,14 @@ module Categories exposing ( Category
                            , categoryDecoder
                            , categoriesDecoder
                            , emptyCategory
-                           , newCategoryEncoder )
+                           , newCategoryEncoder
+                           , idParser
+                           , categoryEncoder )
 
 import Json.Encode as Encode exposing(..)
 import Json.Decode as Decode exposing (Decoder, field, int, list, string)
 import Json.Decode.Pipeline exposing (required)
+import Url.Parser exposing (Parser, custom)
 
 import Time 
 
@@ -70,4 +73,24 @@ newCategoryEncoder category =
     , ( "updatedAt", Encode.string category.updatedAt )
     ]
 
+idParser : Parser (CategoryId -> a) a
+idParser =
+    custom "IMAGEID" <|
+        \categoryId ->
+            Maybe.map CategoryId (String.toInt categoryId)
 
+categoryEncoder : Category -> Encode.Value
+categoryEncoder category =
+    let 
+        today = "2020-04-25"
+    in
+    Encode.object
+        [ ( "id", encodeId category.id )
+        , ( "title", Encode.string category.title )
+        , ( "addedAt", Encode.string today )
+        , ( "addedAt", Encode.string today )
+        ]
+
+encodeId : CategoryId -> Encode.Value
+encodeId (CategoryId id) =
+    Encode.int id
