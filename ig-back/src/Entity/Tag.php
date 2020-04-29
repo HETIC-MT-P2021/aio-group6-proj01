@@ -5,10 +5,17 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ApiResource()
+ * @ApiResource(attributes={
+ *     "force_eager"=false,
+ *     "normalization_context"={"groups"={"read"}},
+ *     "denormalizationContext"={"groups"={"write"}},
+ *     "enable_max_depth"=true}
+ *     )
  * @ORM\Entity(repositoryClass="App\Repository\TagRepository")
  */
 class Tag
@@ -16,22 +23,28 @@ class Tag
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
+     * @Groups({"read"})
      * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Image", inversedBy="tags")
+     * @ORM\JoinColumn(nullable=true)
+     * @Groups({"read", "write"})
+     * @MaxDepth(2)
      */
     private $images;
 
     /**
      * @ORM\Column(type="string", length=100)
+     * @Groups({"read", "write"})
+     * @MaxDepth(2)
      */
     private $title;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="date", nullable=true)
      */
     private $addedAt;
 
@@ -43,6 +56,11 @@ class Tag
     public function __construct()
     {
         $this->images = new ArrayCollection();
+
+        $this->setUpdatedAt(new \DateTime('now'));
+        if ($this->getAddedAt() === null) {
+            $this->setAddedAt(new \DateTime('now'));
+        }
     }
 
     public function getId(): ?int
