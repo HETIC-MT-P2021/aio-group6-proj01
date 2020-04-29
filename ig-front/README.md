@@ -3,6 +3,7 @@
 Need to run this command for using route
 
 ```sh
+$ npm i
 $ npm run elm
 ```
 
