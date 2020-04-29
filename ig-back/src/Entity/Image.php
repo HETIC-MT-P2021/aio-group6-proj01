@@ -31,7 +31,7 @@ class Image
      * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="images")
      * @ORM\JoinColumn(nullable=true)
      * @Groups({"read", "write"})
-     * @MaxDepth(5)
+     * @MaxDepth(2)
      */
     private $category;
 
@@ -39,21 +39,21 @@ class Image
      * @ORM\ManyToMany(targetEntity="App\Entity\Tag", mappedBy="images")
      * @ORM\JoinColumn(nullable=true)
      * @Groups({"read", "write"})
-     * @MaxDepth(5)
+     * @MaxDepth(2)
      */
     private $tags;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"read", "write"})
-     * @MaxDepth(5)
+     * @MaxDepth(2)
      */
     private $path;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      * @Groups({"read", "write"})
-     * @MaxDepth(5)
+     * @MaxDepth(2)
      */
     private $description;
 
