@@ -18,7 +18,6 @@ type Route
     | EditCategory CategoryId
     | AddCategory
 
-
 parseUrl : Url -> Route
 parseUrl url =
     case parse matchRoute url of
@@ -34,6 +33,7 @@ matchRoute =
         [ Parser.map Home Parser.top
         , Parser.map Home (s "home")
         , Parser.map Images (s "images")
+        , Parser.map AddImage (s "images" </> s "new")
         , Parser.map EditImage (s "image" </> Images.idParser </> s "edit")
         , Parser.map AddImage (s "images" </> s "new")
         , Parser.map Categories (s "categories")
@@ -57,16 +57,16 @@ routeToString route =
 
         Home ->
             "/home"
-        
+
         Images ->
             "/images"
 
-        EditImage idImage ->
-            "/image/" ++ Images.idToString idImage ++ "/edit"
-        
         AddImage ->
-            "/images/add"        
-        
+            "/images/add"
+
+        EditImage idImage ->
+            "/image" ++ Images.idToString idImage ++ "/edit"
+
         Categories ->
             "/categories"                
         
@@ -75,4 +75,3 @@ routeToString route =
 
         EditCategory idCategory ->
             "category" ++ Categories.idToString idCategory ++ "/edit"
-        

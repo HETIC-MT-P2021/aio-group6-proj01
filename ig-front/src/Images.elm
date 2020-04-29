@@ -1,12 +1,13 @@
-module Images exposing ( Image
+module Images exposing ( ImageGET
+                        , ImagePOST
                         , ImageId
                         , idToString
-                        , imageDecoder
+                        , imageDecoderGET
+                        , imageDecoderPOST
                         , imagesDecoder
                         , emptyImage
-                        , newImageEncoder
                         , idParser
-                        , imageEncoder )
+                        , newImageEncoder )
 
 import Json.Encode as Encode exposing(..)
 import Json.Decode as Decode exposing (Decoder, field, int, list, string)
@@ -18,34 +19,65 @@ import Time
 type ImageId
     = ImageId Int
 
-type alias Image =
+-- GET
+
+type alias ImageGET =
     { id : ImageId
-    , category : String
+    , category : ImageCategory
     , path : String
-    , description : String
---    , tags : List String
-    , addedAt : String
-    , updatedAt : String
     }
+
+type alias ImageCategory =
+    { title : String
+    }
+
+imagesDecoder : Decoder (List ImageGET)
+imagesDecoder =
+    field "hydra:member" (Decode.list imageDecoderGET)
+
+imageDecoderGET : Decoder ImageGET
+imageDecoderGET =
+    Decode.succeed ImageGET
+        |> required "id" idDecoder
+        |> required "category" imageCategoryDecoder
+        |> required "path" Decode.string
+
+imageCategoryDecoder : Decoder ImageCategory
+imageCategoryDecoder =
+    Decode.succeed ImageCategory
+        |> required "title" Decode.string
+
+-- POST
+
+type alias ImagePOST =
+    { category : String
+    , path : String
+    }
+
+emptyImage : ImagePOST
+emptyImage =
+    { category = ""
+    , path = ""
+    }
+
+imageDecoderPOST : Decoder ImagePOST
+imageDecoderPOST =
+    Decode.succeed ImagePOST
+        |> required "category" Decode.string
+        |> required "path" Decode.string
+
+newImageEncoder : ImagePOST -> Encode.Value
+newImageEncoder image =
+  Encode.object
+    [ ( "category", Encode.string "/api/categories/2" )
+    , ( "path", Encode.string "test.jpg" )
+    ]
+
+--
 
 idDecoder : Decoder ImageId
 idDecoder =
     Decode.map ImageId Decode.int
-
-imagesDecoder : Decoder (List Image)
-imagesDecoder =
-    field "hydra:member" (Decode.list imageDecoder)
-
-imageDecoder : Decoder Image
-imageDecoder =
-    Decode.succeed Image
-        |> required "id" idDecoder
-        |> required "category" Decode.string
---        |> required "tags" (Decode.list Decode.string)
-        |> required "path" Decode.string
-        |> required "description" Decode.string
-        |> required "addedAt" Decode.string
-        |> required "updatedAt" Decode.string
 
 idToString : ImageId -> String
 idToString imageId =
@@ -53,33 +85,9 @@ idToString imageId =
         ImageId id ->
             String.fromInt id
 
-emptyImage : Image
-emptyImage =
-    { id = emptyImageId
-    , category = ""
-    , path = ""
-    , description = ""
---    , tags = [""]
-    , addedAt = "2020-04-25"
-    , updatedAt = "2020-04-25"
-    }
-
 emptyImageId : ImageId
 emptyImageId =
     ImageId -1
-
-newImageEncoder : Image -> String -> Encode.Value
-newImageEncoder image filepath =
-  let 
-    today = "2020-04-25"
-  in
-  Encode.object
-    [ ( "category", Encode.string image.category )
-    , ( "path", Encode.string filepath )
-    , ( "description", Encode.string image.description )
-    , ( "addedAt", Encode.string image.addedAt )
-    , ( "updatedAt", Encode.string image.updatedAt )
-    ]
 
 idParser : Parser (ImageId -> a) a
 idParser =
@@ -87,19 +95,17 @@ idParser =
         \imageId ->
             Maybe.map ImageId (String.toInt imageId)
 
-imageEncoder : Image -> String -> Encode.Value
+{-imageEncoder : Image -> String -> Encode.Value
 imageEncoder image filepath =
     Encode.object
         [ ( "id", encodeId image.id )
         , ( "category", Encode.string image.category )
         , ( "path", Encode.string filepath )
         , ( "description", Encode.string image.description )
-        , ( "addedAt", Encode.string image.addedAt )
-        , ( "addedAt", Encode.string image.updatedAt )
-        ]
+        --, ( "addedAt", Encode.string image.addedAt )
+        --, ( "addedAt", Encode.string image.updatedAt )
+        ]-}
 
 encodeId : ImageId -> Encode.Value
 encodeId (ImageId id) =
     Encode.int id
-
-

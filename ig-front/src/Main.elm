@@ -12,6 +12,8 @@ import Route exposing (Route)
 
 import Page.HomePage as Home
 import Page.ImagesListPage as ImagesList
+import Page.AddImagePage as AddImage
+import Page.ImagesListPage as ImagesList
 import Page.EditImagePage as EditImage
 import Page.AddImagePage as AddImage
 import Page.CategoriesListPage as CategoriesList
@@ -56,6 +58,8 @@ type Page
   = NotFoundPage
   | HomePage Home.Model
   | ImagesListPage ImagesList.Model
+  | AddImagePage AddImage.Model
+  | ImagesListPage ImagesList.Model
   | EditImagePage EditImage.Model
   | AddImagePage AddImage.Model
   | CategoriesListPage CategoriesList.Model
@@ -71,6 +75,8 @@ type UrlRequest
 type Msg
   -- MSG PAGE
   = HomePageMsg Home.Msg
+  | ImagesListPageMsg ImagesList.Msg
+  | AddImagePageMsg AddImage.Msg
   | ImagesListPageMsg ImagesList.Msg
   | EditImagePageMsg EditImage.Msg
   | AddImagePageMsg AddImage.Msg
@@ -94,6 +100,24 @@ update msg model =
       in
       ( { model | page = HomePage updatedPageModel }
       , Cmd.none
+      )
+    
+    ( ImagesListPageMsg subMsg, ImagesListPage pageModel ) ->
+      let
+          ( updatedPageModel, updatedCmd ) =
+            ImagesList.update subMsg pageModel
+      in
+      ( { model | page = ImagesListPage updatedPageModel }
+      , Cmd.map ImagesListPageMsg updatedCmd
+      )
+
+    ( AddImagePageMsg subMsg, AddImagePage pageModel ) ->
+      let
+        ( updatedPageModel, updatedCmd ) =
+          AddImage.update subMsg pageModel
+      in
+      ( { model | page = AddImagePage updatedPageModel }
+      , Cmd.map AddImagePageMsg updatedCmd
       )
 
     ( ImagesListPageMsg subMsg, ImagesListPage pageModel ) ->
@@ -140,7 +164,6 @@ update msg model =
       ( { model | page = EditCategoryPage updatedPageModel }
       , Cmd.map EditCategoryPageMsg updatedCmd
       )
-
 
     ( AddCategoryPageMsg subMsg, AddCategoryPage pageModel ) ->
       let
@@ -191,20 +214,13 @@ initCurrentPage ( model, existingCmds ) =
               Home.init
           in
             ( HomePage pageModel, Cmd.map HomePageMsg pageCmds )
-
+        
         Route.Images ->
           let
             ( pageModel, pageCmds ) =
               ImagesList.init
           in
             ( ImagesListPage pageModel, Cmd.map ImagesListPageMsg pageCmds )
-          
-        Route.EditImage imageId ->
-          let
-            ( pageModel, pageCmds ) =
-              EditImage.init imageId model.navKey
-          in
-            ( EditImagePage pageModel, Cmd.map EditImagePageMsg pageCmds )
 
         Route.AddImage ->
           let
@@ -232,7 +248,8 @@ initCurrentPage ( model, existingCmds ) =
             ( pageModel, pageCmds ) =
               AddCategory.init model.navKey
           in
-            ( AddCategoryPage pageModel, Cmd.map AddCategoryPageMsg pageCmds ) 
+            ( AddCategoryPage pageModel, Cmd.map AddCategoryPageMsg pageCmds )
+
   in
     ( { model | page = currentPage }
     , Cmd.batch [ existingCmds, mappedPageCmds ]
@@ -255,6 +272,14 @@ currentView model =
     HomePage pageModel ->
       Home.view pageModel
         |> Html.map HomePageMsg
+
+    ImagesListPage pageModel ->
+      ImagesList.view pageModel
+        |> Html.map ImagesListPageMsg
+    
+    AddImagePage pageModel ->
+      AddImage.view pageModel
+        |> Html.map AddImagePageMsg
 
     ImagesListPage pageModel ->
       ImagesList.view pageModel
