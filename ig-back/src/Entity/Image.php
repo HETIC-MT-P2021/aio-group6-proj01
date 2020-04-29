@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ApiResource(attributes={
  *     "normalization_context"={"groups"={"read"}},
- *     "denormalizationContext={"groups"={"write"}},
+ *     "denormalizationContext"={"groups"={"write"}},
  *     "enable_max_depth"=true}
  *     )
  * @ORM\Entity(repositoryClass="App\Repository\ImageRepository")
