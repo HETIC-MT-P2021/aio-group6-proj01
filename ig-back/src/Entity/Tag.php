@@ -31,14 +31,14 @@ class Tag
      * @ORM\ManyToMany(targetEntity="App\Entity\Image", inversedBy="tags")
      * @ORM\JoinColumn(nullable=true)
      * @Groups({"read", "write"})
-     * @MaxDepth(5)
+     * @MaxDepth(2)
      */
     private $images;
 
     /**
      * @ORM\Column(type="string", length=100)
      * @Groups({"read", "write"})
-     * @MaxDepth(5)
+     * @MaxDepth(2)
      */
     private $title;
 

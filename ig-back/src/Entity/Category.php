@@ -30,7 +30,7 @@ class Category
     /**
      * @ORM\Column(type="string", length=100)
      * @Groups({"read", "write"})
-     * @MaxDepth(5)
+     * @MaxDepth(2)
      */
     private $title;
 
@@ -38,7 +38,7 @@ class Category
      * @ORM\OneToMany(targetEntity="App\Entity\Image", mappedBy="category")
      * @ORM\JoinColumn(nullable=true)
      * @Groups({"read", "write"})
-     * @MaxDepth(5)
+     * @MaxDepth(2)
      */
     private $images;
 
