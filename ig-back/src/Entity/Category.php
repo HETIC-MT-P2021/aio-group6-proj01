@@ -10,7 +10,11 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ApiResource(attributes={"normalization_context": {"groups"={"read"}, "enable_max_depth"=true}})
+ * @ApiResource(attributes={
+ *     "normalization_context": {"groups"={"read"},
+ *     "denormalizationContext={"groups"={"write"},
+ *     "enable_max_depth"=true}}
+ *     )
  * @ORM\Entity(repositoryClass="App\Repository\CategoryRepository")
  */
 class Category
@@ -24,7 +28,7 @@ class Category
 
     /**
      * @ORM\Column(type="string", length=100)
-     * @Groups({"read"})
+     * @Groups({"read", "write"})
      * @MaxDepth(5)
      */
     private $title;
@@ -32,7 +36,7 @@ class Category
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Image", mappedBy="category")
      * @ORM\JoinColumn(nullable=true)
-     * @Groups({"read"})
+     * @Groups({"read", "write"})
      * @MaxDepth(5)
      */
     private $images;
