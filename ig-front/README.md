@@ -1,20 +1,21 @@
 # Developpment mode
 
-Please install this module from npm :
-
-```npm i -g elm-live```
-
 Need to run this command for using route
 
-```elm-live src/Main.elm --open -- --output=elm.js```
+```sh
+$ npm i
+$ npm run elm
+```
 
 # Build application
-```$ elm make src/Main.elm --output elm.js```
+```sh
+$ elm make src/Main.elm --output elm.js
+```
 
 # Serve application
-```$ elm reactor```
-
-Project launched on localhost:8000
+```sh
+$ elm reactor
+```
 
 # Help tutos
 - Elm doc : https://guide.elm-lang.org/
