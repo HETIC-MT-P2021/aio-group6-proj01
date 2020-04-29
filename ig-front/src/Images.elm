@@ -4,9 +4,8 @@ module Images exposing ( Image
                         , imageDecoder
                         , imagesDecoder
                         , emptyImage
-                        , newImageEncoder
                         , idParser
-                        , imageEncoder )
+                        , newImageEncoder )
 
 import Json.Encode as Encode exposing(..)
 import Json.Decode as Decode exposing (Decoder, field, int, list, string)
@@ -20,12 +19,16 @@ type ImageId
 
 type alias Image =
     { id : ImageId
-    , category : String
+    , category : ImageCategory
     , path : String
     , description : String
 --    , tags : List String
-    , addedAt : String
-    , updatedAt : String
+    --, addedAt : String
+    --, updatedAt : String
+    }
+
+type alias ImageCategory =
+    { title : String
     }
 
 idDecoder : Decoder ImageId
@@ -40,12 +43,17 @@ imageDecoder : Decoder Image
 imageDecoder =
     Decode.succeed Image
         |> required "id" idDecoder
-        |> required "category" Decode.string
+        |> required "category" imageCategoryDecoder
 --        |> required "tags" (Decode.list Decode.string)
         |> required "path" Decode.string
         |> required "description" Decode.string
-        |> required "addedAt" Decode.string
-        |> required "updatedAt" Decode.string
+        --|> required "addedAt" Decode.string
+        --|> required "updatedAt" Decode.string
+
+imageCategoryDecoder : Decoder ImageCategory
+imageCategoryDecoder =
+    Decode.succeed ImageCategory
+        |> required "title" Decode.string
 
 idToString : ImageId -> String
 idToString imageId =
@@ -56,12 +64,17 @@ idToString imageId =
 emptyImage : Image
 emptyImage =
     { id = emptyImageId
-    , category = ""
+    , category = emptyImageCategory
     , path = ""
     , description = ""
 --    , tags = [""]
-    , addedAt = "2020-04-25"
-    , updatedAt = "2020-04-25"
+    --, addedAt = "2020-04-25"
+    --, updatedAt = "2020-04-25"
+    }
+
+emptyImageCategory : ImageCategory
+emptyImageCategory =
+    { title = ""
     }
 
 emptyImageId : ImageId
@@ -74,11 +87,9 @@ newImageEncoder image filepath =
     today = "2020-04-25"
   in
   Encode.object
-    [ ( "category", Encode.string image.category )
+    [ ( "category", Encode.object [ ("title", Encode.string image.category.title) ] )
     , ( "path", Encode.string filepath )
     , ( "description", Encode.string image.description )
-    , ( "addedAt", Encode.string image.addedAt )
-    , ( "updatedAt", Encode.string image.updatedAt )
     ]
 
 idParser : Parser (ImageId -> a) a
@@ -87,19 +98,17 @@ idParser =
         \imageId ->
             Maybe.map ImageId (String.toInt imageId)
 
-imageEncoder : Image -> String -> Encode.Value
+{-imageEncoder : Image -> String -> Encode.Value
 imageEncoder image filepath =
     Encode.object
         [ ( "id", encodeId image.id )
         , ( "category", Encode.string image.category )
         , ( "path", Encode.string filepath )
         , ( "description", Encode.string image.description )
-        , ( "addedAt", Encode.string image.addedAt )
-        , ( "addedAt", Encode.string image.updatedAt )
-        ]
+        --, ( "addedAt", Encode.string image.addedAt )
+        --, ( "addedAt", Encode.string image.updatedAt )
+        ]-}
 
 encodeId : ImageId -> Encode.Value
 encodeId (ImageId id) =
     Encode.int id
-
-

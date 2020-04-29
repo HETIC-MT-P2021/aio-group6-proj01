@@ -12,11 +12,7 @@ import Route exposing (Route)
 
 import Page.HomePage as Home
 import Page.ImagesListPage as ImagesList
-import Page.EditImagePage as EditImage
 import Page.AddImagePage as AddImage
-import Page.CategoriesListPage as CategoriesList
-import Page.EditCategoryPage as EditCategory
-import Page.AddCategoryPage as AddCategory
 
 
 -- MAIN
@@ -56,11 +52,7 @@ type Page
   = NotFoundPage
   | HomePage Home.Model
   | ImagesListPage ImagesList.Model
-  | EditImagePage EditImage.Model
   | AddImagePage AddImage.Model
-  | CategoriesListPage CategoriesList.Model
-  | EditCategoryPage EditCategory.Model
-  | AddCategoryPage AddCategory.Model
 
 -- UPDATE
 
@@ -72,11 +64,7 @@ type Msg
   -- MSG PAGE
   = HomePageMsg Home.Msg
   | ImagesListPageMsg ImagesList.Msg
-  | EditImagePageMsg EditImage.Msg
   | AddImagePageMsg AddImage.Msg
-  | CategoriesListPageMsg CategoriesList.Msg
-  | EditCategoryPageMsg EditCategory.Msg
-  | AddCategoryPageMsg AddCategory.Msg
   -- MANAGE URL
   | LinkClicked Browser.UrlRequest
   | UrlChanged Url
@@ -95,7 +83,7 @@ update msg model =
       ( { model | page = HomePage updatedPageModel }
       , Cmd.none
       )
-
+    
     ( ImagesListPageMsg subMsg, ImagesListPage pageModel ) ->
       let
           ( updatedPageModel, updatedCmd ) =
@@ -105,15 +93,6 @@ update msg model =
       , Cmd.map ImagesListPageMsg updatedCmd
       )
 
-    ( EditImagePageMsg subMsg, EditImagePage pageModel ) ->
-      let
-        ( updatedPageModel, updatedCmd ) =
-          EditImage.update subMsg pageModel
-      in
-      ( { model | page = EditImagePage updatedPageModel }
-      , Cmd.map EditImagePageMsg updatedCmd
-      )
-
     ( AddImagePageMsg subMsg, AddImagePage pageModel ) ->
       let
         ( updatedPageModel, updatedCmd ) =
@@ -121,34 +100,6 @@ update msg model =
       in
       ( { model | page = AddImagePage updatedPageModel }
       , Cmd.map AddImagePageMsg updatedCmd
-      )
-
-    ( CategoriesListPageMsg subMsg, CategoriesListPage pageModel ) ->
-      let
-        ( updatedPageModel, updatedCmd ) =
-          CategoriesList.update subMsg pageModel
-      in
-      ( { model | page = CategoriesListPage updatedPageModel }
-      , Cmd.map CategoriesListPageMsg updatedCmd
-      )
-
-    ( EditCategoryPageMsg subMsg, EditCategoryPage pageModel ) ->
-      let
-        ( updatedPageModel, updatedCmd ) =
-          EditCategory.update subMsg pageModel
-      in
-      ( { model | page = EditCategoryPage updatedPageModel }
-      , Cmd.map EditCategoryPageMsg updatedCmd
-      )
-
-
-    ( AddCategoryPageMsg subMsg, AddCategoryPage pageModel ) ->
-      let
-        ( updatedPageModel, updatedCmd ) =
-          AddCategory.update subMsg pageModel
-      in
-      ( { model | page = AddCategoryPage updatedPageModel }
-      , Cmd.map AddCategoryPageMsg updatedCmd
       )
 
     ( LinkClicked urlRequest, _ ) ->
@@ -191,20 +142,13 @@ initCurrentPage ( model, existingCmds ) =
               Home.init
           in
             ( HomePage pageModel, Cmd.map HomePageMsg pageCmds )
-
+        
         Route.Images ->
           let
             ( pageModel, pageCmds ) =
               ImagesList.init
           in
             ( ImagesListPage pageModel, Cmd.map ImagesListPageMsg pageCmds )
-          
-        Route.EditImage imageId ->
-          let
-            ( pageModel, pageCmds ) =
-              EditImage.init imageId model.navKey
-          in
-            ( EditImagePage pageModel, Cmd.map EditImagePageMsg pageCmds )
 
         Route.AddImage ->
           let
@@ -213,26 +157,6 @@ initCurrentPage ( model, existingCmds ) =
           in
             ( AddImagePage pageModel, Cmd.map AddImagePageMsg pageCmds )
 
-        Route.Categories ->
-          let
-            ( pageModel, pageCmds ) =
-              CategoriesList.init model.navKey
-          in
-            ( CategoriesListPage pageModel, Cmd.map CategoriesListPageMsg pageCmds )
-          
-        Route.EditCategory categoryId ->
-          let
-            ( pageModel, pageCmds ) =
-              EditCategory.init categoryId model.navKey
-          in
-            ( EditCategoryPage pageModel, Cmd.map EditCategoryPageMsg pageCmds )
-
-        Route.AddCategory ->
-          let
-            ( pageModel, pageCmds ) =
-              AddCategory.init model.navKey
-          in
-            ( AddCategoryPage pageModel, Cmd.map AddCategoryPageMsg pageCmds ) 
   in
     ( { model | page = currentPage }
     , Cmd.batch [ existingCmds, mappedPageCmds ]
@@ -259,26 +183,10 @@ currentView model =
     ImagesListPage pageModel ->
       ImagesList.view pageModel
         |> Html.map ImagesListPageMsg
-
-    EditImagePage pageModel ->
-      EditImage.view pageModel
-        |> Html.map EditImagePageMsg
-
+    
     AddImagePage pageModel ->
       AddImage.view pageModel
         |> Html.map AddImagePageMsg
-
-    CategoriesListPage pageModel ->
-      CategoriesList.view pageModel
-        |> Html.map CategoriesListPageMsg
-
-    EditCategoryPage pageModel ->
-      EditCategory.view pageModel
-        |> Html.map EditCategoryPageMsg
-
-    AddCategoryPage pageModel ->
-      AddCategory.view pageModel
-        |> Html.map AddCategoryPageMsg
 
 notFoundView : Html msg
 notFoundView =

@@ -194,11 +194,11 @@ viewImage image =
   in-}
   div [] [
     p [] [ text (Images.idToString image.id) ]
-  , p [] [ text image.category ]
+  , p [] [ text image.category.title ]
   --, ul [] tags
   , p [] [ text image.path ]
   , p [] [ text image.description ]
-  , p [] [ text image.addedAt ]
-  , p [] [ text image.updatedAt ]
+  --, p [] [ text image.addedAt ]
+  --, p [] [ text image.updatedAt ]
   ]
   

@@ -86,13 +86,19 @@ update msg model =
 
         -- ADD IMAGE
 
-        ChangeCategoryImage category ->
+        ChangeCategoryImage title ->
           let
-              oldImage =
-                model.image
+                oldImage =
+                    model.image
 
-              updateCategory =
-                { oldImage | category = category }
+                oldCategory =
+                    model.image.category
+                
+                newCategory =
+                    { oldCategory | title = title }
+
+                updateCategory =
+                    { oldImage | category = newCategory }
           in
           ( { model | image = updateCategory }, Cmd.none )
         
@@ -177,10 +183,10 @@ view model =
             [ Html.map NavbarMsg (Navbar.view model.navbar)
             , showError
             , ul [] 
-                [ li [] [ text model.image.category ]
+                [ li [] [ text model.image.category.title ]
                 , li [] [ text model.image.description ]
-                , li [] [ text model.image.addedAt ]
-                , li [] [ text model.image.updatedAt ]
+                --, li [] [ text model.image.addedAt ]
+                --, li [] [ text model.image.updatedAt ]
                 ]
             , div [ class "container" ]
                 [ div [ class "add_image_section" ] 
