@@ -48,4 +48,5 @@ $ sudo docker-compose down
 When docker is running, run the links below in your favorite browser to access the application  
 
 Back-end (using php-symfony & mysql) launched on ``` localhost:8080/api ```
+
 Front-end (using compiled elm) launched on ``` localhost:8001 ```
