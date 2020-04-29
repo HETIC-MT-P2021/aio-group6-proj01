@@ -1,7 +1,9 @@
-module Images exposing ( Image
+module Images exposing ( ImageGET
+                        , ImagePOST
                         , ImageId
                         , idToString
-                        , imageDecoder
+                        , imageDecoderGET
+                        , imageDecoderPOST
                         , imagesDecoder
                         , emptyImage
                         , idParser
@@ -17,43 +19,65 @@ import Time
 type ImageId
     = ImageId Int
 
-type alias Image =
+-- GET
+
+type alias ImageGET =
     { id : ImageId
     , category : ImageCategory
     , path : String
-    , description : String
---    , tags : List String
-    --, addedAt : String
-    --, updatedAt : String
     }
 
 type alias ImageCategory =
     { title : String
     }
 
-idDecoder : Decoder ImageId
-idDecoder =
-    Decode.map ImageId Decode.int
-
-imagesDecoder : Decoder (List Image)
+imagesDecoder : Decoder (List ImageGET)
 imagesDecoder =
-    field "hydra:member" (Decode.list imageDecoder)
+    field "hydra:member" (Decode.list imageDecoderGET)
 
-imageDecoder : Decoder Image
-imageDecoder =
-    Decode.succeed Image
+imageDecoderGET : Decoder ImageGET
+imageDecoderGET =
+    Decode.succeed ImageGET
         |> required "id" idDecoder
         |> required "category" imageCategoryDecoder
---        |> required "tags" (Decode.list Decode.string)
         |> required "path" Decode.string
-        |> required "description" Decode.string
-        --|> required "addedAt" Decode.string
-        --|> required "updatedAt" Decode.string
 
 imageCategoryDecoder : Decoder ImageCategory
 imageCategoryDecoder =
     Decode.succeed ImageCategory
         |> required "title" Decode.string
+
+-- POST
+
+type alias ImagePOST =
+    { category : String
+    , path : String
+    }
+
+emptyImage : ImagePOST
+emptyImage =
+    { category = ""
+    , path = ""
+    }
+
+imageDecoderPOST : Decoder ImagePOST
+imageDecoderPOST =
+    Decode.succeed ImagePOST
+        |> required "category" Decode.string
+        |> required "path" Decode.string
+
+newImageEncoder : ImagePOST -> Encode.Value
+newImageEncoder image =
+  Encode.object
+    [ ( "category", Encode.string "/api/categories/2" )
+    , ( "path", Encode.string "test.jpg" )
+    ]
+
+--
+
+idDecoder : Decoder ImageId
+idDecoder =
+    Decode.map ImageId Decode.int
 
 idToString : ImageId -> String
 idToString imageId =
@@ -61,36 +85,9 @@ idToString imageId =
         ImageId id ->
             String.fromInt id
 
-emptyImage : Image
-emptyImage =
-    { id = emptyImageId
-    , category = emptyImageCategory
-    , path = ""
-    , description = ""
---    , tags = [""]
-    --, addedAt = "2020-04-25"
-    --, updatedAt = "2020-04-25"
-    }
-
-emptyImageCategory : ImageCategory
-emptyImageCategory =
-    { title = ""
-    }
-
 emptyImageId : ImageId
 emptyImageId =
     ImageId -1
-
-newImageEncoder : Image -> String -> Encode.Value
-newImageEncoder image filepath =
-  let 
-    today = "2020-04-25"
-  in
-  Encode.object
-    [ ( "category", Encode.object [ ("title", Encode.string image.category.title) ] )
-    , ( "path", Encode.string filepath )
-    , ( "description", Encode.string image.description )
-    ]
 
 idParser : Parser (ImageId -> a) a
 idParser =

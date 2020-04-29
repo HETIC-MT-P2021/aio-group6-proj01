@@ -5540,15 +5540,7 @@ var $author$project$Main$ImagesListPageMsg = function (a) {
 	return {$: 'ImagesListPageMsg', a: a};
 };
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
-var $author$project$Images$emptyImageCategory = {title: ''};
-var $author$project$Images$ImageId = function (a) {
-	return {$: 'ImageId', a: a};
-};
-var $elm$core$Basics$negate = function (n) {
-	return -n;
-};
-var $author$project$Images$emptyImageId = $author$project$Images$ImageId(-1);
-var $author$project$Images$emptyImage = {category: $author$project$Images$emptyImageCategory, description: '', id: $author$project$Images$emptyImageId, path: ''};
+var $author$project$Images$emptyImage = {category: '', path: ''};
 var $author$project$Footer$init = {
 	authors: _List_fromArray(
 		[
@@ -6208,10 +6200,13 @@ var $krisajenkins$remotedata$RemoteData$fromResult = function (result) {
 var $author$project$ApiEndpoint$getHostname = 'http://localhost:8001/api';
 var $author$project$ApiEndpoint$getImagesList = $author$project$ApiEndpoint$getHostname + '/images';
 var $elm$json$Json$Decode$field = _Json_decodeField;
-var $author$project$Images$Image = F4(
-	function (id, category, path, description) {
-		return {category: category, description: description, id: id, path: path};
+var $author$project$Images$ImageGET = F3(
+	function (id, category, path) {
+		return {category: category, id: id, path: path};
 	});
+var $author$project$Images$ImageId = function (a) {
+	return {$: 'ImageId', a: a};
+};
 var $elm$json$Json$Decode$int = _Json_decodeInt;
 var $author$project$Images$idDecoder = A2($elm$json$Json$Decode$map, $author$project$Images$ImageId, $elm$json$Json$Decode$int);
 var $author$project$Images$ImageCategory = function (title) {
@@ -6231,28 +6226,24 @@ var $author$project$Images$imageCategoryDecoder = A3(
 	'title',
 	$elm$json$Json$Decode$string,
 	$elm$json$Json$Decode$succeed($author$project$Images$ImageCategory));
-var $author$project$Images$imageDecoder = A3(
+var $author$project$Images$imageDecoderGET = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-	'description',
+	'path',
 	$elm$json$Json$Decode$string,
 	A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-		'path',
-		$elm$json$Json$Decode$string,
+		'category',
+		$author$project$Images$imageCategoryDecoder,
 		A3(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-			'category',
-			$author$project$Images$imageCategoryDecoder,
-			A3(
-				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-				'id',
-				$author$project$Images$idDecoder,
-				$elm$json$Json$Decode$succeed($author$project$Images$Image)))));
+			'id',
+			$author$project$Images$idDecoder,
+			$elm$json$Json$Decode$succeed($author$project$Images$ImageGET))));
 var $elm$json$Json$Decode$list = _Json_decodeList;
 var $author$project$Images$imagesDecoder = A2(
 	$elm$json$Json$Decode$field,
 	'hydra:member',
-	$elm$json$Json$Decode$list($author$project$Images$imageDecoder));
+	$elm$json$Json$Decode$list($author$project$Images$imageDecoderGET));
 var $elm$http$Http$Request = function (a) {
 	return {$: 'Request', a: a};
 };
@@ -6819,20 +6810,19 @@ var $elm$url$Url$toString = function (url) {
 var $author$project$Page$AddImagePage$ImageCreated = function (a) {
 	return {$: 'ImageCreated', a: a};
 };
-var $elm$core$String$replace = F3(
-	function (before, after, string) {
-		return A2(
-			$elm$core$String$join,
-			after,
-			A2($elm$core$String$split, before, string));
+var $author$project$Images$ImagePOST = F2(
+	function (category, path) {
+		return {category: category, path: path};
 	});
-var $elm$core$Debug$toString = _Debug_toString;
-var $author$project$Page$AddImagePage$getFilename = function (files) {
-	var filename = $elm$core$Debug$toString(files);
-	var filenameReplaceStart = A3($elm$core$String$replace, '[<', '', filename);
-	var filenameReplaceEnd = A3($elm$core$String$replace, '>]', '', filenameReplaceStart);
-	return filenameReplaceEnd;
-};
+var $author$project$Images$imageDecoderPOST = A3(
+	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+	'path',
+	$elm$json$Json$Decode$string,
+	A3(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'category',
+		$elm$json$Json$Decode$string,
+		$elm$json$Json$Decode$succeed($author$project$Images$ImagePOST)));
 var $elm$http$Http$jsonBody = function (value) {
 	return A2(
 		_Http_pair,
@@ -6853,37 +6843,25 @@ var $elm$json$Json$Encode$object = function (pairs) {
 			pairs));
 };
 var $elm$json$Json$Encode$string = _Json_wrap;
-var $author$project$Images$newImageEncoder = F2(
-	function (image, filepath) {
-		var today = '2020-04-25';
-		return $elm$json$Json$Encode$object(
-			_List_fromArray(
-				[
-					_Utils_Tuple2(
-					'category',
-					$elm$json$Json$Encode$object(
-						_List_fromArray(
-							[
-								_Utils_Tuple2(
-								'title',
-								$elm$json$Json$Encode$string(image.category.title))
-							]))),
-					_Utils_Tuple2(
-					'path',
-					$elm$json$Json$Encode$string(filepath)),
-					_Utils_Tuple2(
-					'description',
-					$elm$json$Json$Encode$string(image.description))
-				]));
-	});
+var $author$project$Images$newImageEncoder = function (image) {
+	return $elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'category',
+				$elm$json$Json$Encode$string('/api/categories/2')),
+				_Utils_Tuple2(
+				'path',
+				$elm$json$Json$Encode$string('test.jpg'))
+			]));
+};
 var $author$project$ApiEndpoint$postImage = $author$project$ApiEndpoint$getHostname + '/images';
 var $author$project$Page$AddImagePage$addImage = function (model) {
-	var filepath = '/images/' + $author$project$Page$AddImagePage$getFilename(model.fileImage);
 	return $elm$http$Http$request(
 		{
 			body: $elm$http$Http$jsonBody(
-				A2($author$project$Images$newImageEncoder, model.image, filepath)),
-			expect: A2($elm$http$Http$expectJson, $author$project$Page$AddImagePage$ImageCreated, $author$project$Images$imageDecoder),
+				$author$project$Images$newImageEncoder(model.image)),
+			expect: A2($elm$http$Http$expectJson, $author$project$Page$AddImagePage$ImageCreated, $author$project$Images$imageDecoderPOST),
 			headers: _List_Nil,
 			method: 'POST',
 			timeout: $elm$core$Maybe$Nothing,
@@ -6963,30 +6941,15 @@ var $author$project$Page$AddImagePage$update = F2(
 						}),
 					$elm$core$Platform$Cmd$none);
 			case 'ChangeCategoryImage':
-				var title = msg.a;
+				var category = msg.a;
 				var oldImage = model.image;
-				var oldCategory = model.image.category;
-				var newCategory = _Utils_update(
-					oldCategory,
-					{title: title});
 				var updateCategory = _Utils_update(
 					oldImage,
-					{category: newCategory});
+					{category: category});
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{image: updateCategory}),
-					$elm$core$Platform$Cmd$none);
-			case 'ChangeDescImage':
-				var description = msg.a;
-				var oldImage = model.image;
-				var updateDesc = _Utils_update(
-					oldImage,
-					{description: description});
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{image: updateDesc}),
 					$elm$core$Platform$Cmd$none);
 			case 'GotFiles':
 				var files = msg.a;
@@ -7274,9 +7237,6 @@ var $author$project$Main$notFoundView = A2(
 		]));
 var $author$project$Page$AddImagePage$ChangeCategoryImage = function (a) {
 	return {$: 'ChangeCategoryImage', a: a};
-};
-var $author$project$Page$AddImagePage$ChangeDescImage = function (a) {
-	return {$: 'ChangeDescImage', a: a};
 };
 var $author$project$Page$AddImagePage$FooterMsg = function (a) {
 	return {$: 'FooterMsg', a: a};
@@ -7598,14 +7558,7 @@ var $author$project$Page$AddImagePage$view = function (model) {
 						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$text(model.image.category.title)
-							])),
-						A2(
-						$elm$html$Html$li,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$elm$html$Html$text(model.image.description)
+								$elm$html$Html$text(model.image.category)
 							]))
 					])),
 				A2(
@@ -7640,7 +7593,6 @@ var $author$project$Page$AddImagePage$view = function (model) {
 								_List_fromArray(
 									[
 										A2($author$project$Page$AddImagePage$renderInputText, 'Catégorie', $author$project$Page$AddImagePage$ChangeCategoryImage),
-										A2($author$project$Page$AddImagePage$renderInputText, 'Description', $author$project$Page$AddImagePage$ChangeDescImage),
 										$author$project$Page$AddImagePage$renderSelect('Tags'),
 										A2(
 										$elm$html$Html$div,
@@ -7669,84 +7621,51 @@ var $author$project$Page$HomePage$NavbarMsg = function (a) {
 var $author$project$Page$HomePage$PopupMsg = function (a) {
 	return {$: 'PopupMsg', a: a};
 };
-var $author$project$Page$HomePage$ThumbnailsCategories = {$: 'ThumbnailsCategories'};
-var $author$project$Page$HomePage$ThumbnailsImages = {$: 'ThumbnailsImages'};
-var $author$project$Popup$DeletePopup = {$: 'DeletePopup'};
-var $author$project$Popup$EditPopup = {$: 'EditPopup'};
-var $author$project$Popup$ShowPopup = F2(
-	function (a, b) {
-		return {$: 'ShowPopup', a: a, b: b};
-	});
 var $elm$html$Html$span = _VirtualDom_node('span');
-var $author$project$Page$HomePage$renderThumbnails = function (thumbnailsType) {
-	var editPopupMsgImage = $author$project$Page$HomePage$PopupMsg(
-		A2($author$project$Popup$ShowPopup, $author$project$Popup$EditPopup, 'Veuillez modifier le titre de l\'image ?'));
-	var editPopupMsgCategory = $author$project$Page$HomePage$PopupMsg(
-		A2($author$project$Popup$ShowPopup, $author$project$Popup$EditPopup, 'Veuillez modifier le titre de la catégorie ?'));
-	var deletePopupMsgImage = $author$project$Page$HomePage$PopupMsg(
-		A2($author$project$Popup$ShowPopup, $author$project$Popup$DeletePopup, 'Voulez-vous supprimer l\'image ?'));
-	var deletePopupMsgCategory = $author$project$Page$HomePage$PopupMsg(
-		A2($author$project$Popup$ShowPopup, $author$project$Popup$DeletePopup, 'Voulez-vous supprimer la catégorie ?'));
-	if (thumbnailsType.$ === 'ThumbnailsCategories') {
-		return A2(
-			$elm$html$Html$button,
+var $author$project$Page$HomePage$renderThumbnails = A2(
+	$elm$html$Html$button,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('home_images_thumbnail')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class('home_categories_thumbnail')
+					$elm$html$Html$Attributes$class('home_tags_images')
 				]),
 			_List_fromArray(
 				[
 					A2(
-					$elm$html$Html$p,
+					$elm$html$Html$span,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('home_category_name')
+							$elm$html$Html$Attributes$href('#'),
+							$elm$html$Html$Attributes$class('tag_thumbnails')
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text('Voiture')
+							$elm$html$Html$text('Rouge')
 						])),
 					A2(
-					$elm$html$Html$button,
+					$elm$html$Html$span,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('icon_container pointer'),
-							$elm$html$Html$Events$onClick(deletePopupMsgCategory)
+							$elm$html$Html$Attributes$href('#'),
+							$elm$html$Html$Attributes$class('tag_thumbnails')
 						]),
 					_List_fromArray(
 						[
-							A2(
-							$elm$html$Html$div,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('icon icon_trash')
-								]),
-							_List_Nil)
-						])),
-					A2(
-					$elm$html$Html$button,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('icon_container pointer'),
-							$elm$html$Html$Events$onClick(editPopupMsgCategory)
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$div,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('icon icon_pen')
-								]),
-							_List_Nil)
+							$elm$html$Html$text('BMW')
 						]))
-				]));
-	} else {
-		return A2(
+				])),
+			A2(
 			$elm$html$Html$button,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class('home_images_thumbnail')
+					$elm$html$Html$Attributes$class('icon_container pointer')
 				]),
 			_List_fromArray(
 				[
@@ -7754,79 +7673,147 @@ var $author$project$Page$HomePage$renderThumbnails = function (thumbnailsType) {
 					$elm$html$Html$div,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('home_tags_images')
+							$elm$html$Html$Attributes$class('icon icon_trash')
 						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$span,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$href('#'),
-									$elm$html$Html$Attributes$class('tag_thumbnails')
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text('Rouge')
-								])),
-							A2(
-							$elm$html$Html$span,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$href('#'),
-									$elm$html$Html$Attributes$class('tag_thumbnails')
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text('BMW')
-								]))
-						])),
+					_List_Nil)
+				])),
+			A2(
+			$elm$html$Html$button,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('icon_container pointer')
+				]),
+			_List_fromArray(
+				[
 					A2(
-					$elm$html$Html$button,
+					$elm$html$Html$div,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('icon_container pointer'),
-							$elm$html$Html$Events$onClick(deletePopupMsgImage)
+							$elm$html$Html$Attributes$class('icon icon_pen')
 						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$div,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('icon icon_trash')
-								]),
-							_List_Nil)
-						])),
-					A2(
-					$elm$html$Html$button,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('icon_container pointer'),
-							$elm$html$Html$Events$onClick(editPopupMsgImage)
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$div,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('icon icon_pen')
-								]),
-							_List_Nil)
-						])),
-					A2(
-					$elm$html$Html$a,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$href('#'),
-							$elm$html$Html$Attributes$class('home_image_category')
-						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text('Voiture')
-						]))
+					_List_Nil)
+				])),
+			A2(
+			$elm$html$Html$a,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$href('#'),
+					$elm$html$Html$Attributes$class('home_image_category')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Voiture')
+				]))
+		]));
+var $author$project$Page$HomePage$hrefEditImgsPage = function (id) {
+	return '/category/' + (id + '/edit');
+};
+var $author$project$Page$HomePage$thumbCategoryView = function (image) {
+	return A2(
+		$elm$html$Html$button,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('home_categories_thumbnail')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$p,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('home_category_name')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Voiture')
+					])),
+				A2(
+				$elm$html$Html$a,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('icon_container pointer')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('icon icon_trash')
+							]),
+						_List_Nil)
+					])),
+				A2(
+				$elm$html$Html$a,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$href(
+						$author$project$Page$HomePage$hrefEditImgsPage(
+							$author$project$Images$idToString(image.id))),
+						$elm$html$Html$Attributes$class('icon_container pointer')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('icon icon_pen')
+							]),
+						_List_Nil)
+					]))
+			]));
+};
+var $author$project$Page$HomePage$viewFetchError = function (errorMessage) {
+	if (errorMessage === '') {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('error_message hidden')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text(errorMessage)
 				]));
+	} else {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('error_message')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text(errorMessage)
+				]));
+	}
+};
+var $author$project$Page$HomePage$thumbsCategoriesView = function (images) {
+	switch (images.$) {
+		case 'NotAsked':
+			return $elm$html$Html$text('');
+		case 'Loading':
+			return A2(
+				$elm$html$Html$h3,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Chargement...')
+					]));
+		case 'Success':
+			var actualImages = images.a;
+			return A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('home_categories_thumbnails')
+					]),
+				A2($elm$core$List$map, $author$project$Page$HomePage$thumbCategoryView, actualImages));
+		default:
+			var httpError = images.a;
+			return $author$project$Page$HomePage$viewFetchError(
+				$author$project$Error$buildErrorMessage(httpError));
 	}
 };
 var $author$project$Popup$HidePopup = {$: 'HidePopup'};
@@ -8038,105 +8025,6 @@ var $author$project$Popup$view = function (model) {
 		return A2($author$project$Popup$renderPopup, model, 'popup_overlay hidden');
 	}
 };
-var $author$project$Page$HomePage$viewFetchError = function (errorMessage) {
-	if (errorMessage === '') {
-		return A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('error_message hidden')
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text(errorMessage)
-				]));
-	} else {
-		return A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('error_message')
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text(errorMessage)
-				]));
-	}
-};
-var $author$project$Page$HomePage$viewImage = function (image) {
-	return A2(
-		$elm$html$Html$div,
-		_List_Nil,
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$p,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text(
-						$author$project$Images$idToString(image.id))
-					])),
-				A2(
-				$elm$html$Html$p,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text(image.category.title)
-					])),
-				A2(
-				$elm$html$Html$p,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text(image.path)
-					])),
-				A2(
-				$elm$html$Html$p,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text(image.description)
-					]))
-			]));
-};
-var $author$project$Page$HomePage$viewImages = function (images) {
-	switch (images.$) {
-		case 'NotAsked':
-			return $elm$html$Html$text('test');
-		case 'Loading':
-			return A2(
-				$elm$html$Html$h3,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Loading...')
-					]));
-		case 'Success':
-			var actualImages = images.a;
-			return A2(
-				$elm$html$Html$div,
-				_List_Nil,
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$h3,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Posts')
-							])),
-						A2(
-						$elm$html$Html$ul,
-						_List_Nil,
-						A2($elm$core$List$map, $author$project$Page$HomePage$viewImage, actualImages))
-					]));
-		default:
-			var httpError = images.a;
-			return $author$project$Page$HomePage$viewFetchError(
-				$author$project$Error$buildErrorMessage(httpError));
-	}
-};
 var $author$project$Page$HomePage$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -8151,7 +8039,6 @@ var $author$project$Page$HomePage$view = function (model) {
 				$elm$html$Html$map,
 				$author$project$Page$HomePage$NavbarMsg,
 				$author$project$Navbar$view(model.navbar)),
-				$author$project$Page$HomePage$viewImages(model.images),
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(
@@ -8175,18 +8062,7 @@ var $author$project$Page$HomePage$view = function (model) {
 									[
 										$elm$html$Html$text('catégories')
 									])),
-								A2(
-								$elm$html$Html$div,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('home_categories_thumbnails')
-									]),
-								_List_fromArray(
-									[
-										$author$project$Page$HomePage$renderThumbnails($author$project$Page$HomePage$ThumbnailsCategories),
-										$author$project$Page$HomePage$renderThumbnails($author$project$Page$HomePage$ThumbnailsCategories),
-										$author$project$Page$HomePage$renderThumbnails($author$project$Page$HomePage$ThumbnailsCategories)
-									])),
+								$author$project$Page$HomePage$thumbsCategoriesView(model.images),
 								A2(
 								$elm$html$Html$a,
 								_List_fromArray(
@@ -8202,7 +8078,7 @@ var $author$project$Page$HomePage$view = function (model) {
 								$elm$html$Html$a,
 								_List_fromArray(
 									[
-										$elm$html$Html$Attributes$href('#'),
+										$elm$html$Html$Attributes$href('category/new'),
 										$elm$html$Html$Attributes$class('link')
 									]),
 								_List_fromArray(
@@ -8232,11 +8108,7 @@ var $author$project$Page$HomePage$view = function (model) {
 										$elm$html$Html$Attributes$class('home_images_thumbnails')
 									]),
 								_List_fromArray(
-									[
-										$author$project$Page$HomePage$renderThumbnails($author$project$Page$HomePage$ThumbnailsImages),
-										$author$project$Page$HomePage$renderThumbnails($author$project$Page$HomePage$ThumbnailsImages),
-										$author$project$Page$HomePage$renderThumbnails($author$project$Page$HomePage$ThumbnailsImages)
-									])),
+									[$author$project$Page$HomePage$renderThumbnails, $author$project$Page$HomePage$renderThumbnails, $author$project$Page$HomePage$renderThumbnails])),
 								A2(
 								$elm$html$Html$a,
 								_List_fromArray(
@@ -8252,7 +8124,7 @@ var $author$project$Page$HomePage$view = function (model) {
 								$elm$html$Html$a,
 								_List_fromArray(
 									[
-										$elm$html$Html$Attributes$href('#'),
+										$elm$html$Html$Attributes$href('/image/new'),
 										$elm$html$Html$Attributes$class('link')
 									]),
 								_List_fromArray(
@@ -8436,13 +8308,6 @@ var $author$project$Page$ImagesListPage$viewImage = function (image) {
 				_List_fromArray(
 					[
 						$elm$html$Html$text(image.path)
-					])),
-				A2(
-				$elm$html$Html$p,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text(image.description)
 					]))
 			]));
 };

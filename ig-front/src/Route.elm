@@ -12,7 +12,11 @@ type Route
     = NotFound
     | Home
     | Images
+    | EditImage ImageId
     | AddImage
+    | Categories
+    | EditCategory CategoryId
+    | AddCategory
 
 parseUrl : Url -> Route
 parseUrl url =
@@ -30,6 +34,11 @@ matchRoute =
         , Parser.map Home (s "home")
         , Parser.map Images (s "images")
         , Parser.map AddImage (s "images" </> s "new")
+        , Parser.map EditImage (s "image" </> Images.idParser </> s "edit")
+        , Parser.map AddImage (s "images" </> s "new")
+        , Parser.map Categories (s "categories")
+        , Parser.map EditCategory (s "category" </> Categories.idParser </> s "edit")
+        , Parser.map AddCategory (s "category" </> s "new")
         ]
 
 -- MAKE REDIRECTION TO routeToString
@@ -54,3 +63,15 @@ routeToString route =
 
         AddImage ->
             "/images/add"
+
+        EditImage idImage ->
+            "/image" ++ Images.idToString idImage ++ "/edit"
+
+        Categories ->
+            "/categories"                
+        
+        AddCategory ->
+            "/category/new"
+
+        EditCategory idCategory ->
+            "category" ++ Categories.idToString idCategory ++ "/edit"

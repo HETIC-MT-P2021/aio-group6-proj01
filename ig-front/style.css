@@ -235,6 +235,7 @@ input[type="file"] {
     flex-direction: column;
     margin-bottom: 30px;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 .home_categories_thumbnail {
@@ -249,10 +250,6 @@ input[type="file"] {
     font-size: 1.5rem;
     text-decoration: none;
     margin-bottom: 50px;
-}
-
-.home_categories_thumbnail:nth-of-type(3) {
-    margin: 0;
 }
 
 /* Select icons of categories thumbnais */
@@ -297,10 +294,7 @@ input[type="file"] {
     justify-content: center;
     font-size: 1.5rem;
     text-decoration: none;
-}
-
-.home_images_thumbnail:nth-of-type(3) {
-    margin: 0;
+    margin: 15px;
 }
 
 .home_images_thumbnails .icon_container {
@@ -613,10 +607,6 @@ input[type="file"] {
     .home_categories_thumbnails {
         flex-direction: row;
         justify-content: space-around;
-    }
-
-    .home_categories_thumbnail {
-        margin: 0;
     }
 
 /*********************************************************************/

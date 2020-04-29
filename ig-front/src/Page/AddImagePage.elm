@@ -20,10 +20,10 @@ import Route
 
 import ApiEndpoint
 import Error
-import Images exposing ( Image
+import Images exposing ( ImagePOST
                        , ImageId
                        , imagesDecoder
-                       , imageDecoder
+                       , imageDecoderPOST
                        , emptyImage
                        , newImageEncoder )
 
@@ -32,7 +32,7 @@ import Images exposing ( Image
 type alias Model =
     { navbar : Navbar.Model
     , footer : Footer.Model
-    , image : Image
+    , image : ImagePOST
     , fileImage : List File
     , createError : Maybe String
     , navKey : Nav.Key
@@ -54,23 +54,19 @@ type Msg
     = NavbarMsg Navbar.Msg
     | FooterMsg Footer.Msg
     | ChangeCategoryImage String
-    | ChangeDescImage String
     | GotFiles (List File)
     -- ADD IMAGE
     | AddImage
-    | ImageCreated (Result Http.Error Image)
+    | ImageCreated (Result Http.Error ImagePOST)
 
 addImage : Model -> Cmd Msg
 addImage model =
-    let 
-        filepath = "/images/" ++ getFilename model.fileImage
-    in 
     Http.request
         { method = "POST"
         , headers = []
         , url = ApiEndpoint.postImage
-        , body =  Http.jsonBody (newImageEncoder model.image filepath)
-        , expect = Http.expectJson ImageCreated imageDecoder
+        , body =  Http.jsonBody (newImageEncoder model.image)
+        , expect = Http.expectJson ImageCreated imageDecoderPOST
         , timeout = Nothing
         , tracker = Nothing
         }
@@ -86,31 +82,15 @@ update msg model =
 
         -- ADD IMAGE
 
-        ChangeCategoryImage title ->
+        ChangeCategoryImage category ->
           let
                 oldImage =
                     model.image
 
-                oldCategory =
-                    model.image.category
-                
-                newCategory =
-                    { oldCategory | title = title }
-
                 updateCategory =
-                    { oldImage | category = newCategory }
+                    { oldImage | category = category }
           in
           ( { model | image = updateCategory }, Cmd.none )
-        
-        ChangeDescImage description ->
-          let
-              oldImage =
-                model.image
-
-              updateDesc =
-                { oldImage | description = description }
-          in
-          ( { model | image = updateDesc }, Cmd.none )
 
         GotFiles files ->
             ( { model | fileImage = files }, Cmd.none)
@@ -183,17 +163,14 @@ view model =
             [ Html.map NavbarMsg (Navbar.view model.navbar)
             , showError
             , ul [] 
-                [ li [] [ text model.image.category.title ]
-                , li [] [ text model.image.description ]
-                --, li [] [ text model.image.addedAt ]
-                --, li [] [ text model.image.updatedAt ]
+                [ li [] [ text model.image.category ]
                 ]
             , div [ class "container" ]
                 [ div [ class "add_image_section" ] 
                     [ h1 [] [ text "Ajout d'image" ]
                     , div [ class "add_image_form" ]
                         [ renderInputText "Catégorie" ChangeCategoryImage
-                        , renderInputText "Description" ChangeDescImage
+                        --, renderInputText "Description" ChangeDescImage
                         , renderSelect "Tags"
                         , div [ class "add_image_tags" ]
                             [ renderInputFile ]
