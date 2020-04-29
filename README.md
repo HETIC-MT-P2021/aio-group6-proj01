@@ -35,6 +35,11 @@ Coming soon
 - Set the category you created to the image <br/>
 - You can add tags to filter your images later <br/>
 - Navigate in the app and discover our features
+
+### Documentations 
+
+[BACK](https://github.com/HETIC-MT-P2021/aio-group6-proj01/blob/master/ig-back/README-BACK.md), also accessible in project : localhost:8080/api<br/>
+[FRONT](https://github.com/HETIC-MT-P2021/aio-group6-proj01/blob/master/ig-front/README-FRONT.md)
   
 ### Contributing
 
