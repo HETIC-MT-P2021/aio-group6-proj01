@@ -36,7 +36,7 @@ services:
             - "3308:3306" 
     elm: 
         build:
-            context: /home/oussama/Documents/aio-group6-proj01/ig-front
+            context: ../ig-front
             dockerfile: Dockerfile 
         ports: 
           - "8001:80"
