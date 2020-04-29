@@ -13,7 +13,7 @@ RUN elm make src/Main.elm
 
 #Stage 1 --> based on Nginx, to have only the compiled app, ready for production with Nginx 
 FROM nginx:latest 
-COPY  --from=builder /app/index.html /app/index.html 
+COPY  --from=builder /app/style.css /usr/share/nginx/html
 COPY  --from=builder /app/index.html /usr/share/nginx/html
 COPY  --from=builder /app/site2.conf etc/nginx/conf.d/default.conf
 CMD ["nginx", "-g", "daemon off;"]

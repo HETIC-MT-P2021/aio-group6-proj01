@@ -53,3 +53,10 @@
 
 # Ignore Idea's software files
 /.idea
+
+# Environnement files
+/.env
+
+###> symfony/web-server-bundle ###
+/.web-server-pid
+###< symfony/web-server-bundle ###
