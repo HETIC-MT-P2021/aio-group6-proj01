@@ -1,3 +1,21 @@
 # Environment file
 .idea/
 ig-back/.env
+
+# Front
+# elm-package generated files
+ig-front/elm-stuff
+# elm-repl generated files
+ig-front/repl-temp-*
+
+# Created by https://www.gitignore.io/api/node
+# Edit at https://www.gitignore.io/?templates=node
+
+### Node ###
+# Logs
+ig-front/logs
+ig-front/*.log
+ig-front/npm-debug.log*
+
+# Dependency directories
+ig-front/node_modules/
