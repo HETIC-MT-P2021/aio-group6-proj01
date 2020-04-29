@@ -13,7 +13,7 @@ import Navbar
 import Footer
 import Popup
 
-import Images exposing (Image, ImageId, imagesDecoder)
+import Images exposing (ImageGET, ImageId, imagesDecoder)
 import ApiEndpoint
 import Error
 
@@ -28,7 +28,7 @@ type alias Model =
     { navbar : Navbar.Model
     , footer : Footer.Model
     , popup : Popup.Model
-    , images : WebData (List Image)
+    , images : WebData (List ImageGET)
     , deleteError : Maybe String
     }
 
@@ -62,7 +62,7 @@ type Msg
     | PopupMsg Popup.Msg
     -- FETCH IMAGES
     | FetchImages
-    | ImagesReceived (WebData (List Image))
+    | ImagesReceived (WebData (List ImageGET))
     -- DELETE IMAGE
     | DeleteImage ImageId
     | ImageDeleted (Result Http.Error String)
@@ -155,7 +155,7 @@ renderThumbnails =
     , a [ href "#", class "image_category" ] [ text "Voiture" ]
     ]
 
-viewImages : WebData (List Image) -> Html Msg
+viewImages : WebData (List ImageGET) -> Html Msg
 viewImages images =
     case images of
         RemoteData.NotAsked ->
@@ -189,7 +189,7 @@ viewDeleteError maybeError =
         Nothing ->
             ""  
 
-viewImage : Image -> Html Msg
+viewImage : ImageGET -> Html Msg
 viewImage image =
     {-let
         tags = List.map (\tag -> li [] [ text tag ]) image.tags
@@ -198,15 +198,8 @@ viewImage image =
         [ button [ onClick (DeleteImage image.id) ]
             [ text (Images.idToString image.id) ]
         , p []
-            [ text image.category ]
-        --, ul [] tags
+            [ text image.category.title ]
         , p []
             [ text image.path ]
-        , p []
-            [ text image.description ]
-        , p []
-            [ text image.addedAt ]
-        , p []
-            [ text image.updatedAt ]
         ]
   
