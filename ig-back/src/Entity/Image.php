@@ -5,10 +5,12 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ApiResource()
+ * @ApiResource(attributes={"normalization_context": {"groups"={"read"}, "enable_max_depth"=true}})
  * @ORM\Entity(repositoryClass="App\Repository\ImageRepository")
  */
 class Image
@@ -16,34 +18,43 @@ class Image
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
+     * @Groups({"read"})
      * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="images")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
+     * @Groups({"read"})
+     * @MaxDepth(5)
      */
     private $category;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Tag", mappedBy="images")
+     * @ORM\JoinColumn(nullable=true)
+     * @Groups({"read"})
+     * @MaxDepth(5)
      */
     private $tags;
 
-
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"read"})
+     * @MaxDepth(5)
      */
     private $path;
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @Groups({"read"})
+     * @MaxDepth(5)
      */
     private $description;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="date", nullable=true)
      */
     private $addedAt;
 
@@ -51,9 +62,15 @@ class Image
      * @ORM\Column(type="date", nullable=true)
      */
     private $updatedAt;
+
     public function __construct()
     {
         $this->tags = new ArrayCollection();
+
+        $this->setUpdatedAt(new \DateTime('now'));
+        if ($this->getAddedAt() === null) {
+            $this->setAddedAt(new \DateTime('now'));
+        }
     }
 
     public function getId(): ?int

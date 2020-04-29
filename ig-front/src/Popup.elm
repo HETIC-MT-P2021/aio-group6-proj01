@@ -1,16 +1,16 @@
 module Popup exposing (init, update, Msg(..), Model, view, PopupType(..))
 
 import Html exposing (Html, div, text, p, button, input)
-import Html.Events exposing (onClick)
+import Html.Events exposing (onClick, onInput)
 import Html.Attributes exposing (class, href)
 
 -- MODEL
 
 type PopupType
-    = EmptyPopup
-    | EditPopup
-    | CreatePopup
-    | DeletePopup
+  = EmptyPopup
+  | EditPopup
+  | CreatePopup
+  | DeletePopup
 
 type alias Model =
     { title : String
@@ -36,13 +36,13 @@ update : Msg -> Model -> Model
 update msg model =
     case msg of
         NoOp ->
-            model
+          model
 
         ShowPopup popupType title ->
-            { model | isPopupOpen = True, popupType = popupType, title = title }
+          { model | isPopupOpen = True, popupType = popupType, title = title }
         
         HidePopup ->
-            { model | isPopupOpen = False }
+          { model | isPopupOpen = False }
 
 -- VIEW
 
