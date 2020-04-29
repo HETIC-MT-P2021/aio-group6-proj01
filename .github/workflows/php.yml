@@ -1,0 +1,33 @@
+name: PHP Composer
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    env: 
+      working-directory: ./ig-back
+
+    steps:
+    
+    - name: where am i
+      run: ls -a
+    
+    - name: Validate composer.json and composer.lock
+      run: composer validate
+      working-directory: ${{ env.working-directory }}
+
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress --no-suggest
+      working-directory: ${{ env.working-directory }}
+
+    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
+    # Docs: https://getcomposer.org/doc/articles/scripts.md
+
+    # - name: Run test suite
+    #   run: composer run-script test

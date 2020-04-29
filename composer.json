@@ -1,7 +1,0 @@
-{
-  "name": "HETIC_MT_P2021/image_gallery",
-  "description": "Image gallery web app",
-  "require": {
-    "php": "^7.3"
-  }
-}
