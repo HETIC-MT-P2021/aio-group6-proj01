@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ApiResource(attributes={
- *     "normalization_context": {"groups"={"read"},
+ *     "normalization_context"={"groups"={"read"},
  *     "denormalizationContext={"groups"={"write"},
  *     "enable_max_depth"=true}}}
  *     )
